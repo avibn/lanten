@@ -8,6 +8,7 @@ on:
             - main
         paths:
             - "client/**"
+    workflow_dispatch:
 jobs:
     Deploy-Production:
         runs-on: ubuntu-latest
