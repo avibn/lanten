@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tailwind */
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+}
+
+/* Root */
+@media (prefers-color-scheme: light) {
+    :root {
+        --text: #011307;
+        --background: #f8fdfa;
+        --primary: #2fb673;
+        --secondary: #83d6fa;
+        --accent: #4994f8;
+    }
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: #ecfef2;
+        --background: #020805;
+        --primary: #49d08c;
+        --secondary: #05577a;
+        --accent: #0753b6;
+    }
+}
+
+body {
+    color: --text;
+    background: --background;
+}
