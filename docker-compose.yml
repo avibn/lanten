@@ -1,0 +1,27 @@
+version: "3.1"
+services:
+    db:
+        image: postgres:16
+        restart: always
+        environment:
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+        ports:
+            - ${DB_PORT}:5432
+        volumes:
+            - postgres-data-volume:/var/lib/postgresql/data
+
+    pgadmin:
+        container_name: pg-admin
+        image: dpage/pgadmin4
+        restart: always
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+        ports:
+            - ${PGADMIN_PORT}:80
+
+volumes:
+    postgres-data-volume:
+        external: true
