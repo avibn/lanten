@@ -3,7 +3,10 @@ import "dotenv/config";
 import createHttpError, { isHttpError } from "http-errors";
 import express, { NextFunction, Request, Response } from "express";
 
+import { PrismaClient } from '@prisma/client'
 import morgan from "morgan";
+
+const prisma = new PrismaClient();
 
 const app = express();
 
@@ -11,8 +14,17 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 // Endpoints
-app.get("/", (req, res) => {
-    res.send("Hello, world!");
+app.get("/users", async (req, res) => {
+    // todo:: testing
+    // Get all users (email, name, id)
+    const users = await prisma.user.findMany({
+        select: {
+            email: true,
+            name: true,
+            id: true
+        }
+    });
+    res.json(users)
 });
 
 // Routers

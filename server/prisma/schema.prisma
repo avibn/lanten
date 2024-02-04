@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum userType {
+  ADMIN
+  TENANT
+  LANDLORD
+}
+
+model User {
+  id         String        @id @default(uuid())
+  email      String        @unique
+  name       String?
+  password   String
+  userType   userType      @default(TENANT)
+  isActive   Boolean       @default(true)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  properties Property[]
+  leases     LeaseTenant[]
+}
+
+model Property {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  address     String
+  isDeleted   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  landlord    User     @relation(fields: [landlordId], references: [id])
+  landlordId  String
+  leases      Lease[]
+}
+
+model Lease {
+  id         String        @id @default(uuid())
+  startDate  DateTime
+  endDate    DateTime
+  totalRent  Float         @default(0)
+  isDeleted  Boolean       @default(false)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  property   Property      @relation(fields: [propertyId], references: [id])
+  propertyId String
+  tenants    LeaseTenant[]
+  payments   Payment[]
+}
+
+model LeaseTenant {
+  id             String    @id @default(uuid())
+  individualRent Float     @default(0)
+  isDeleted      Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  lease          Lease     @relation(fields: [leaseId], references: [id])
+  leaseId        String
+  tenant         User      @relation(fields: [tenantId], references: [id])
+  tenantId       String
+  payments       Payment[]
+}
+
+enum paymentType {
+  RENT
+  DEPOSIT
+  UTILITIES
+  OTHER
+}
+
+model Payment {
+  id                String       @id @default(uuid())
+  amount            Float
+  name              String
+  description       String?
+  type              paymentType  @default(OTHER)
+  paymentDate       DateTime
+  isRecurring       Boolean      @default(false)
+  recurringInterval Int?
+  isDeleted         Boolean      @default(false)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  lease             Lease?       @relation(fields: [leaseId], references: [id])
+  leaseId           String?
+  leaseTenant       LeaseTenant? @relation(fields: [leaseTenantId], references: [id])
+  leaseTenantId     String?
+  reminders         Reminder[]
+}
+
+model Reminder {
+  id         String   @id @default(uuid())
+  message    String
+  daysBefore Int      @default(0)
+  isSent     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  payment    Payment  @relation(fields: [paymentId], references: [id])
+  paymentId  String
+}
