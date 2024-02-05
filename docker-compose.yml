@@ -22,6 +22,24 @@ services:
         ports:
             - ${PGADMIN_PORT}:80
 
+    redis:
+        image: redis:7.2.4
+        restart: always
+        ports:
+            - ${REDIS_PORT}:6379
+        command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+        volumes:
+            - redis-cache:/data
+
+    redisInsight:
+        container_name: redis-insight
+        image: redislabs/redisinsight
+        restart: always
+        ports:
+            - ${REDIS_INSIGHT_PORT}:8001
+
 volumes:
     postgres-data-volume:
+        external: true
+    redis-cache:
         external: true

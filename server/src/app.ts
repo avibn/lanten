@@ -3,14 +3,48 @@ import "dotenv/config";
 import createHttpError, { isHttpError } from "http-errors";
 import express, { NextFunction, Request, Response } from "express";
 
+import RedisStore from "connect-redis";
 import { ZodError } from "zod";
+import { createClient } from "redis";
+import env from "./utils/validateEnv";
 import morgan from "morgan";
+import session from "express-session";
 import usersRouter from "./routes/users";
 
 const app = express();
 
+// Redis
+const redisClient = createClient({
+    url: env.REDIS_URL,
+});
+redisClient.connect().catch(console.error);
+
+// Initialize redis store
+const redisStore = new RedisStore({
+    client: redisClient,
+    prefix: "lanten:",
+});
+
+// Middlewares
 app.use(morgan("dev"));
 app.use(express.json());
+
+// Session middleware with redis
+app.use(
+    session({
+        store: redisStore,
+        resave: false,
+        saveUninitialized: false,
+        secret: env.SESSION_SECRET,
+        rolling: true,
+        cookie: {
+            maxAge: 1000 * 60 * 60 * 24 * 5, // 15 days
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+        },
+    })
+);
 
 // Endpoints
 app.get("/", (req, res) => {
@@ -20,6 +54,7 @@ app.get("/", (req, res) => {
 // Routers
 app.use("/users", usersRouter);
 
+// Error handling
 app.use((req, res, next) => {
     next(createHttpError(404, "Endpoint not found"));
 });

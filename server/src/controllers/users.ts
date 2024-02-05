@@ -55,6 +55,9 @@ export const signUp: RequestHandler = async (req, res, next) => {
             },
         });
 
+        // Create session
+        req.session.userId = user.id;
+
         res.status(201).json(user);
     } catch (error) {
         next(error);
@@ -83,9 +86,47 @@ export const login: RequestHandler = async (req, res, next) => {
             throw createHttpError(401, "Invalid email or password");
         }
 
+        // Create session
+        req.session.userId = user.id;
+
         // Return user
         const { id, name, userType } = user;
-        res.json({ id, email, name, userType });
+        res.status(201).json({ id, email, name, userType });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const logout: RequestHandler = (req, res, next) => {
+    req.session.destroy((error) => {
+        if (error) {
+            next(error);
+        } else {
+            res.sendStatus(204);
+        }
+    });
+};
+
+export const me: RequestHandler = async (req, res, next) => {
+    try {
+        if (!req.session.userId) {
+            throw createHttpError(401, "Not authenticated");
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { id: req.session.userId },
+            select: {
+                email: true,
+                name: true,
+                id: true,
+                userType: true,
+            },
+        });
+        if (!user) {
+            throw createHttpError(401, "Not authenticated");
+        }
+
+        res.json(user);
     } catch (error) {
         next(error);
     }
