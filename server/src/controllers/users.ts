@@ -91,6 +91,10 @@ export const login: RequestHandler = async (req, res, next) => {
 
         // Return user
         const { id, name, userType } = user;
+
+        // Add 3s delay to simulate slow network
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        
         res.status(201).json({ id, email, name, userType });
     } catch (error) {
         next(error);
@@ -109,10 +113,6 @@ export const logout: RequestHandler = (req, res, next) => {
 
 export const me: RequestHandler = async (req, res, next) => {
     try {
-        if (!req.session.userId) {
-            throw createHttpError(401, "Not authenticated");
-        }
-
         const user = await prisma.user.findUnique({
             where: { id: req.session.userId },
             select: {

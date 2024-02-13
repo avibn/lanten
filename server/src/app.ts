@@ -5,6 +5,7 @@ import express, { NextFunction, Request, Response } from "express";
 
 import RedisStore from "connect-redis";
 import { ZodError } from "zod";
+import cors from "cors";
 import { createClient } from "redis";
 import env from "./utils/validateEnv";
 import morgan from "morgan";
@@ -25,7 +26,15 @@ const redisStore = new RedisStore({
     prefix: "lanten:",
 });
 
+// CORS
+const corsOptions: cors.CorsOptions = {
+    origin: env.CLIENT_URL,
+    credentials: true,
+    optionsSuccessStatus: 200,
+};
+
 // Middlewares
+app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(express.json());
 

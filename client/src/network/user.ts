@@ -1,5 +1,6 @@
 import { User } from "@/models/user";
 import { fetchData } from "./helpers/apiHelper";
+import { useMutation } from "@tanstack/react-query";
 
 interface LoginBody {
     email: string;
@@ -10,18 +11,27 @@ interface RegisterBody {
     name: string;
     email: string;
     password: string;
-    userType: "tenant" | "landlord";
+    type: "tenant" | "landlord";
 }
 
-export const loginClient = async (body: LoginBody): Promise<User> => {
+// Login
+const loginClient = async (body: LoginBody): Promise<User> => {
     const response = await fetchData("/users/login", {
         method: "POST",
         body: JSON.stringify(body),
+        credentials: "include",
     });
     return await response.json();
 };
 
-export const registerClient = async (body: RegisterBody): Promise<User> => {
+export const useLoginMutation = () => {
+    return useMutation({
+        mutationFn: loginClient,
+    });
+};
+
+// Register
+const registerClient = async (body: RegisterBody): Promise<User> => {
     const response = await fetchData("/users/signup", {
         method: "POST",
         body: JSON.stringify(body),
@@ -29,12 +39,24 @@ export const registerClient = async (body: RegisterBody): Promise<User> => {
     return await response.json();
 };
 
-export const logoutClient = async () => {
-    await fetchData("/users/logout", {
-        method: "POST",
+export const useRegisterMutation = () => {
+    return useMutation({
+        mutationFn: registerClient,
     });
 };
 
+// Logout
+export const logoutClient = async () => {
+    await fetchData(
+        "/users/logout",
+        {
+            method: "POST",
+        },
+        true
+    );
+};
+
+// Get current user
 export const getCurrentUserServer = async (): Promise<User> => {
     const response = await fetchData("/users/me", {}, true);
     return await response.json();

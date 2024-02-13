@@ -1,18 +1,17 @@
-import { cookies } from "next/headers";
 import { statusCodeErrorMap } from "../errors/httpErrors";
 
 /**
  * Fetches data from the server.
  * @param input - The URL to fetch.
  * @param init - The optional RequestInit object for additional configuration.
- * @param isServerRequest - Whether the request is made from the server.
+ * @param includeServerCookies - Whether to include server cookies in the request.
  * @returns A Promise that resolves to the Response object representing the fetched data.
  * @throws Error if the base URL is not set, if fetching data fails, or if an HTTP error occurs.
  */
 export async function fetchData(
     input: RequestInfo,
     init: RequestInit = {},
-    isServerRequest = false
+    includeServerCookies = false
 ) {
     const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -29,7 +28,8 @@ export async function fetchData(
     }
 
     // Add cookies if request from server
-    if (isServerRequest) {
+    if (includeServerCookies) {
+        const { cookies } = await import("next/headers");
         init.headers = {
             ...init.headers,
             Cookie: cookies().toString(),
