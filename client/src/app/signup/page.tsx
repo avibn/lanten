@@ -4,6 +4,7 @@ import { SignupForm, SignupFormValues } from "@/components/forms/signup-form";
 
 import { ConflictError } from "@/network/errors/httpErrors";
 import { toast } from "sonner";
+import { useAuthStore } from "@/stores/use-auth-store";
 import { useRegisterMutation } from "@/network/user";
 import { useRouter } from "next/navigation";
 
@@ -11,6 +12,14 @@ export default function Page() {
     const router = useRouter();
     const { mutate, isPending, error, isSuccess, isError } =
         useRegisterMutation();
+
+    // Check if the user is already logged in
+    const fetchUser = useAuthStore((state) => state.fetchUser);
+    const user = useAuthStore((state) => state.user);
+    fetchUser();
+    if (user) {
+        router.push("/dashboard");
+    }
 
     const onSubmit = async (data: SignupFormValues) => {
         const loggedInUser = mutate(data);
@@ -28,7 +37,7 @@ export default function Page() {
     // Success
     if (isSuccess) {
         toast.success("Account created!");
-        router.push("/");
+        router.push("/dashboard");
         router.refresh();
     }
 

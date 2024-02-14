@@ -4,12 +4,21 @@ import { LoginForm, LoginFormValues } from "@/components/forms/login-form";
 
 import { UnauthorizedError } from "@/network/errors/httpErrors";
 import { toast } from "sonner";
+import { useAuthStore } from "@/stores/use-auth-store";
 import { useLoginMutation } from "@/network/user";
 import { useRouter } from "next/navigation";
 
 export default function Page() {
     const router = useRouter();
     const { mutate, isPending, error, isSuccess, isError } = useLoginMutation();
+
+    // Check if the user is already logged in
+    const fetchUser = useAuthStore((state) => state.fetchUser);
+    const user = useAuthStore((state) => state.user);
+    fetchUser();
+    if (user) {
+        router.push("/dashboard");
+    }
 
     const onSubmit = async (data: LoginFormValues) => {
         const loggedInUser = mutate(data);
@@ -28,7 +37,7 @@ export default function Page() {
     // Success
     if (isSuccess) {
         toast.success("Logged in successfully!");
-        router.push("/");
+        router.push("/dashboard");
         router.refresh();
     }
 

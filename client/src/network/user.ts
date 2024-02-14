@@ -46,18 +46,28 @@ export const useRegisterMutation = () => {
 };
 
 // Logout
-export const logoutClient = async () => {
-    await fetchData(
-        "/users/logout",
-        {
-            method: "POST",
-        },
-        true
-    );
+const logoutClient = async () => {
+    await fetchData("/users/logout", {
+        method: "POST",
+        credentials: "include",
+    });
+};
+
+export const useLogoutMutation = () => {
+    return useMutation({
+        mutationFn: logoutClient,
+    });
 };
 
 // Get current user
 export const getCurrentUserServer = async (): Promise<User> => {
     const response = await fetchData("/users/me", {}, true);
+    return await response.json();
+};
+
+export const getCurrentUserClient = async (): Promise<User> => {
+    const response = await fetchData("/users/me", {
+        credentials: "include",
+    });
     return await response.json();
 };
