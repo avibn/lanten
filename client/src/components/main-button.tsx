@@ -1,4 +1,5 @@
 import { Button } from "./ui/button";
+import { ButtonHTMLAttributes } from "react";
 import { Loader2 } from "lucide-react";
 
 interface MainButtonProps {
@@ -7,7 +8,16 @@ interface MainButtonProps {
     isLoading?: boolean;
     loadingText?: string;
     className?: string;
-    type?: string;
+    type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
+    variant?:
+        | "default"
+        | "destructive"
+        | "outline"
+        | "secondary"
+        | "ghost"
+        | "link"
+        | null
+        | undefined;
 }
 
 export function MainButton({
@@ -17,12 +27,14 @@ export function MainButton({
     loadingText,
     className,
     type = "submit",
+    variant = "default",
 }: MainButtonProps) {
     return (
         <Button
             disabled={isDisabled || isLoading}
             className={className}
-            type="submit"
+            type={type}
+            variant={variant}
         >
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isLoading && loadingText ? loadingText : text}

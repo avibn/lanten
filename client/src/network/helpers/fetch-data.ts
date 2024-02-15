@@ -4,15 +4,10 @@ import { statusCodeErrorMap } from "../errors/httpErrors";
  * Fetches data from the server.
  * @param input - The URL to fetch.
  * @param init - The optional RequestInit object for additional configuration.
- * @param includeServerCookies - Whether to include server cookies in the request.
  * @returns A Promise that resolves to the Response object representing the fetched data.
  * @throws Error if the base URL is not set, if fetching data fails, or if an HTTP error occurs.
  */
-export async function fetchData(
-    input: RequestInfo,
-    init: RequestInit = {},
-    includeServerCookies = false
-) {
+export async function fetchData(input: RequestInfo, init: RequestInit = {}) {
     const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
     if (!baseURL) {
@@ -24,15 +19,6 @@ export async function fetchData(
         init.headers = {
             ...init.headers,
             "Content-Type": "application/json",
-        };
-    }
-
-    // Add cookies if request from server
-    if (includeServerCookies) {
-        const { cookies } = await import("next/headers");
-        init.headers = {
-            ...init.headers,
-            Cookie: cookies().toString(),
         };
     }
 

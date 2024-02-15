@@ -5,13 +5,16 @@ import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import { ReactQueryProvider } from "@/providers/react-query-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { getCurrentUserServer } from "@/network/user";
+import { getSessionUser } from "@/network/server/users";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "App",
-    description: "Tenant management application",
+    title: {
+        template: "%s | Lanten",
+        default: "Lanten",
+    },
+    description: "All-in-one Tenant Management Service",
 };
 
 export default async function RootLayout({
@@ -22,9 +25,9 @@ export default async function RootLayout({
     // Get current user
     let user = null;
     try {
-        user = await getCurrentUserServer();
+        user = await getSessionUser();
     } catch (error) {
-        console.error("Failed to get current user");
+        console.error("Failed to get current user (root layout)");
     }
 
     return (

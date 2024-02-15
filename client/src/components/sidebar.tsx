@@ -1,5 +1,7 @@
 "use client";
 
+import { usePathname, useRouter } from "next/navigation";
+
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import Image from "next/image";
@@ -7,19 +9,34 @@ import Link from "next/link";
 import { cn } from "@/utils/tw-merge";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/use-auth-store";
-import { useLogoutMutation } from "@/network/user";
-import { useRouter } from "next/navigation";
+import { useLogoutMutation } from "@/network/client/users";
 
-export function Sidebar() {
+interface SidebarProps {
+    sideBarItems: { name: string; href: string }[];
+}
+
+export function Sidebar({ sideBarItems }: SidebarProps) {
     const router = useRouter();
+    const pathname = usePathname();
     const loggedInUser = useAuthStore((state) => state.user);
+    const setUser = useAuthStore((state) => state.setUser);
     const logoutMutation = useLogoutMutation();
 
+    // Logout handler
     const handleLogout = () => {
         logoutMutation.mutate();
-        router.push("/login");
-        toast.success("Logged out successfully!");
     };
+
+    // Handle logout mutation
+    if (logoutMutation.isError) {
+        toast.error("Failed to logout");
+    }
+
+    if (logoutMutation.isSuccess) {
+        setUser(null);
+        toast.success("Logged out successfully");
+        router.push("/login");
+    }
 
     return (
         // todo cn className
@@ -31,37 +48,20 @@ export function Sidebar() {
                             Lanten
                         </h2>
                         <div className="space-y-1">
-                            <Button
-                                variant="secondary"
-                                className="w-full justify-start"
-                                asChild
-                            >
-                                <Link href="/dashboard">Dashboard</Link>
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                className="w-full justify-start"
-                            >
-                                Properties
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                className="w-full justify-start"
-                            >
-                                Leases
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                className="w-full justify-start"
-                            >
-                                Tenants
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                className="w-full justify-start"
-                            >
-                                Maintenance
-                            </Button>
+                            {sideBarItems.map((item) => (
+                                <Button
+                                    key={item.name}
+                                    variant={
+                                        pathname === item.href
+                                            ? "secondary"
+                                            : "ghost"
+                                    }
+                                    className="w-full justify-start"
+                                    asChild
+                                >
+                                    <Link href={item.href}>{item.name}</Link>
+                                </Button>
+                            ))}
                         </div>
                     </div>
                     <div className="flex flex-col gap-2">
@@ -83,11 +83,11 @@ export function Sidebar() {
                         <Card className="mt-4">
                             <div className="flex items-center justify-start p-4">
                                 <Image
-                                    src={loggedInUser?.avatar}
+                                    src="/user-placeholder.png"
                                     alt="user"
                                     className="w-8 h-8 rounded-full"
-                                    width={32}
-                                    height={32}
+                                    width={128}
+                                    height={128}
                                 />
                                 <div className="ml-2">
                                     <h3 className="text-sm font-semibold">

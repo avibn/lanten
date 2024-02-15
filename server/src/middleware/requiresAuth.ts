@@ -7,7 +7,7 @@ export const requiresAuth: RequestHandler = (req, res, next) => {
         next();
     } else {
         // Remove session cookie
-        res.clearCookie("connect.sid"); // todo:: check if correct
+        // res.clearCookie("connect.sid"); // todo - does this work?
         next(createHttpError(401, "User not authenticated"));
     }
 };

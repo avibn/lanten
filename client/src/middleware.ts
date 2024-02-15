@@ -1,27 +1,30 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+const protectedRoutes = [
+    "/home",
+    "/properties",
+    "/leases",
+    "/tenants",
+    "/maintenance",
+];
+
 export function middleware(request: NextRequest) {
     const currentUser = request.cookies.get("connect.sid")?.value;
 
-    // If the user is already logged in, redirect to the home page
-    // if (
-    //     currentUser &&
-    //     (request.nextUrl.pathname === "/login" ||
-    //         request.nextUrl.pathname === "/signup")
-    // ) {
-    //     return NextResponse.redirect(new URL("/dashboard", request.url));
-    // }
-
-    // If the user is not logged in on dashboard, redirect to the login page
-    if (
-        !currentUser &&
-        request.nextUrl.pathname.startsWith("/dashboard")
-    ) {
+    // Check protected routes
+    const isProtectedRoute = protectedRoutes.some((route) =>
+        request.nextUrl.pathname.startsWith(route)
+    );
+    if (isProtectedRoute && !currentUser) {
         return NextResponse.redirect(new URL("/login", request.url));
     }
 }
 
 export const config = {
-    matcher: ["/login", "/signup", "/dashboard/:path*"],
+    matcher: [
+        "/login",
+        "/signup",
+        ...protectedRoutes.map((route) => `${route}/:path*`),
+    ],
 };

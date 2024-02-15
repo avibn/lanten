@@ -97,7 +97,7 @@ export function SignupForm({ onSubmit, loading }: SignupFormProps) {
                         },
                         {
                             value: "landlord",
-                            label: "landlord",
+                            label: "Landlord",
                         },
                     ]}
                 />
