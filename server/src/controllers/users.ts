@@ -1,12 +1,10 @@
 import * as argon2 from "argon2";
 
-import { PrismaClient, userType } from "@prisma/client";
-
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
+import prisma from "../utils/prismaClient";
+import { userType } from "@prisma/client";
 import { z } from "zod";
-
-const prisma = new PrismaClient();
 
 const SignUpBody = z.object({
     email: z.string().email(),

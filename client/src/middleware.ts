@@ -8,6 +8,7 @@ const protectedRoutes = [
     "/tenants",
     "/maintenance",
 ];
+const protectedRoutePaths = protectedRoutes.map((route) => `${route}/:path*`);
 
 export function middleware(request: NextRequest) {
     const currentUser = request.cookies.get("connect.sid")?.value;
@@ -22,9 +23,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: [
-        "/login",
-        "/signup",
-        ...protectedRoutes.map((route) => `${route}/:path*`),
-    ],
+    matcher: ["/login", "/signup", ...protectedRoutePaths],
 };
