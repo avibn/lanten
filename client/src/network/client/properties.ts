@@ -1,5 +1,6 @@
 import { Property } from "@/models/properties";
 import { fetchData } from "../helpers/fetch-data";
+import { useMutation } from "@tanstack/react-query";
 
 interface CreatePropertyBody {
     name: string;
@@ -18,6 +19,12 @@ export async function createProperty(
     return await response.json();
 }
 
+export const useCreatePropertyMutation = () => {
+    return useMutation({
+        mutationFn: createProperty,
+    });
+};
+
 export async function updateProperty(
     id: string,
     property: CreatePropertyBody
@@ -29,3 +36,10 @@ export async function updateProperty(
     });
     return await response.json();
 }
+
+export const useUpdatePropertyMutation = (id: string) => {
+    return useMutation({
+        mutationFn: (property: CreatePropertyBody) =>
+            updateProperty(id, property),
+    });
+};

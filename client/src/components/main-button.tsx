@@ -1,5 +1,6 @@
 import { Button } from "./ui/button";
 import { ButtonHTMLAttributes } from "react";
+import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
 interface MainButtonProps {
@@ -18,6 +19,7 @@ interface MainButtonProps {
         | "link"
         | null
         | undefined;
+    href?: string;
 }
 
 export function MainButton({
@@ -28,16 +30,27 @@ export function MainButton({
     className,
     type = "submit",
     variant = "default",
+    href,
 }: MainButtonProps) {
+    const buttonContent = (
+        <>
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isLoading && loadingText ? loadingText : text}
+        </>
+    );
     return (
         <Button
             disabled={isDisabled || isLoading}
             className={className}
             type={type}
             variant={variant}
+            asChild={href ? true : false}
         >
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isLoading && loadingText ? loadingText : text}
+            {href ? (
+                <Link href={href}>{buttonContent}</Link>
+            ) : (
+                <>{buttonContent}</>
+            )}
         </Button>
     );
 }

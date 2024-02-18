@@ -52,7 +52,7 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
                                 <Button
                                     key={item.name}
                                     variant={
-                                        pathname === item.href
+                                        pathname.startsWith(item.href)
                                             ? "secondary"
                                             : "ghost"
                                     }
