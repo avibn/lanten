@@ -1,8 +1,8 @@
 "use client";
 
-import { SignupForm, SignupFormValues } from "@/components/forms/signup-form";
-
 import { ConflictError } from "@/network/errors/httpErrors";
+import { SignupForm } from "@/components/forms/signup-form";
+import { SignupFormValues } from "@/schemas/signup";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/use-auth-store";
 import { useRegisterMutation } from "@/network/client/users";

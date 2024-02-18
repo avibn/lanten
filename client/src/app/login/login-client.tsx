@@ -1,7 +1,7 @@
 "use client";
 
-import { LoginForm, LoginFormValues } from "@/components/forms/login-form";
-
+import { LoginForm } from "@/components/forms/login-form";
+import { LoginFormValues } from "@/schemas/login";
 import { UnauthorizedError } from "@/network/errors/httpErrors";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/use-auth-store";

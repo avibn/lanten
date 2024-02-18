@@ -1,3 +1,5 @@
+import { SignupFormValues, signupSchema } from "@/schemas/signup";
+
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { FormRadioField } from "./fields/form-radio-field";
@@ -6,34 +8,7 @@ import { Label } from "../ui/label";
 import Link from "next/link";
 import { MainButton } from "../main-button";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-const formSchema = z
-    .object({
-        email: z.string().email(),
-        name: z.string().min(2).max(40),
-        password: z
-            .string()
-            .min(8)
-            .max(100)
-            .refine((password) => /[A-Z]/.test(password), {
-                message: "Password must contain at least one uppercase letter",
-            })
-            .refine((password) => /\d/.test(password), {
-                message: "Password must contain at least one number",
-            }),
-        confirmPassword: z.string().min(8).max(100),
-        type: z.enum(["tenant", "landlord"], {
-            required_error: "A user type must be selected",
-        }),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-        message: "The password does not match",
-        path: ["confirmPassword"],
-    });
-
-export type SignupFormValues = z.infer<typeof formSchema>;
 
 interface SignupFormProps {
     onSubmit(values: SignupFormValues): void;
@@ -43,7 +18,7 @@ interface SignupFormProps {
 export function SignupForm({ onSubmit, loading }: SignupFormProps) {
     // React hook form
     const form = useForm<SignupFormValues>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(signupSchema),
         defaultValues: {
             email: "",
             password: "",

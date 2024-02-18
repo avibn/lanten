@@ -1,3 +1,5 @@
+import { LoginFormValues, loginSchema } from "@/schemas/login";
+
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { FormTextField } from "./fields/form-text-field";
@@ -5,29 +7,7 @@ import { Label } from "../ui/label";
 import Link from "next/link";
 import { MainButton } from "../main-button";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-const formSchema = z.object({
-    email: z
-        .string()
-        .email()
-        .refine((value) => value, {
-            message: "Invalid email address",
-        }),
-    password: z
-        .string()
-        .min(8)
-        .max(100)
-        .refine((password) => /[A-Z]/.test(password), {
-            message: "Password must contain at least one uppercase letter",
-        })
-        .refine((password) => /\d/.test(password), {
-            message: "Password must contain at least one number",
-        }),
-});
-
-export type LoginFormValues = z.infer<typeof formSchema>;
 
 interface LoginFormProps {
     onSubmit(values: LoginFormValues): void;
@@ -37,7 +17,7 @@ interface LoginFormProps {
 export function LoginForm({ onSubmit, loading }: LoginFormProps) {
     // React hook form
     const form = useForm<LoginFormValues>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(loginSchema),
         defaultValues: {
             email: "",
             password: "",
