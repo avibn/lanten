@@ -9,7 +9,7 @@ export const metadata = {
 };
 
 export default async function Page() {
-    const user = await getSessionUserOrRedirect();
+    const user = await getSessionUserOrRedirect("LANDLORD");
 
     return <CreatePropertyClient />;
 }

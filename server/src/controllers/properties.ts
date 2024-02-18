@@ -14,6 +14,18 @@ export const createProperty: RequestHandler = async (req, res, next) => {
             req.body
         );
 
+        // Check if user is a landlord
+        const user = await prisma.user.findUnique({
+            where: { id: req.session.userId },
+        });
+        if (user?.userType !== "LANDLORD") {
+            return res
+                .status(403)
+                .json({ message: "Only landlords can create properties" });
+        }
+
+        // todo:: middleware to check if user is a landlord?
+
         // Create property and connect it to the landlord
         const property = await prisma.property.create({
             data: {
@@ -36,6 +48,16 @@ export const createProperty: RequestHandler = async (req, res, next) => {
 
 export const getProperties: RequestHandler = async (req, res, next) => {
     try {
+        // Check if user is a landlord
+        const user = await prisma.user.findUnique({
+            where: { id: req.session.userId },
+        });
+        if (user?.userType !== "LANDLORD") {
+            return res
+                .status(403)
+                .json({ message: "Only landlords can create properties" });
+        }
+
         // Get all properties for the logged in landlord
         const properties = await prisma.property.findMany({
             where: {
@@ -53,6 +75,16 @@ export const getProperties: RequestHandler = async (req, res, next) => {
 export const getProperty: RequestHandler = async (req, res, next) => {
     try {
         const { id } = req.params;
+
+        // Check if user is a landlord
+        const user = await prisma.user.findUnique({
+            where: { id: req.session.userId },
+        });
+        if (user?.userType !== "LANDLORD") {
+            return res
+                .status(403)
+                .json({ message: "Only landlords can create properties" });
+        }
 
         // Get property by id
         const property = await prisma.property.findUnique({
@@ -79,6 +111,16 @@ export const updateProperty: RequestHandler = async (req, res, next) => {
             req.body
         );
 
+        // Check if user is a landlord
+        const user = await prisma.user.findUnique({
+            where: { id: req.session.userId },
+        });
+        if (user?.userType !== "LANDLORD") {
+            return res
+                .status(403)
+                .json({ message: "Only landlords can create properties" });
+        }
+
         // Update property by id
         const property = await prisma.property.update({
             where: { id: id, isDeleted: false },
@@ -98,6 +140,16 @@ export const updateProperty: RequestHandler = async (req, res, next) => {
 export const deleteProperty: RequestHandler = async (req, res, next) => {
     try {
         const { id } = req.params;
+
+        // Check if user is a landlord
+        const user = await prisma.user.findUnique({
+            where: { id: req.session.userId },
+        });
+        if (user?.userType !== "LANDLORD") {
+            return res
+                .status(403)
+                .json({ message: "Only landlords can create properties" });
+        }
 
         // Set deleted property to true
         await prisma.property.update({

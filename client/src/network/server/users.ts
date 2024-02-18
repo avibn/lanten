@@ -19,13 +19,24 @@ export const getSessionUser = async (): Promise<User> => {
 };
 
 /**
- * Retrieves the session user or redirects to the login page if the user is not authenticated.
- * @returns A promise that resolves to the session user.
+ * Retrieves the session user or redirects to a specified path if unauthenticated or unauthorized.
+ *
+ * @param userType - The expected user type.
+ * @param typeRedirectPath - The path to redirect if the user does not match the expected type.
+ * @returns A Promise that resolves to the session user.
  */
-export async function getSessionUserOrRedirect(): Promise<User> {
+export async function getSessionUserOrRedirect(
+    userType?: string,
+    typeRedirectPath: string = "/home"
+): Promise<User> {
     let user: User | null = null;
     try {
         user = await getSessionUser();
+
+        // Redirect if user type is invalid
+        if (userType && user.userType !== userType) {
+            redirect(typeRedirectPath);
+        }
     } catch (error) {
         console.error("Failed to get current user (redirect)");
         redirect("/login");
