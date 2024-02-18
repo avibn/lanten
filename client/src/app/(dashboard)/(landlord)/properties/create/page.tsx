@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/back-button";
 import { CreatePropertyClient } from "./create-property-client";
 import { getSessionUserOrRedirect } from "@/network/server/users";
 
@@ -11,5 +12,10 @@ export const metadata = {
 export default async function Page() {
     const user = await getSessionUserOrRedirect("LANDLORD");
 
-    return <CreatePropertyClient />;
+    return (
+        <div className="flex flex-col items-start">
+            <BackButton text="Properties" href="/properties" />
+            <CreatePropertyClient className="w-full" />
+        </div>
+    );
 }

@@ -3,11 +3,16 @@
 import { BadRequestError } from "@/network/errors/httpErrors";
 import { CreatePropertyForm } from "@/components/forms/create-property-form";
 import { PropertyFormValues } from "@/schemas/property";
+import { cn } from "@/utils/tw-merge";
 import { toast } from "sonner";
 import { useCreatePropertyMutation } from "@/network/client/properties";
 import { useRouter } from "next/navigation";
 
-export function CreatePropertyClient() {
+interface CreatePropertyClientProps {
+    className?: string;
+}
+
+export function CreatePropertyClient({ className }: CreatePropertyClientProps) {
     const { data, mutate, isPending, error, isSuccess, isError } =
         useCreatePropertyMutation();
     const router = useRouter();
@@ -32,7 +37,7 @@ export function CreatePropertyClient() {
     }
 
     return (
-        <div className="flex justify-center h-screen">
+        <div className={cn("flex justify-center h-screen", className)}>
             <div className="w-1/2">
                 <CreatePropertyForm onSubmit={onSubmit} loading={isPending} />
             </div>
