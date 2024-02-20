@@ -8,9 +8,7 @@ interface CreatePropertyBody {
     address: string;
 }
 
-export async function createProperty(
-    property: CreatePropertyBody
-): Promise<Property> {
+async function createProperty(property: CreatePropertyBody): Promise<Property> {
     const response = await fetchData("/properties", {
         method: "POST",
         body: JSON.stringify(property),
@@ -25,7 +23,7 @@ export const useCreatePropertyMutation = () => {
     });
 };
 
-export async function updateProperty(
+async function updateProperty(
     id: string,
     property: CreatePropertyBody
 ): Promise<Property> {
