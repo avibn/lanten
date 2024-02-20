@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import createHttpError from "http-errors";
 import prisma from "../utils/prismaClient";
 import { z } from "zod";
 
@@ -19,9 +20,7 @@ export const createProperty: RequestHandler = async (req, res, next) => {
             where: { id: req.session.userId },
         });
         if (user?.userType !== "LANDLORD") {
-            return res
-                .status(403)
-                .json({ message: "Only landlords can create properties" });
+            throw createHttpError(403, "Only landlords can create properties");
         }
 
         // todo:: middleware to check if user is a landlord?
@@ -53,9 +52,7 @@ export const getProperties: RequestHandler = async (req, res, next) => {
             where: { id: req.session.userId },
         });
         if (user?.userType !== "LANDLORD") {
-            return res
-                .status(403)
-                .json({ message: "Only landlords can create properties" });
+            throw createHttpError(403, "Only landlords can get properties");
         }
 
         // Get all properties for the logged in landlord
@@ -81,9 +78,7 @@ export const getProperty: RequestHandler = async (req, res, next) => {
             where: { id: req.session.userId },
         });
         if (user?.userType !== "LANDLORD") {
-            return res
-                .status(403)
-                .json({ message: "Only landlords can get properties" });
+            throw createHttpError(403, "Only landlords can get properties");
         }
 
         // Get property by id
@@ -111,9 +106,7 @@ export const getProperty: RequestHandler = async (req, res, next) => {
 
         // Check if property exists
         if (!property) {
-            return res
-                .status(404)
-                .json({ message: "No property found with id" });
+            throw createHttpError(404, "No property found with id");
         }
 
         res.status(200).json(property);
@@ -134,9 +127,7 @@ export const updateProperty: RequestHandler = async (req, res, next) => {
             where: { id: req.session.userId },
         });
         if (user?.userType !== "LANDLORD") {
-            return res
-                .status(403)
-                .json({ message: "Only landlords can update properties" });
+            throw createHttpError(403, "Only landlords can update properties");
         }
 
         // Update property by id
@@ -164,9 +155,7 @@ export const deleteProperty: RequestHandler = async (req, res, next) => {
             where: { id: req.session.userId },
         });
         if (user?.userType !== "LANDLORD") {
-            return res
-                .status(403)
-                .json({ message: "Only landlords can delete properties" });
+            throw createHttpError(403, "Only landlords can delete properties");
         }
 
         // Set deleted property to true

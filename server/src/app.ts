@@ -5,6 +5,7 @@ import { corsOptions } from "./configs/corsOptions";
 import createHttpError from "http-errors";
 import { errorHandler } from "./configs/errorHandler";
 import express from "express";
+import leasesRouter from "./routes/leases";
 import morgan from "morgan";
 import propertiesRouter from "./routes/properties";
 import { sessionMiddleware } from "./configs/sessions";
@@ -28,6 +29,7 @@ app.get("/", (req, res) => {
 // Routers
 app.use("/users", usersRouter);
 app.use("/properties", propertiesRouter);
+app.use("/leases", leasesRouter);
 
 // Error handling
 app.use((req, res, next) => {

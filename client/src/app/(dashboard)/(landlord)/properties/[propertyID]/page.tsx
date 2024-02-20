@@ -56,7 +56,7 @@ export default async function Page({ params: { propertyID } }: PageProps) {
         return (
             <>
                 {leases?.map((lease) => (
-                    <Card key={lease.id}>
+                    <Card key={lease.id} className="mt-3">
                         <CardHeader>
                             <p>
                                 Duration: {formatTime(lease.startDate)} -{" "}
