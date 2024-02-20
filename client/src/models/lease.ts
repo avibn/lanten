@@ -7,4 +7,12 @@ export interface Lease {
     createdAt: string;
     updatedAt: string;
     isDeleted: boolean;
+    property?: {
+        name: string;
+        address: string;
+    };
+    _count?: {
+        tenants: number;
+        payments: number;
+    };
 }

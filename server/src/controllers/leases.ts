@@ -78,6 +78,20 @@ export const getLeases: RequestHandler = async (req, res, next) => {
                     },
                 ],
             },
+            include: {
+                property: {
+                    select: {
+                        name: true,
+                        address: true,
+                    },
+                },
+                _count: {
+                    select: {
+                        tenants: true,
+                        payments: true,
+                    },
+                },
+            },
         });
 
         res.status(200).json(leases);
