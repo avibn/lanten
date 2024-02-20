@@ -12,7 +12,7 @@ import { useAuthStore } from "@/stores/use-auth-store";
 import { useLogoutMutation } from "@/network/client/users";
 
 interface SidebarProps {
-    sideBarItems: { name: string; href: string }[];
+    sideBarItems: { name: string; href: string; roles: string[] }[];
 }
 
 export function Sidebar({ sideBarItems }: SidebarProps) {
@@ -48,22 +48,32 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
                             Lanten
                         </h2>
                         <div className="space-y-1">
-                            {sideBarItems.map((item) => (
-                                <Button
-                                    key={item.name}
-                                    variant={
-                                        pathname.startsWith(item.href)
-                                            ? "secondary"
-                                            : "ghost"
-                                    }
-                                    className="w-full justify-start"
-                                    asChild
-                                >
-                                    <Link href={item.href}>{item.name}</Link>
-                                </Button>
-                            ))}
+                            {sideBarItems.map(
+                                (item) =>
+                                    // Check user roles
+                                    loggedInUser &&
+                                    item.roles.includes(
+                                        loggedInUser?.userType
+                                    ) && (
+                                        <Button
+                                            key={item.name}
+                                            variant={
+                                                pathname.startsWith(item.href)
+                                                    ? "secondary"
+                                                    : "ghost"
+                                            }
+                                            className="w-full justify-start"
+                                            asChild
+                                        >
+                                            <Link href={item.href}>
+                                                {item.name}
+                                            </Link>
+                                        </Button>
+                                    )
+                            )}
                         </div>
                     </div>
+
                     <div className="flex flex-col gap-2">
                         <Button
                             variant="outline"

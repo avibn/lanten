@@ -5,11 +5,15 @@ import { usePathname } from "next/navigation";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
     const sideBarItems = [
-        { name: "Home", href: "/home" },
-        { name: "Properties", href: "/properties" },
-        { name: "Leases", href: "/leases" },
-        { name: "Tenants", href: "/tenants" },
-        { name: "Maintenance", href: "/maintenance" },
+        { name: "Home", href: "/home", roles: ["TENANT", "LANDLORD"] },
+        { name: "Properties", href: "/properties", roles: ["LANDLORD"] },
+        { name: "Leases", href: "/leases", roles: ["TENANT", "LANDLORD"] },
+        { name: "Tenants", href: "/tenants", roles: ["LANDLORD"] },
+        {
+            name: "Maintenance",
+            href: "/maintenance",
+            roles: ["TENANT", "LANDLORD"],
+        },
     ];
     const pathname = usePathname();
     const currentPageName = sideBarItems.find(
