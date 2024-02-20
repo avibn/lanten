@@ -54,8 +54,12 @@ export function CreatePropertyForm({
                     description="This is the address of your property."
                 />
                 <MainButton
-                    text="Create Property"
-                    loadingText="Creating Property..."
+                    text={defaultValues ? "Update Property" : "Create Property"}
+                    loadingText={
+                        defaultValues
+                            ? "Updating Property..."
+                            : "Creating Property..."
+                    }
                     isLoading={loading}
                     className="w-full"
                 />

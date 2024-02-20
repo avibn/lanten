@@ -6,12 +6,13 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 
+import { ForbiddenError } from "@/network/errors/httpErrors";
+import Link from "next/link";
 import { MainButton } from "@/components/main-button";
+import { Property } from "@/models/property";
 import { formatTime } from "@/utils/format-time";
 import { getProperties } from "@/network/server/properties";
-import { getSessionUserOrRedirect } from "@/network/server/users";
-
-export const revalidate = 0;
+import { redirect } from "next/navigation";
 
 export const metadata = {
     title: "Properties",
@@ -19,8 +20,15 @@ export const metadata = {
 };
 
 export default async function Page() {
-    const user = await getSessionUserOrRedirect("LANDLORD");
-    const properties = await getProperties();
+    // Get the list of properties
+    let properties: Property[] = [];
+    try {
+        properties = await getProperties();
+    } catch (error) {
+        if (error instanceof ForbiddenError) {
+            redirect("/home");
+        }
+    }
 
     return (
         <div>
@@ -31,6 +39,19 @@ export default async function Page() {
                 <MainButton text="Create Property" href="/properties/create" />
             </div>
             <div className="flex flex-wrap gap-3 mt-5">
+                {properties.length === 0 && (
+                    <p className="text-lg font-light tracking-tight">
+                        You have no properties yet.{" "}
+                        <Link
+                            href="/properties/create"
+                            className="hover:underline hover:text-green-700"
+                        >
+                            Create
+                        </Link>{" "}
+                        one to get started.
+                    </p>
+                )}
+
                 {properties.map((property) => (
                     <Card key={property.id}>
                         <CardHeader>

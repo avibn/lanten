@@ -1,4 +1,4 @@
-import { Property } from "@/models/properties";
+import { Property } from "@/models/property";
 import { fetchDataServer } from "../helpers/fetch-data-server";
 
 export async function getProperties(): Promise<Property[]> {

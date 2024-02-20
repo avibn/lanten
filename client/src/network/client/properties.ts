@@ -1,4 +1,4 @@
-import { Property } from "@/models/properties";
+import { Property } from "@/models/property";
 import { fetchData } from "../helpers/fetch-data";
 import { useMutation } from "@tanstack/react-query";
 

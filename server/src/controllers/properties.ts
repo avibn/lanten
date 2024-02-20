@@ -83,12 +83,30 @@ export const getProperty: RequestHandler = async (req, res, next) => {
         if (user?.userType !== "LANDLORD") {
             return res
                 .status(403)
-                .json({ message: "Only landlords can create properties" });
+                .json({ message: "Only landlords can get properties" });
         }
 
         // Get property by id
         const property = await prisma.property.findUnique({
-            where: { id, isDeleted: false },
+            where: { id, isDeleted: false, landlordId: req.session.userId },
+            include: {
+                leases: {
+                    select: {
+                        id: true,
+                        startDate: true,
+                        endDate: true,
+                        totalRent: true,
+                        isDeleted: true,
+                        createdAt: true,
+                        updatedAt: true,
+                    },
+                },
+                _count: {
+                    select: {
+                        leases: true,
+                    },
+                },
+            },
         });
 
         // Check if property exists
@@ -118,12 +136,12 @@ export const updateProperty: RequestHandler = async (req, res, next) => {
         if (user?.userType !== "LANDLORD") {
             return res
                 .status(403)
-                .json({ message: "Only landlords can create properties" });
+                .json({ message: "Only landlords can update properties" });
         }
 
         // Update property by id
         const property = await prisma.property.update({
-            where: { id: id, isDeleted: false },
+            where: { id: id, isDeleted: false, landlordId: req.session.userId },
             data: {
                 name,
                 description,
@@ -148,12 +166,12 @@ export const deleteProperty: RequestHandler = async (req, res, next) => {
         if (user?.userType !== "LANDLORD") {
             return res
                 .status(403)
-                .json({ message: "Only landlords can create properties" });
+                .json({ message: "Only landlords can delete properties" });
         }
 
         // Set deleted property to true
         await prisma.property.update({
-            where: { id: id },
+            where: { id: id, landlordId: req.session.userId },
             data: {
                 isDeleted: true,
             },

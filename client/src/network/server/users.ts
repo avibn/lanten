@@ -14,7 +14,11 @@ export const getSessionUser = async (): Promise<User> => {
         throw new UnauthorizedError("Not logged in");
     }
 
-    const response = await fetchDataServer("/users/me");
+    const response = await fetchDataServer("/users/me", {
+        next: {
+            revalidate: 30,
+        },
+    });
     return await response.json();
 };
 
@@ -29,17 +33,25 @@ export async function getSessionUserOrRedirect(
     userType?: string,
     typeRedirectPath: string = "/home"
 ): Promise<User> {
+    // todo:: redirect to /home?error=UnauthorizedPageAccess instead?
+
     let user: User | null = null;
+    let redirectPath: string | null = null;
     try {
         user = await getSessionUser();
 
         // Redirect if user type is invalid
         if (userType && user.userType !== userType) {
-            redirect(typeRedirectPath);
+            redirectPath = typeRedirectPath;
         }
     } catch (error) {
         console.error("Failed to get current user (redirect)");
-        redirect("/login");
+        return redirect("/login");
+    } finally {
+        if (redirectPath) {
+            console.log("Redirerecting to: ", redirectPath);
+            redirect(redirectPath);
+        }
     }
     return user;
 }
