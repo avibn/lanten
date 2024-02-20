@@ -65,3 +65,7 @@
 .card-login {
     @apply w-96;
 }
+
+.link-primary {
+    @apply text-primary hover:text-green-700;
+}

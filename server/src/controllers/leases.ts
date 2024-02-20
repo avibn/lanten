@@ -7,7 +7,11 @@ const CreateLeaseBody = z.object({
     propertyId: z.string(),
     startDate: z.string().datetime(),
     endDate: z.string().datetime(),
-    totalRent: z.number().min(0).max(1000000),
+    totalRent: z
+        .number()
+        .multipleOf(0.01, "Rent must be a valid currency amount")
+        .min(0)
+        .max(1000000),
 });
 
 export const createLease: RequestHandler = async (req, res, next) => {
@@ -33,6 +37,14 @@ export const createLease: RequestHandler = async (req, res, next) => {
         // Check if user is landlord
         if (property?.landlord.userType !== "LANDLORD") {
             throw createHttpError(403, "Only landlords can create leases");
+        }
+
+        // Check if the user is the landlord of the property
+        if (property.landlordId !== req.session.userId) {
+            throw createHttpError(
+                403,
+                "You are not the landlord of this property"
+            );
         }
 
         // Create property and connect it to the landlord
@@ -141,7 +153,11 @@ export const getLease: RequestHandler = async (req, res, next) => {
 const UpdateLeaseBody = z.object({
     startDate: z.string().datetime(),
     endDate: z.string().datetime(),
-    totalRent: z.number().min(0).max(1000000),
+    totalRent: z
+        .number()
+        .multipleOf(0.01, "Rent must be a valid currency amount")
+        .min(0)
+        .max(1000000),
 });
 
 export const updateLease: RequestHandler = async (req, res, next) => {
