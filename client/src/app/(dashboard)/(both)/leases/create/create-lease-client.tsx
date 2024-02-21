@@ -11,11 +11,13 @@ import { useRouter } from "next/navigation";
 
 interface CreateLeaseClientProps {
     className?: string;
+    selectedProperty?: string;
     properties: Property[];
 }
 
 export function CreateLeaseClient({
     className,
+    selectedProperty,
     properties,
 }: CreateLeaseClientProps) {
     const { data, mutate, isPending, error, isSuccess, isError } =
@@ -41,6 +43,11 @@ export function CreateLeaseClient({
         router.refresh();
     }
 
+    // If property is selected, set it as the default value
+    const defaultValues = selectedProperty
+        ? { propertyId: selectedProperty }
+        : {};
+
     return (
         <div className={cn("flex justify-center h-screen", className)}>
             <div className="w-1/2">
@@ -48,6 +55,7 @@ export function CreateLeaseClient({
                     properties={properties}
                     onSubmit={onSubmit}
                     loading={isPending}
+                    defaultValues={defaultValues}
                 />
             </div>
         </div>

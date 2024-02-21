@@ -6,9 +6,10 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 
+import { AddButton } from "@/components/buttons/add-button";
 import { ForbiddenError } from "@/network/errors/httpErrors";
 import Link from "next/link";
-import { MainButton } from "@/components/main-button";
+import { MainButton } from "@/components/buttons/main-button";
 import { Property } from "@/models/property";
 import { formatTime } from "@/utils/format-time";
 import { getProperties } from "@/network/server/properties";
@@ -36,7 +37,7 @@ export default async function Page() {
                 <h3 className="text-xl font-semibold tracking-tight">
                     Your Properties
                 </h3>
-                <MainButton text="Create Property" href="/properties/create" />
+                <AddButton text="Create Property" href="/properties/create" />
             </div>
             <div className="flex flex-wrap gap-3 mt-5">
                 {properties.length === 0 && (

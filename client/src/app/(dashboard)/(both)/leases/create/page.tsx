@@ -1,4 +1,4 @@
-import { BackButton } from "@/components/back-button";
+import { BackButton } from "@/components/buttons/back-button";
 import { CreateLeaseClient } from "./create-lease-client";
 import { Property } from "@/models/property";
 import { getProperties } from "@/network/server/properties";
@@ -9,7 +9,11 @@ export const metadata = {
     description: "Create a new lease",
 };
 
-export default async function Page() {
+interface PageProps {
+    searchParams: { [key: string]: string | string[] | undefined };
+}
+
+export default async function Page({ searchParams }: PageProps) {
     // Ensure the user is a landlord
     await getSessionUserOrRedirect("LANDLORD");
 
@@ -21,10 +25,17 @@ export default async function Page() {
         console.error("Error fetching properties", err);
     }
 
+    // Pass query params
+    const selectedProperty = searchParams.property as string | undefined;
+
     return (
         <div className="flex flex-col items-start">
             <BackButton text="Leases" href="/leases" />
-            <CreateLeaseClient properties={properties} className="w-full" />
+            <CreateLeaseClient
+                properties={properties}
+                className="w-full"
+                selectedProperty={selectedProperty}
+            />
         </div>
     );
 }

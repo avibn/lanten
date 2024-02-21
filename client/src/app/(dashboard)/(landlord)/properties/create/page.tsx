@@ -1,4 +1,4 @@
-import { BackButton } from "@/components/back-button";
+import { BackButton } from "@/components/buttons/back-button";
 import { CreatePropertyClient } from "./create-property-client";
 import { getSessionUserOrRedirect } from "@/network/server/users";
 

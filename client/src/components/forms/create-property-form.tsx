@@ -4,7 +4,7 @@ import { PropertyFormValues, propertySchema } from "@/schemas/property";
 
 import { Form } from "@/components/ui/form";
 import { FormTextField } from "@/components/forms/fields/form-text-field";
-import { MainButton } from "@/components/main-button";
+import { MainButton } from "@/components/buttons/main-button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 

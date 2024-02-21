@@ -1,9 +1,12 @@
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 import { Metadata, ResolvingMetadata } from "next";
 
-import { BackButton } from "@/components/back-button";
+import { AddButton } from "@/components/buttons/add-button";
+import { BackButton } from "@/components/buttons/back-button";
+import { DeletePropertyCLient } from "./delete-property-client";
+import { EditButton } from "@/components/buttons/edit-button";
 import { Lease } from "@/models/lease";
-import { MainButton } from "@/components/main-button";
+import { MainButton } from "@/components/buttons/main-button";
 import { Property } from "@/models/property";
 import { formatTime } from "@/utils/format-time";
 import { getProperty } from "@/network/server/properties";
@@ -83,10 +86,13 @@ export default async function Page({ params: { propertyID } }: PageProps) {
             <BackButton text="Properties" href="/properties" />
             <div className="flex items-center justify-between w-full">
                 <h1 className="text-xl font-bold">{property.name}</h1>
-                <MainButton
-                    text="Edit Property"
-                    href={`/properties/${property.id}/edit`}
-                />
+                <div className="flex items-center gap-2">
+                    <EditButton
+                        text="Edit Property"
+                        href={`/properties/${property.id}/edit`}
+                    />
+                    <DeletePropertyCLient propertyID={propertyID} />
+                </div>
             </div>
 
             <h2 className="text-lg font-bold">Description</h2>
@@ -103,9 +109,15 @@ export default async function Page({ params: { propertyID } }: PageProps) {
 
             {/* List of leases */}
             <div className="w-full">
-                <h2 className="text-lg font-bold">
-                    Active Leases ({activeLeases?.length})
-                </h2>
+                <div className="flex items-center justify-between w-full">
+                    <h2 className="text-lg font-bold">
+                        Active Leases ({activeLeases?.length})
+                    </h2>
+                    <AddButton
+                        text="Create Lease"
+                        href={`/leases/create?property=${property.id}`}
+                    />
+                </div>
                 <ul className="mt-2">
                     {activeLeases?.length === 0 && (
                         <p className="text-sm">

@@ -10,9 +10,3 @@ export async function getProperty(id: string): Promise<Property> {
     const response = await fetchDataServer(`/properties/${id}`);
     return await response.json();
 }
-
-export async function deleteProperty(id: string) {
-    await fetchDataServer(`/properties/${id}`, {
-        method: "DELETE",
-    });
-}

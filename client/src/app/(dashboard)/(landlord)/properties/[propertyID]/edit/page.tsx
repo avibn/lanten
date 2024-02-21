@@ -1,4 +1,4 @@
-import { BackButton } from "@/components/back-button";
+import { BackButton } from "@/components/buttons/back-button";
 import { EditPropertyClient } from "./edit-property-client";
 import { getProperty } from "@/network/server/properties";
 import { getSessionUserOrRedirect } from "@/network/server/users";

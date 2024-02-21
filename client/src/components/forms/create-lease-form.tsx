@@ -7,16 +7,16 @@ import { FormDateField } from "./fields/form-date-field";
 import { FormSelectField } from "./fields/form-select-field";
 import { FormTextField } from "@/components/forms/fields/form-text-field";
 import Link from "next/link";
-import { MainButton } from "@/components/main-button";
+import { MainButton } from "@/components/buttons/main-button";
 import { Property } from "@/models/property";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface CreateLeaseFormProps {
     properties: Property[];
-    onSubmit(values: any): void;
+    onSubmit(values: LeaseCreateFormValues): void;
     loading?: boolean;
-    defaultValues?: LeaseCreateFormValues;
+    defaultValues?: Partial<LeaseCreateFormValues>;
 }
 
 export function CreateLeaseForm({

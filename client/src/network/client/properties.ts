@@ -41,3 +41,16 @@ export const useUpdatePropertyMutation = (id: string) => {
             updateProperty(id, property),
     });
 };
+
+async function deleteProperty(id: string): Promise<void> {
+    await fetchData(`/properties/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+    });
+}
+
+export const useDeletePropertyMutation = () => {
+    return useMutation({
+        mutationFn: deleteProperty,
+    });
+};

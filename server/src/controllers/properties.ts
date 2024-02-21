@@ -166,6 +166,14 @@ export const deleteProperty: RequestHandler = async (req, res, next) => {
             },
         });
 
+        // Delete all leases for the property
+        await prisma.lease.updateMany({
+            where: { propertyId: id },
+            data: {
+                isDeleted: true,
+            },
+        });
+
         res.sendStatus(204);
     } catch (error) {
         next(error);

@@ -1,10 +1,10 @@
 import { Card, CardHeader } from "@/components/ui/card";
 
+import { AddButton } from "@/components/buttons/add-button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronRight } from "lucide-react";
 import { Lease } from "@/models/lease";
 import Link from "next/link";
-import { MainButton } from "@/components/main-button";
 import { getLeases } from "@/network/server/leases";
 import { getSessionUser } from "@/network/server/users";
 
@@ -31,6 +31,9 @@ export default async function Page() {
         return new Date(time).toLocaleDateString();
     };
 
+    const activeLeases = leases.filter((lease) => !lease.isDeleted);
+    // todo:: add inactive leases
+
     return (
         <div>
             <div className="flex items-center justify-between">
@@ -39,10 +42,10 @@ export default async function Page() {
                         ? "Active Leases"
                         : "Your Leases"}
                 </h3>
-                <MainButton text="Create Lease" href="/leases/create" />
+                <AddButton text="Create Lease" href="/leases/create" />
             </div>
             <div className="mt-5 flex flex-col gap-4">
-                {leases.map((lease) => (
+                {activeLeases.map((lease) => (
                     <Card key={lease.id}>
                         <CardHeader className="flex flex-row items-center justify-between">
                             <div className="flex flex-col gap-2">

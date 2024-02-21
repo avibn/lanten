@@ -5,7 +5,7 @@ import { Form } from "@/components/ui/form";
 import { FormTextField } from "./fields/form-text-field";
 import { Label } from "../ui/label";
 import Link from "next/link";
-import { MainButton } from "../main-button";
+import { MainButton } from "../buttons/main-button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
