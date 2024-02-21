@@ -32,7 +32,7 @@ export function CreatePropertyClient({ className }: CreatePropertyClientProps) {
 
     if (isSuccess) {
         toast.success("Property created successfully!");
-        router.push("/properties");
+        router.push(`/properties/${data.id}`);
         router.refresh();
     }
 

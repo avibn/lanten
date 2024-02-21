@@ -3,7 +3,7 @@ import { Metadata, ResolvingMetadata } from "next";
 
 import { AddButton } from "@/components/buttons/add-button";
 import { BackButton } from "@/components/buttons/back-button";
-import { DeletePropertyCLient } from "./delete-property-client";
+import { DeletePropertyClient } from "./delete-property-client";
 import { EditButton } from "@/components/buttons/edit-button";
 import { Lease } from "@/models/lease";
 import { MainButton } from "@/components/buttons/main-button";
@@ -91,7 +91,10 @@ export default async function Page({ params: { propertyID } }: PageProps) {
                         text="Edit Property"
                         href={`/properties/${property.id}/edit`}
                     />
-                    <DeletePropertyCLient propertyID={propertyID} />
+                    <DeletePropertyClient
+                        propertyID={propertyID}
+                        leases={activeLeases || []}
+                    />
                 </div>
             </div>
 
