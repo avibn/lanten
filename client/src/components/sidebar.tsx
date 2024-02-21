@@ -1,5 +1,6 @@
 "use client";
 
+import { LogOut, Settings, icons } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { Button } from "./ui/button";
@@ -11,8 +12,15 @@ import { toast } from "sonner";
 import { useAuthStore } from "@/stores/use-auth-store";
 import { useLogoutMutation } from "@/network/client/users";
 
+export type SidebarIcon = keyof typeof icons;
+export type SidebarItem = {
+    name: string;
+    href: string;
+    roles: string[];
+    icon: SidebarIcon;
+};
 interface SidebarProps {
-    sideBarItems: { name: string; href: string; roles: string[] }[];
+    sideBarItems: SidebarItem[];
 }
 
 export function Sidebar({ sideBarItems }: SidebarProps) {
@@ -21,6 +29,13 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
     const loggedInUser = useAuthStore((state) => state.user);
     const setUser = useAuthStore((state) => state.setUser);
     const logoutMutation = useLogoutMutation();
+
+    // Icon
+    const createIcon = (icon: SidebarIcon) => {
+        console.log(icon);
+        const LucideIcon = icons[icon];
+        return <LucideIcon size={20} strokeWidth={1} className="mr-3" />;
+    };
 
     // Logout handler
     const handleLogout = () => {
@@ -44,7 +59,7 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
             <div className="space-y-4 py-4 h-full">
                 <div className="px-3 py-2 flex flex-col justify-between h-full">
                     <div>
-                        <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+                        <h2 className="mb-5 px-4 text-lg font-semibold tracking-tight">
                             Lanten
                         </h2>
                         <div className="space-y-1">
@@ -66,6 +81,7 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
                                             asChild
                                         >
                                             <Link href={item.href}>
+                                                {createIcon(item.icon)}
                                                 {item.name}
                                             </Link>
                                         </Button>
@@ -79,6 +95,11 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
                             variant="outline"
                             className="w-full justify-start"
                         >
+                            <Settings
+                                size={20}
+                                strokeWidth={1}
+                                className="mr-3"
+                            />
                             Settings
                         </Button>
                         <Button
@@ -87,6 +108,11 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
                             onClick={handleLogout}
                             disabled={logoutMutation.isPending}
                         >
+                            <LogOut
+                                size={20}
+                                strokeWidth={1}
+                                className="mr-3"
+                            />
                             Logout
                         </Button>
 
