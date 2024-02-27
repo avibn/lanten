@@ -116,6 +116,13 @@ export const getLease: RequestHandler = async (req, res, next) => {
     try {
         const { id } = req.params;
 
+        // Check the user
+        const user = await prisma.user.findUnique({
+            where: {
+                id: req.session.userId,
+            },
+        });
+
         // Get lease by id
         // todo:: Split this for separate queries for landlord and tenant
         const lease = await prisma.lease.findUnique({
@@ -136,6 +143,22 @@ export const getLease: RequestHandler = async (req, res, next) => {
                         },
                     },
                 ],
+            },
+            include: {
+                property: {
+                    select: {
+                        name: true,
+                        address: true,
+                    },
+                },
+                tenants: user?.userType === "LANDLORD",
+                payments: true,
+                _count: {
+                    select: {
+                        tenants: true,
+                        payments: true,
+                    },
+                },
             },
         });
 

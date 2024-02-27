@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 export interface Lease {
     id: string;
     propertyId?: string;
@@ -11,6 +13,8 @@ export interface Lease {
         name: string;
         address: string;
     };
+    tenants?: Partial<User>[];
+    payments?: any[]; // todo
     _count?: {
         tenants: number;
         payments: number;

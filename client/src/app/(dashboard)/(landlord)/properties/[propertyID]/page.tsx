@@ -42,7 +42,7 @@ export default async function Page({ params: { propertyID } }: PageProps) {
     await getSessionUserOrRedirect("LANDLORD");
 
     // Get the property data
-    let property = null;
+    let property: Property | null = null;
     try {
         property = await getProperty(propertyID);
     } catch (error) {

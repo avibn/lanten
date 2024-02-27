@@ -58,6 +58,10 @@
     }
 }
 
+/* p {
+    @apply text-base;
+} */
+
 .page-login {
     @apply flex items-center justify-center h-screen;
 }
