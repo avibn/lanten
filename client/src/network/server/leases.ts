@@ -10,9 +10,3 @@ export async function getLease(id: string): Promise<Lease> {
     const response = await fetchDataServer(`/leases/${id}`);
     return await response.json();
 }
-
-export async function deleteLease(id: string) {
-    await fetchDataServer(`/leases/${id}`, {
-        method: "DELETE",
-    });
-}

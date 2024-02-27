@@ -13,15 +13,18 @@ interface LandlordPageProps {
 }
 
 export function LandlordPage({ user, lease }: LandlordPageProps) {
+    // Lease date range string
     const leaseDates = `${formatTimeToDateString(
         lease.startDate
     )} - ${formatTimeToDateString(lease.endDate)}`;
 
+    // Work out the duration of the lease in months
+    const leaseStart = new Date(lease.startDate);
+    const leaseEnd = new Date(lease.endDate);
     const leaseDurationMonths =
-        (new Date(lease.endDate).getMonth() -
-            new Date(lease.startDate).getMonth() +
-            12) %
-        12;
+        (leaseEnd.getFullYear() - leaseStart.getFullYear()) * 12 +
+        leaseEnd.getMonth() -
+        leaseStart.getMonth();
 
     return (
         <>

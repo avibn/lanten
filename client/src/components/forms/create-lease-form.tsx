@@ -13,10 +13,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface CreateLeaseFormProps {
-    properties: Property[];
+    properties?: Property[];
     onSubmit(values: LeaseCreateFormValues): void;
     loading?: boolean;
     defaultValues?: Partial<LeaseCreateFormValues>;
+    edit?: boolean;
 }
 
 export function CreateLeaseForm({
@@ -24,6 +25,7 @@ export function CreateLeaseForm({
     onSubmit,
     loading,
     defaultValues,
+    edit = false,
 }: CreateLeaseFormProps) {
     const form = useForm<LeaseCreateFormValues>({
         resolver: zodResolver(leaseCreateSchema),
@@ -37,7 +39,7 @@ export function CreateLeaseForm({
         },
     });
 
-    const propertiesOptions = properties.map((property) => ({
+    const propertiesOptions = properties?.map((property) => ({
         value: property.id,
         label: property.name,
     }));
@@ -45,25 +47,27 @@ export function CreateLeaseForm({
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormSelectField
-                    form={form}
-                    name="propertyId"
-                    label="Property"
-                    placeholder="Select a property"
-                    description={
-                        <>
-                            Choose the property for the lease or{" "}
-                            <Link
-                                href="/properties/create"
-                                className="link-primary"
-                            >
-                                create a new property
-                            </Link>
-                            .
-                        </>
-                    }
-                    options={propertiesOptions}
-                />
+                {!edit && (
+                    <FormSelectField
+                        form={form}
+                        name="propertyId"
+                        label="Property"
+                        placeholder="Select a property"
+                        description={
+                            <>
+                                Choose the property for the lease or{" "}
+                                <Link
+                                    href="/properties/create"
+                                    className="link-primary"
+                                >
+                                    create a new property
+                                </Link>
+                                .
+                            </>
+                        }
+                        options={propertiesOptions || []}
+                    />
+                )}
                 <FormDateField
                     form={form}
                     name="startDate"
@@ -79,11 +83,9 @@ export function CreateLeaseForm({
                     description="The total rent for the lease, for all tenants combined (in GBP)."
                 />
                 <MainButton
-                    text={defaultValues ? "Update Lease" : "Create Lease"}
+                    text={edit ? "Update Lease" : "Create Lease"}
                     loadingText={
-                        defaultValues
-                            ? "Updating Lease..."
-                            : "Creating Lease..."
+                        edit ? "Updating Lease..." : "Creating Lease..."
                     }
                     isLoading={loading}
                     className="w-full"

@@ -1,6 +1,7 @@
 import { Metadata, ResolvingMetadata } from "next";
 
 import { BackButton } from "@/components/buttons/back-button";
+import { DeleteLeaseClient } from "./delete-lease-client";
 import { EditButton } from "@/components/buttons/edit-button";
 import { LandlordPage } from "./landlord-page";
 import { Lease } from "@/models/lease";
@@ -66,9 +67,7 @@ export default async function Page({ params: { leaseID } }: PageProps) {
                                 text="Edit Lease"
                                 href={`/leases/${lease.id}/edit`}
                             />
-                            {/* <DeleteLeaseClient
-                        leaseID={propertyID}
-                    /> */}
+                            <DeleteLeaseClient leaseID={leaseID} />
                         </>
                     ) : (
                         <></> // todo:: leave lease

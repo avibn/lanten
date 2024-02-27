@@ -44,3 +44,16 @@ export const useUpdateLeaseMutation = (id: string) => {
         mutationFn: (lease: LeaseUpdateBody) => updateLease(id, lease),
     });
 };
+
+export async function deleteLease(id: string) {
+    await fetchData(`/leases/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+    });
+}
+
+export const useDeleteLeaseMutation = () => {
+    return useMutation({
+        mutationFn: (id: string) => deleteLease(id),
+    });
+};
