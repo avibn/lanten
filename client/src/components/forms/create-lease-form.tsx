@@ -80,7 +80,12 @@ export function CreateLeaseForm({
                     label="Total Rent"
                     inputPlaceholder="1000"
                     inputType="number"
-                    description="The total rent for the lease, for all tenants combined (in GBP)."
+                    description={
+                        <>
+                            The total <b>monthly</b> rent for the lease, for all
+                            tenants combined (in GBP).
+                        </>
+                    }
                 />
                 <MainButton
                     text={edit ? "Update Lease" : "Create Lease"}

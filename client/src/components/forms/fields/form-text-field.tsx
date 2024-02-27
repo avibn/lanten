@@ -16,7 +16,7 @@ interface FormTextFieldProps {
     label: string;
     inputPlaceholder: string;
     inputType?: string;
-    description?: string;
+    description?: string | JSX.Element;
 }
 
 export function FormTextField({
