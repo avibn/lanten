@@ -47,6 +47,7 @@ model Lease {
   startDate  DateTime
   endDate    DateTime
   totalRent  Float         @default(0)
+  inviteCode String        @unique
   isDeleted  Boolean       @default(false)
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt

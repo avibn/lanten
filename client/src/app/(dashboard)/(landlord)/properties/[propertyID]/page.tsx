@@ -55,7 +55,7 @@ export default async function Page({ params: { propertyID } }: PageProps) {
     const inactiveLeases = property.leases?.filter((lease) => lease.isDeleted);
 
     // Function to create lease card items for list
-    const createLeaseCards = (leases: Lease[]) => {
+    const createLeaseCards = (leases: Lease[], showViewButton = true) => {
         return (
             <>
                 {leases?.map((lease) => (
@@ -67,14 +67,16 @@ export default async function Page({ params: { propertyID } }: PageProps) {
                             </p>
                             <p>Total Rent: £{lease.totalRent}</p>
                         </CardHeader>
-                        <CardFooter>
-                            <MainButton
-                                text="View Lease"
-                                variant={"secondary"}
-                                href={`/leases/${lease.id}`}
-                                className="w-full"
-                            />
-                        </CardFooter>
+                        {showViewButton && (
+                            <CardFooter>
+                                <MainButton
+                                    text="View Lease"
+                                    variant={"secondary"}
+                                    href={`/leases/${lease.id}`}
+                                    className="w-full"
+                                />
+                            </CardFooter>
+                        )}
                     </Card>
                 ))}
             </>
@@ -136,7 +138,8 @@ export default async function Page({ params: { propertyID } }: PageProps) {
                         Inactive Leases ({inactiveLeases?.length})
                     </h2>
                     <ul className="mt-2">
-                        {inactiveLeases && createLeaseCards(inactiveLeases)}
+                        {inactiveLeases &&
+                            createLeaseCards(inactiveLeases, false)}
                     </ul>
                 </div>
             )}

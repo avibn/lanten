@@ -1,17 +1,20 @@
+import { CurrencySchema } from "../utils/schemas";
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
+import { customAlphabet } from "nanoid";
 import prisma from "../utils/prismaClient";
 import { z } from "zod";
+
+const nanoid = customAlphabet(
+    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+    10
+);
 
 const CreateLeaseBody = z.object({
     propertyId: z.string(),
     startDate: z.string().datetime(),
     endDate: z.string().datetime(),
-    totalRent: z
-        .number()
-        .multipleOf(0.01, "Rent must be a valid currency amount")
-        .min(0)
-        .max(1000000),
+    totalRent: CurrencySchema,
 });
 
 export const createLease: RequestHandler = async (req, res, next) => {
@@ -58,6 +61,7 @@ export const createLease: RequestHandler = async (req, res, next) => {
                         id: propertyId,
                     },
                 },
+                inviteCode: nanoid(10), // todo:: check if invite code exists already
             },
         });
 
@@ -176,11 +180,7 @@ export const getLease: RequestHandler = async (req, res, next) => {
 const UpdateLeaseBody = z.object({
     startDate: z.string().datetime(),
     endDate: z.string().datetime(),
-    totalRent: z
-        .number()
-        .multipleOf(0.01, "Rent must be a valid currency amount")
-        .min(0)
-        .max(1000000),
+    totalRent: CurrencySchema,
 });
 
 export const updateLease: RequestHandler = async (req, res, next) => {
@@ -231,6 +231,18 @@ export const deleteLease: RequestHandler = async (req, res, next) => {
                 isDeleted: true,
             },
         });
+
+        // Delete all lease tenants
+        await prisma.leaseTenant.updateMany({
+            where: {
+                leaseId: id,
+            },
+            data: {
+                isDeleted: true,
+            },
+        });
+
+        // todo:: delete all lease payments, reminders, etc.
 
         res.status(200).json(lease);
     } catch (error) {
