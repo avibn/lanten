@@ -1,5 +1,4 @@
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
-import { Metadata, ResolvingMetadata } from "next";
 
 import { AddButton } from "@/components/buttons/add-button";
 import { BackButton } from "@/components/buttons/back-button";
@@ -7,6 +6,7 @@ import { DeletePropertyClient } from "./delete-property-client";
 import { EditButton } from "@/components/buttons/edit-button";
 import { Lease } from "@/models/lease";
 import { MainButton } from "@/components/buttons/main-button";
+import { Metadata } from "next";
 import { Property } from "@/models/property";
 import { formatTime } from "@/utils/format-time";
 import { getProperty } from "@/network/server/properties";
@@ -19,23 +19,9 @@ interface PageProps {
     };
 }
 
-export async function generateMetadata(
-    { params: { propertyID } }: PageProps,
-    parent: ResolvingMetadata
-): Promise<Metadata> {
-    // Get the property data for metadata
-    let property: Property | null;
-    try {
-        property = await getProperty(propertyID);
-    } catch (error) {
-        property = null;
-    }
-
-    return {
-        title: property ? `${property.name} | Property` : "Property",
-        description: property?.description,
-    };
-}
+export const metadata: Metadata = {
+    title: "Property",
+};
 
 export default async function Page({ params: { propertyID } }: PageProps) {
     // Ensure the user is a landlord
