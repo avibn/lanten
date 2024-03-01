@@ -1,9 +1,11 @@
+import { Metadata, ResolvingMetadata } from "next";
+
 import { BackButton } from "@/components/buttons/back-button";
 import { DeleteLeaseClient } from "./delete-lease-client";
 import { EditButton } from "@/components/buttons/edit-button";
 import { LandlordPage } from "./landlord-page";
 import { Lease } from "@/models/lease";
-import { Metadata } from "next";
+import { formatTimeToDateString } from "@/utils/format-time";
 import { getLease } from "@/network/server/leases";
 import { getSessionUser } from "@/network/server/users";
 import { redirect } from "next/navigation";
@@ -14,9 +16,24 @@ interface PageProps {
     };
 }
 
-export const metadata: Metadata = {
-    title: "Lease",
-};
+export async function generateMetadata(
+    { params: { leaseID } }: PageProps,
+    parent: ResolvingMetadata
+): Promise<Metadata> {
+    // Get the property data for metadata
+    let lease: Lease | null;
+    try {
+        lease = await getLease(leaseID);
+    } catch (error) {
+        lease = null;
+    }
+
+    return {
+        title: lease
+            ? `${formatTimeToDateString(lease.startDate)} | Lease`
+            : "Lease",
+    };
+}
 
 export default async function Page({ params: { leaseID } }: PageProps) {
     // Get user session

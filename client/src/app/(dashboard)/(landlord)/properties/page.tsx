@@ -87,6 +87,7 @@ export default async function Page() {
                                     href={`/properties/${property.id}`}
                                     className="mt-3 w-full"
                                     variant="secondary"
+                                    linkPrefetch={false}
                                 />
                             </div>
                         </CardFooter>

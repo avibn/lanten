@@ -74,6 +74,7 @@ export default async function Page() {
                                 href={`/leases/${lease.id}`}
                                 className="flex items-center self-stretch px-5 transform
                                 hover:-translate-y-1 transition-transform duration-200"
+                                prefetch={false}
                             >
                                 <ChevronRight size={24} />
                             </Link>

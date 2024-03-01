@@ -24,7 +24,7 @@ export function BackButton({
             asChild={href ? true : false}
         >
             {href ? (
-                <Link href={href}>
+                <Link href={href} prefetch={false}>
                     <ArrowLeft className="mr-2 font" strokeWidth={1.15} />
                     {buttonContent}
                 </Link>
