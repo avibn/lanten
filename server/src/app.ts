@@ -1,5 +1,6 @@
 import "dotenv/config";
 
+import announcementsRouter from "./routes/announcements";
 import cors from "cors";
 import { corsOptions } from "./configs/corsOptions";
 import createHttpError from "http-errors";
@@ -30,6 +31,7 @@ app.get("/", (req, res) => {
 app.use("/users", usersRouter);
 app.use("/properties", propertiesRouter);
 app.use("/leases", leasesRouter);
+app.use("/announcements", announcementsRouter);
 
 // Error handling
 app.use((req, res, next) => {

@@ -1,3 +1,4 @@
+import * as AnnouncementController from "../controllers/announcements";
 import * as LeaseController from "../controllers/leases";
 import * as TenantController from "../controllers/tenants";
 
@@ -18,11 +19,21 @@ router.put(
     LeaseController.updateLeaseDescription
 );
 
+// Announcements
+router.get(
+    "/:id/announcements",
+    requiresAuth,
+    AnnouncementController.getAnnouncements
+);
+router.post(
+    "/:id/announcements",
+    requiresAuth,
+    AnnouncementController.createAnnouncement
+);
+
 // Tenants
 router.get("/tenants", requiresAuth, TenantController.getAllTenants);
-
-// Tenant invite accept route
-router.post("/join", requiresAuth, TenantController.acceptInvite);
+router.post("/join", requiresAuth, TenantController.acceptInvite); // Accept invite to lease
 
 // Tenant routes
 const tenantRouter = express.Router({ mergeParams: true });
