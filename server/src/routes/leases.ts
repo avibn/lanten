@@ -12,13 +12,21 @@ router.post("/", requiresAuth, LeaseController.createLease);
 router.get("/:id", requiresAuth, LeaseController.getLease);
 router.put("/:id", requiresAuth, LeaseController.updateLease);
 router.delete("/:id", requiresAuth, LeaseController.deleteLease);
+router.put(
+    "/:id/description",
+    requiresAuth,
+    LeaseController.updateLeaseDescription
+);
+
+// Tenants
+router.get("/tenants", requiresAuth, TenantController.getAllTenants);
 
 // Tenant invite accept route
 router.post("/join", requiresAuth, TenantController.acceptInvite);
 
 // Tenant routes
-const tenantRouter = express.Router();
-tenantRouter.get("/", requiresAuth, TenantController.getTenants);
+const tenantRouter = express.Router({ mergeParams: true });
+tenantRouter.get("/", requiresAuth, TenantController.getLeaseTenants);
 tenantRouter.put("/", requiresAuth, TenantController.updateTenant);
 tenantRouter.post("/invite", requiresAuth, TenantController.inviteTenant);
 tenantRouter.post("/leave", requiresAuth, TenantController.leaveLease);

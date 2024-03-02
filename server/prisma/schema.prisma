@@ -43,18 +43,20 @@ model Property {
 }
 
 model Lease {
-  id         String        @id @default(uuid())
-  startDate  DateTime
-  endDate    DateTime
-  totalRent  Float         @default(0)
-  inviteCode String        @unique
-  isDeleted  Boolean       @default(false)
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
-  property   Property      @relation(fields: [propertyId], references: [id])
-  propertyId String
-  tenants    LeaseTenant[]
-  payments   Payment[]
+  id            String         @id @default(uuid())
+  description   String?
+  startDate     DateTime
+  endDate       DateTime
+  totalRent     Float          @default(0)
+  inviteCode    String         @unique
+  isDeleted     Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  property      Property       @relation(fields: [propertyId], references: [id])
+  propertyId    String
+  tenants       LeaseTenant[]
+  payments      Payment[]
+  announcements Announcement[]
 }
 
 model LeaseTenant {
@@ -68,6 +70,17 @@ model LeaseTenant {
   tenant         User      @relation(fields: [tenantId], references: [id])
   tenantId       String
   payments       Payment[]
+}
+
+model Announcement {
+  id        String   @id @default(uuid())
+  title     String
+  message   String
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lease     Lease?   @relation(fields: [leaseId], references: [id])
+  leaseId   String?
 }
 
 enum paymentType {

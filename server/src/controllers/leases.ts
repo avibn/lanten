@@ -88,7 +88,10 @@ export const getLeases: RequestHandler = async (req, res, next) => {
                     {
                         tenants: {
                             some: {
-                                tenantId: req.session.userId,
+                                AND: {
+                                    tenantId: req.session.userId,
+                                    isDeleted: false,
+                                },
                             },
                         },
                     },
@@ -165,6 +168,7 @@ export const getLease: RequestHandler = async (req, res, next) => {
                 },
             },
         });
+        // todo:: don't return everything for tenants (e.g. invite code for landlord only, etc.)
 
         // Check if lease exists
         if (!lease) {
@@ -245,6 +249,63 @@ export const deleteLease: RequestHandler = async (req, res, next) => {
         // todo:: delete all lease payments, reminders, etc.
 
         res.status(200).json(lease);
+    } catch (error) {
+        next(error);
+    }
+};
+
+const UpdateLeaseDescriptionBody = z.object({
+    description: z.string().max(500),
+});
+
+export const updateLeaseDescription: RequestHandler = async (
+    req,
+    res,
+    next
+) => {
+    try {
+        const { id } = req.params;
+        const { description } = UpdateLeaseDescriptionBody.parse(req.body);
+
+        // Get lease by id
+        const lease = await prisma.lease.findUnique({
+            where: {
+                id,
+                isDeleted: false,
+            },
+            include: {
+                property: {
+                    select: {
+                        landlordId: true,
+                    },
+                },
+            },
+        });
+
+        // Check if lease exists
+        if (!lease) {
+            throw createHttpError(404, "Specified lease not found");
+        }
+
+        // Check if user is landlord
+        if (lease.property.landlordId !== req.session.userId) {
+            throw createHttpError(
+                403,
+                "Only landlords can update lease description"
+            );
+        }
+
+        // Update lease description
+        const updatedLease = await prisma.lease.update({
+            where: {
+                id,
+            },
+            data: {
+                description,
+            },
+        });
+
+        res.status(200).json(updatedLease);
     } catch (error) {
         next(error);
     }

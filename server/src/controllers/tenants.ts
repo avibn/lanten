@@ -3,6 +3,7 @@ import { RequestHandler } from "express";
 import assertIsDefined from "../utils/assertIsDefined";
 import createHttpError from "http-errors";
 import prisma from "../utils/prismaClient";
+import { userType } from "@prisma/client";
 import { z } from "zod";
 
 const InviteTenantBody = z.object({
@@ -19,9 +20,6 @@ export const inviteTenant: RequestHandler = async (req, res, next) => {
         const lease = await prisma.lease.findUnique({
             where: {
                 id: leaseId,
-                property: {
-                    landlordId: req.session.userId, // check if user is landlord
-                },
                 isDeleted: false,
             },
             include: {
@@ -30,12 +28,22 @@ export const inviteTenant: RequestHandler = async (req, res, next) => {
                         tenant: true,
                     },
                 },
+                property: {
+                    select: {
+                        landlordId: true,
+                    },
+                },
             },
         });
 
         // Check if lease exists
         if (!lease) {
             throw createHttpError(404, "Specified lease not found");
+        }
+
+        // Check if user is landlord
+        if (lease.property.landlordId !== req.session.userId) {
+            throw createHttpError(403, "Only landlords can invite tenants");
         }
 
         // check email against existing tenants
@@ -75,7 +83,7 @@ export const acceptInvite: RequestHandler = async (req, res, next) => {
             throw createHttpError(404, "User not found");
         }
 
-        if (user.userType !== "TENANT") {
+        if (user.userType !== userType.TENANT) {
             throw createHttpError(403, "Only tenants can accept lease invites");
         }
 
@@ -134,7 +142,7 @@ export const leaveLease: RequestHandler = async (req, res, next) => {
         const leaseId = req.params.id;
 
         // set lease tenant to deleted
-        const leaseTenants = await prisma.leaseTenant.updateMany({
+        const leaseTenants = await prisma.leaseTenant.deleteMany({
             where: {
                 leaseId,
                 tenantId: req.session.userId,
@@ -143,10 +151,7 @@ export const leaveLease: RequestHandler = async (req, res, next) => {
                     isDeleted: false,
                 },
             },
-            data: {
-                isDeleted: true,
-            },
-        });
+        }); // todo:: delete directly or isDeleted to true
 
         if (leaseTenants.count === 0) {
             throw createHttpError(404, "Lease tenant not found");
@@ -213,7 +218,7 @@ export const removeTenant: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const getTenants: RequestHandler = async (req, res, next) => {
+export const getLeaseTenants: RequestHandler = async (req, res, next) => {
     try {
         assertIsDefined(req.session.userId);
         const leaseId = req.params.id;
@@ -223,14 +228,26 @@ export const getTenants: RequestHandler = async (req, res, next) => {
             where: {
                 id: leaseId,
                 isDeleted: false,
+            },
+            include: {
                 property: {
-                    landlordId: req.session.userId, // check if user is the landlord
+                    select: {
+                        landlordId: true,
+                    },
                 },
             },
         });
 
         if (!lease) {
             throw createHttpError(404, "Lease not found");
+        }
+
+        // Check if user is landlord of lease
+        if (lease.property.landlordId !== req.session.userId) {
+            throw createHttpError(
+                403,
+                "You are not the landlord of this lease"
+            );
         }
 
         // get lease tenants
@@ -248,10 +265,6 @@ export const getTenants: RequestHandler = async (req, res, next) => {
                 },
             },
         });
-
-        if (tenants.length === 0) {
-            throw createHttpError(404, "No tenants found in lease");
-        }
 
         res.status(200).json(tenants);
     } catch (error) {
@@ -310,6 +323,46 @@ export const updateTenant: RequestHandler = async (req, res, next) => {
         }
 
         res.status(200).json(leaseTenant);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getAllTenants: RequestHandler = async (req, res, next) => {
+    try {
+        assertIsDefined(req.session.userId);
+
+        // Get logged in user
+        const user = await prisma.user.findUnique({
+            where: {
+                id: req.session.userId,
+            },
+        });
+
+        if (!user) {
+            throw createHttpError(404, "User not found");
+        }
+
+        // Ensure user is a landlord
+        if (user.userType !== userType.LANDLORD) {
+            throw createHttpError(403, "Only landlords can view tenants");
+        }
+
+        const tenants = await prisma.leaseTenant.findMany({
+            where: {
+                isDeleted: false,
+                lease: {
+                    property: {
+                        landlordId: req.session.userId,
+                    },
+                },
+            },
+            include: {
+                tenant: true,
+            },
+        });
+
+        res.status(200).json(tenants);
     } catch (error) {
         next(error);
     }
