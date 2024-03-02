@@ -13,10 +13,11 @@ import { UseFormReturn } from "react-hook-form";
 interface FormTextFieldProps {
     form: UseFormReturn<any>;
     name: string;
-    label: string;
+    label?: string;
     inputPlaceholder: string;
     inputType?: string;
     description?: string | JSX.Element;
+    readOnly?: boolean;
 }
 
 export function FormTextField({
@@ -26,6 +27,7 @@ export function FormTextField({
     description,
     inputPlaceholder,
     inputType = "text",
+    readOnly = false,
 }: FormTextFieldProps) {
     return (
         <FormField
@@ -33,12 +35,13 @@ export function FormTextField({
             name={name}
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel>{label}</FormLabel>
+                    {label && <FormLabel>{label}</FormLabel>}
                     <FormControl>
                         <Input
                             placeholder={inputPlaceholder}
                             type={inputType}
                             {...field}
+                            readOnly={readOnly}
                         />
                     </FormControl>
                     {description && (

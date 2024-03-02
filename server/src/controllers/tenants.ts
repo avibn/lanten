@@ -30,7 +30,12 @@ export const inviteTenant: RequestHandler = async (req, res, next) => {
                 },
                 property: {
                     select: {
-                        landlordId: true,
+                        landlord: {
+                            select: {
+                                id: true,
+                                email: true,
+                            },
+                        },
                     },
                 },
             },
@@ -40,20 +45,65 @@ export const inviteTenant: RequestHandler = async (req, res, next) => {
         if (!lease) {
             throw createHttpError(404, "Specified lease not found");
         }
-
         // Check if user is landlord
-        if (lease.property.landlordId !== req.session.userId) {
+        if (lease.property.landlord.id !== req.session.userId) {
             throw createHttpError(403, "Only landlords can invite tenants");
+        }
+        // check if landlord is inviting themselves
+        if (lease.property.landlord.email === tenantEmail) {
+            throw createHttpError(400, "You cannot invite yourself to a lease");
         }
 
         // check email against existing tenants
         const existingTenant = lease.tenants.some(
             (leaseTenant) => leaseTenant.tenant.email === tenantEmail
         );
-
         if (existingTenant) {
             throw createHttpError(400, "Tenant already in lease");
         }
+
+        // check if tenant already has an invite
+        const existingInvite = await prisma.leaseTenantInvite.findFirst({
+            where: {
+                email: tenantEmail,
+                leaseId,
+                OR: [
+                    {
+                        expiresAt: {
+                            gt: new Date(),
+                        },
+                    },
+                    {
+                        createdAt: {
+                            gt: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
+                        },
+                    },
+                ],
+            },
+            orderBy: {
+                createdAt: "desc", // get the most recent invite
+            },
+        });
+
+        if (existingInvite) {
+            throw createHttpError(
+                400,
+                "You have already invited this tenant. Please try again later."
+            );
+        }
+
+        // add invite to database
+        await prisma.leaseTenantInvite.create({
+            data: {
+                email: tenantEmail,
+                expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+                lease: {
+                    connect: {
+                        id: leaseId,
+                    },
+                },
+            },
+        });
 
         // todo: add to email queue
 
@@ -114,6 +164,26 @@ export const acceptInvite: RequestHandler = async (req, res, next) => {
             );
         }
 
+        // update invite to used
+        const invites = await prisma.leaseTenantInvite.updateMany({
+            where: {
+                leaseId: lease.id,
+                email: user.email,
+                isUsed: false,
+                isDeleted: false,
+                expiresAt: {
+                    gt: new Date(),
+                },
+            },
+            data: {
+                isUsed: true,
+            },
+        });
+
+        if (invites.count === 0) {
+            throw createHttpError(404, "Invite may have expired or is invalid");
+        }
+
         // create lease tenant connection
         const leaseTenant = await prisma.leaseTenant.create({
             data: {
@@ -131,6 +201,107 @@ export const acceptInvite: RequestHandler = async (req, res, next) => {
         });
 
         res.status(201).json(leaseTenant);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getInvites: RequestHandler = async (req, res, next) => {
+    try {
+        assertIsDefined(req.session.userId);
+        const leaseId = req.params.id;
+
+        // get lease to check if user is landlord
+        const lease = await prisma.lease.findUnique({
+            where: {
+                id: leaseId,
+                isDeleted: false,
+            },
+            include: {
+                property: {
+                    select: {
+                        landlordId: true,
+                    },
+                },
+            },
+        });
+
+        if (!lease) {
+            throw createHttpError(404, "Lease not found");
+        }
+
+        // check if user is landlord of lease
+        if (lease.property.landlordId !== req.session.userId) {
+            throw createHttpError(
+                403,
+                "You are not the landlord of this lease"
+            );
+        }
+
+        // get invites for tenant
+        const invites = await prisma.leaseTenantInvite.findMany({
+            where: {
+                leaseId,
+                isUsed: false,
+                expiresAt: {
+                    gt: new Date(),
+                }, // todo:: maybe add a resend invite button
+                isDeleted: false,
+            },
+        });
+
+        res.status(200).json(invites);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const removeInvite: RequestHandler = async (req, res, next) => {
+    try {
+        assertIsDefined(req.session.userId);
+        const leaseId = req.params.id;
+        const inviteId = req.params.inviteId;
+
+        // get lease to check if user is landlord
+        const lease = await prisma.lease.findUnique({
+            where: {
+                id: leaseId,
+                isDeleted: false,
+            },
+            include: {
+                property: {
+                    select: {
+                        landlordId: true,
+                    },
+                },
+            },
+        });
+
+        if (!lease) {
+            throw createHttpError(404, "Lease not found");
+        }
+
+        // check if user is landlord of lease
+        if (lease.property.landlordId !== req.session.userId) {
+            throw createHttpError(
+                403,
+                "You are not the landlord of this lease"
+            );
+        }
+
+        // remove invite
+        await prisma.leaseTenantInvite.update({
+            where: {
+                id: inviteId,
+                isDeleted: false,
+                isUsed: false,
+            },
+            data: {
+                isDeleted: true,
+            },
+        });
+
+        res.status(204).send();
     } catch (error) {
         next(error);
     }

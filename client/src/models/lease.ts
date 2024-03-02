@@ -1,18 +1,17 @@
+import { Property } from "./property";
 import { User } from "./user";
 
 export interface Lease {
     id: string;
     propertyId?: string;
+    inviteCode: string;
     startDate: string;
     endDate: string;
     totalRent: number;
     createdAt: string;
     updatedAt: string;
     isDeleted: boolean;
-    property?: {
-        name: string;
-        address: string;
-    };
+    property?: Partial<Property>;
     tenants?: Partial<User>[];
     payments?: any[]; // todo
     _count?: {

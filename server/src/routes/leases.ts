@@ -39,10 +39,15 @@ router.post("/join", requiresAuth, TenantController.acceptInvite); // Accept inv
 const tenantRouter = express.Router({ mergeParams: true });
 tenantRouter.get("/", requiresAuth, TenantController.getLeaseTenants);
 tenantRouter.put("/", requiresAuth, TenantController.updateTenant);
-tenantRouter.post("/invite", requiresAuth, TenantController.inviteTenant);
+tenantRouter.get("/invites", requiresAuth, TenantController.getInvites);
+tenantRouter.post("/invites", requiresAuth, TenantController.inviteTenant);
+tenantRouter.delete(
+    "/invites/:inviteId",
+    requiresAuth,
+    TenantController.removeInvite
+);
 tenantRouter.post("/leave", requiresAuth, TenantController.leaveLease);
 tenantRouter.post("/remove", requiresAuth, TenantController.removeTenant);
-
 router.use("/:id/tenants", tenantRouter);
 
 export default router;

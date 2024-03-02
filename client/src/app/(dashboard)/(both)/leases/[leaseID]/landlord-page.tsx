@@ -1,11 +1,14 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatTime, formatTimeToDateString } from "@/utils/format-time";
 
+import { Invite } from "@/models/invite";
+import { InviteDialog } from "./invite-dialog";
 import { Lease } from "@/models/lease";
 import Link from "next/link";
 import { MainButton } from "@/components/buttons/main-button";
 import { Separator } from "@/components/ui/separator";
 import { User } from "@/models/user";
+import { getLeaseInvites } from "@/network/server/tenants";
 
 interface LandlordPageProps {
     user: User;
@@ -25,6 +28,12 @@ export function LandlordPage({ user, lease }: LandlordPageProps) {
         (leaseEnd.getFullYear() - leaseStart.getFullYear()) * 12 +
         leaseEnd.getMonth() -
         leaseStart.getMonth();
+
+    const getCurrentInvites = async (): Promise<Invite[]> => {
+        "use server";
+        const invites = await getLeaseInvites(lease.id);
+        return invites;
+    };
 
     return (
         <>
@@ -88,7 +97,10 @@ export function LandlordPage({ user, lease }: LandlordPageProps) {
                             <CardTitle className="text-lg font-medium">
                                 Tenants ({lease._count?.tenants})
                             </CardTitle>
-                            <MainButton text="Add Tenant" />
+                            <InviteDialog
+                                lease={lease}
+                                getCurrentInvites={getCurrentInvites}
+                            />
                         </div>
                         <ul>
                             {lease.tenants?.map((tenant) => (
