@@ -74,15 +74,16 @@ model LeaseTenant {
 }
 
 model LeaseTenantInvite {
-  id        String   @id @default(uuid())
-  email     String
-  isUsed    Boolean  @default(false)
-  isDeleted Boolean  @default(false)
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  lease     Lease?   @relation(fields: [leaseId], references: [id])
-  leaseId   String?
+  id         String   @id @default(uuid())
+  email      String
+  inviteCode String   @unique
+  isUsed     Boolean  @default(false)
+  isDeleted  Boolean  @default(false)
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  lease      Lease?   @relation(fields: [leaseId], references: [id])
+  leaseId    String?
 }
 
 model Announcement {

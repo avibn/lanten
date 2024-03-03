@@ -2,6 +2,7 @@ import { CurrencySchema } from "../utils/schemas";
 import { RequestHandler } from "express";
 import assertIsDefined from "../utils/assertIsDefined";
 import createHttpError from "http-errors";
+import { nanoid } from "../utils/nanoid";
 import prisma from "../utils/prismaClient";
 import { userType } from "@prisma/client";
 import { z } from "zod";
@@ -96,6 +97,7 @@ export const inviteTenant: RequestHandler = async (req, res, next) => {
         await prisma.leaseTenantInvite.create({
             data: {
                 email: tenantEmail,
+                inviteCode: nanoid(10),
                 expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
                 lease: {
                     connect: {
@@ -137,16 +139,37 @@ export const acceptInvite: RequestHandler = async (req, res, next) => {
             throw createHttpError(403, "Only tenants can accept lease invites");
         }
 
-        // get lease from invite code
-        const lease = await prisma.lease.findFirst({
-            where: {
-                inviteCode,
-                isDeleted: false,
-            },
-            include: {
-                tenants: true,
-            },
-        });
+        // try get lease from global invite code or tenant invite code (email invite)
+        const lease =
+            (await prisma.lease.findFirst({
+                where: {
+                    inviteCode,
+                    isDeleted: false,
+                },
+                include: {
+                    tenants: true,
+                },
+            })) ||
+            (
+                await prisma.leaseTenantInvite.findFirst({
+                    where: {
+                        inviteCode,
+                        email: user.email,
+                        isUsed: false,
+                        isDeleted: false,
+                        expiresAt: {
+                            gt: new Date(),
+                        },
+                    },
+                    select: {
+                        lease: {
+                            include: {
+                                tenants: true,
+                            },
+                        },
+                    },
+                })
+            )?.lease;
 
         if (!lease) {
             throw createHttpError(404, "Lease with invite code not found");
@@ -159,13 +182,13 @@ export const acceptInvite: RequestHandler = async (req, res, next) => {
             )
         ) {
             throw createHttpError(
-                400,
+                403,
                 "You are already a tenant in this lease"
             );
         }
 
         // update invite to used
-        const invites = await prisma.leaseTenantInvite.updateMany({
+        await prisma.leaseTenantInvite.updateMany({
             where: {
                 leaseId: lease.id,
                 email: user.email,
@@ -179,10 +202,6 @@ export const acceptInvite: RequestHandler = async (req, res, next) => {
                 isUsed: true,
             },
         });
-
-        if (invites.count === 0) {
-            throw createHttpError(404, "Invite may have expired or is invalid");
-        }
 
         // create lease tenant connection
         const leaseTenant = await prisma.leaseTenant.create({

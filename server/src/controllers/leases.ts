@@ -1,14 +1,9 @@
 import { CurrencySchema } from "../utils/schemas";
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
-import { customAlphabet } from "nanoid";
+import { nanoid } from "../utils/nanoid";
 import prisma from "../utils/prismaClient";
 import { z } from "zod";
-
-const nanoid = customAlphabet(
-    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-    10
-);
 
 const CreateLeaseBody = z.object({
     propertyId: z.string(),
