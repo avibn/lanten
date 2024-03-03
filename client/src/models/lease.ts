@@ -5,6 +5,7 @@ import { User } from "./user";
 export interface Lease {
     id: string;
     propertyId?: string;
+    description: string;
     inviteCode: string;
     startDate: string;
     endDate: string;

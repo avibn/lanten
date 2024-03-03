@@ -20,3 +20,14 @@ export async function getLease(id: string): Promise<Lease> {
     });
     return await response.json();
 }
+
+export async function updateLeaseDescription(
+    id: string,
+    description: string
+): Promise<Lease> {
+    const response = await fetchDataServer(`/leases/${id}/description`, {
+        method: "PUT",
+        body: JSON.stringify({ description }),
+    });
+    return await response.json();
+}

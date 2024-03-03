@@ -3,12 +3,19 @@ import { formatTime, formatTimeToDateString } from "@/utils/format-time";
 
 import CardLoadingSkeleton from "@/components/card-loading-skeleton";
 import CardTenats from "./card-tenants";
+import { Error } from "@/models/error";
+import { InfoEditDialog } from "./info-edit-dialog";
 import { Lease } from "@/models/lease";
 import Link from "next/link";
 import { MainButton } from "@/components/buttons/main-button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Suspense } from "react";
+import { UpdateLeaseDescriptionFormValues } from "@/schemas/lease";
 import { User } from "@/models/user";
+import { revalidateTag } from "next/cache";
+import { sanitizeText } from "@/utils/sanitizeText";
+import { updateLeaseDescription } from "@/network/server/leases";
 
 interface LandlordPageProps {
     user: User;
@@ -30,6 +37,22 @@ export function LandlordPage({ user, lease }: LandlordPageProps) {
         leaseStart.getMonth();
 
     // todo:: lease.tenants shouldnt return password!!
+
+    const editLeaseInfo = async (
+        data: UpdateLeaseDescriptionFormValues
+    ): Promise<Lease | Error> => {
+        "use server";
+        try {
+            const response = await updateLeaseDescription(
+                lease.id,
+                data.description
+            );
+            revalidateTag("leases");
+            return response;
+        } catch (error) {
+            return { error: "Something went wrong!" };
+        }
+    };
 
     return (
         <>
@@ -77,12 +100,27 @@ export function LandlordPage({ user, lease }: LandlordPageProps) {
                 </Card>
                 <Card className="flex-1">
                     <CardHeader>
-                        <div className="grid grid-cols-2 gap-3">
-                            <p className="font-medium leading-none">Tenants</p>
-                            <p>{lease._count?.tenants}</p>
-                            <p className="font-medium leading-none">Payments</p>
-                            <p>{lease._count?.payments}</p>
+                        <div className="flex items-center justify-between w-full">
+                            <CardTitle className="text-lg font-medium">
+                                Lease Information
+                            </CardTitle>
+                            <InfoEditDialog
+                                description={lease.description}
+                                editLeaseInfo={editLeaseInfo}
+                            />
                         </div>
+                        {lease.description ? (
+                            <ScrollArea>
+                                <div
+                                    dangerouslySetInnerHTML={sanitizeText(
+                                        lease.description
+                                    )}
+                                    className="max-h-48 rich-text-area"
+                                ></div>
+                            </ScrollArea>
+                        ) : (
+                            <p>A description has not been added yet.</p>
+                        )}
                     </CardHeader>
                 </Card>
             </div>
