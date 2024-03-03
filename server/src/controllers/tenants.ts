@@ -147,7 +147,7 @@ export const acceptInvite: RequestHandler = async (req, res, next) => {
                     isDeleted: false,
                 },
                 include: {
-                    tenants: true,
+                    tenants: { where: { isDeleted: false } },
                 },
             })) ||
             (
@@ -164,7 +164,7 @@ export const acceptInvite: RequestHandler = async (req, res, next) => {
                     select: {
                         lease: {
                             include: {
-                                tenants: true,
+                                tenants: { where: { isDeleted: false } },
                             },
                         },
                     },

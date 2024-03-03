@@ -1,3 +1,4 @@
+import { LeaseTenant } from "./lease-tenant";
 import { Property } from "./property";
 import { User } from "./user";
 
@@ -12,7 +13,7 @@ export interface Lease {
     updatedAt: string;
     isDeleted: boolean;
     property?: Partial<Property>;
-    tenants?: Partial<User>[];
+    tenants?: Partial<LeaseTenant>[];
     payments?: any[]; // todo
     _count?: {
         tenants: number;

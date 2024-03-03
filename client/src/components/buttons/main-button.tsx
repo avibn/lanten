@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
 export interface MainButtonProps {
-    text: string;
+    text?: string;
     isDisabled?: boolean;
     isLoading?: boolean;
     loadingText?: string;
@@ -41,7 +41,9 @@ export function MainButton({
     const buttonContent = (
         <>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {icon && !isLoading && <span className="mr-2">{icon}</span>}
+            {icon &&
+                !isLoading &&
+                (text ? <span className="mr-2">{icon}</span> : <>{icon}</>)}
             {isLoading && loadingText ? loadingText : text}
         </>
     );

@@ -101,7 +101,7 @@ export const getLeases: RequestHandler = async (req, res, next) => {
                 },
                 _count: {
                     select: {
-                        tenants: true,
+                        tenants: { where: { isDeleted: false } },
                         payments: true,
                     },
                 },
@@ -140,6 +140,7 @@ export const getLease: RequestHandler = async (req, res, next) => {
                     {
                         tenants: {
                             some: {
+                                isDeleted: false,
                                 tenantId: req.session.userId,
                             },
                         },
@@ -153,11 +154,17 @@ export const getLease: RequestHandler = async (req, res, next) => {
                         address: true,
                     },
                 },
-                tenants: user?.userType === "LANDLORD",
+                // tenants: user?.userType === "LANDLORD",
+                tenants: {
+                    select: {
+                        id: true,
+                        tenant: user?.userType === "LANDLORD",
+                    },
+                },
                 payments: true,
                 _count: {
                     select: {
-                        tenants: true,
+                        tenants: { where: { isDeleted: false } },
                         payments: true,
                     },
                 },

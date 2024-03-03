@@ -47,6 +47,7 @@ export default async function Page({ params: { leaseID } }: PageProps) {
         redirect("/leases");
         // notFound(); // todo:: 404 error page
     }
+    console.log(lease);
 
     return (
         <div className="flex flex-col items-start gap-5">

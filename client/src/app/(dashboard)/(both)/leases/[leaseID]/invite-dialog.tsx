@@ -165,32 +165,37 @@ export function InviteDialog({ lease, getCurrentInvites }: InviteDialogProps) {
                         </form>
                     </Form>
                     <Separator />
-
-                    <div className="flex items-center space-x-2">
-                        <div className="grid flex-1 gap-2">
-                            <Label htmlFor="link" className="sr-only">
-                                Link
-                            </Label>
-                            <Input id="link" value={inviteURL} readOnly />
+                    <div className="flex flex-col items-center gap-2">
+                        <div className="flex items-center space-x-2 w-full">
+                            <div className="grid flex-1 gap-2">
+                                <Label htmlFor="link" className="sr-only">
+                                    Link
+                                </Label>
+                                <Input id="link" value={inviteURL} readOnly />
+                            </div>
+                            {/* Copy button */}
+                            <Button
+                                type="submit"
+                                size="sm"
+                                className="px-3"
+                                variant="secondary"
+                                disabled={copied}
+                                onClick={handleCopyInvite}
+                            >
+                                <span className="sr-only">
+                                    {copied ? "Copied" : "Copy"}
+                                </span>
+                                {copied ? (
+                                    <CopyCheck className="h-4 w-4" />
+                                ) : (
+                                    <Copy className="h-4 w-4" />
+                                )}
+                            </Button>
                         </div>
-                        {/* Copy button */}
-                        <Button
-                            type="submit"
-                            size="sm"
-                            className="px-3"
-                            variant="secondary"
-                            disabled={copied}
-                            onClick={handleCopyInvite}
-                        >
-                            <span className="sr-only">
-                                {copied ? "Copied" : "Copy"}
-                            </span>
-                            {copied ? (
-                                <CopyCheck className="h-4 w-4" />
-                            ) : (
-                                <Copy className="h-4 w-4" />
-                            )}
-                        </Button>
+                        <p className="text-gray-500 text-sm">
+                            Alternatively, share this link with the tenant to
+                            invite them.
+                        </p>
                     </div>
                     <Separator />
                     <div>

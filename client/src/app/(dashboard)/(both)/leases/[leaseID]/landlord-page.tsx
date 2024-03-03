@@ -1,14 +1,14 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatTime, formatTimeToDateString } from "@/utils/format-time";
 
-import { Invite } from "@/models/invite";
-import { InviteDialog } from "./invite-dialog";
+import CardLoadingSkeleton from "@/components/card-loading-skeleton";
+import CardTenats from "./card-tenants";
 import { Lease } from "@/models/lease";
 import Link from "next/link";
 import { MainButton } from "@/components/buttons/main-button";
 import { Separator } from "@/components/ui/separator";
+import { Suspense } from "react";
 import { User } from "@/models/user";
-import { getLeaseInvites } from "@/network/server/tenants";
 
 interface LandlordPageProps {
     user: User;
@@ -29,11 +29,7 @@ export function LandlordPage({ user, lease }: LandlordPageProps) {
         leaseEnd.getMonth() -
         leaseStart.getMonth();
 
-    const getCurrentInvites = async (): Promise<Invite[]> => {
-        "use server";
-        const invites = await getLeaseInvites(lease.id);
-        return invites;
-    };
+    // todo:: lease.tenants shouldnt return password!!
 
     return (
         <>
@@ -91,24 +87,13 @@ export function LandlordPage({ user, lease }: LandlordPageProps) {
                 </Card>
             </div>
             <div className="flex flex-col xl:flex-row gap-4 w-full">
-                <Card className="flex-1">
-                    <CardHeader>
-                        <div className="flex items-center justify-between w-full">
-                            <CardTitle className="text-lg font-medium">
-                                Tenants ({lease._count?.tenants})
-                            </CardTitle>
-                            <InviteDialog
-                                lease={lease}
-                                getCurrentInvites={getCurrentInvites}
-                            />
-                        </div>
-                        <ul>
-                            {lease.tenants?.map((tenant) => (
-                                <li key={tenant.id}>{tenant.email}</li>
-                            ))}
-                        </ul>
-                    </CardHeader>
-                </Card>
+                <Suspense
+                    fallback={
+                        <CardLoadingSkeleton loadingText="Loading tenants" />
+                    }
+                >
+                    <CardTenats lease={lease} />
+                </Suspense>
                 <Card className="flex-1">
                     <CardHeader>
                         <div className="flex items-center justify-between w-full">

@@ -16,7 +16,8 @@ export async function getAllLeaseTenants(
 ): Promise<LeaseTenant[]> {
     const response = await fetchDataServer(`/leases/${leaseId}/tenants`, {
         next: {
-            revalidate: 20,
+            revalidate: 0,
+            tags: ["LeaseTenants"],
         },
     });
     return await response.json();

@@ -15,6 +15,7 @@ export async function getLease(id: string): Promise<Lease> {
     const response = await fetchDataServer(`/leases/${id}`, {
         next: {
             revalidate: 20,
+            tags: ["leases"],
         },
     });
     return await response.json();
