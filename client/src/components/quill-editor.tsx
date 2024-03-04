@@ -1,9 +1,16 @@
 import "react-quill/dist/quill.snow.css";
 
+import LoadingSpinner from "./loading-spinner";
+import { Skeleton } from "./ui/skeleton";
 import dynamic from "next/dynamic";
 
 const ReactQuill = dynamic(() => import("react-quill"), {
     ssr: false,
+    loading: () => (
+        <Skeleton className="h-60 w-full flex items-center justify-center">
+            <LoadingSpinner />
+        </Skeleton>
+    ),
 });
 
 interface QuillEditorProps {

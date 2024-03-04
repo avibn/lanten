@@ -2,6 +2,7 @@
 
 import { Sidebar, SidebarItem } from "@/components/sidebar";
 
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { usePathname } from "next/navigation";
 
 const sideBarItems: SidebarItem[] = [
@@ -47,14 +48,16 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <div className="bg-background h-screen">
             <div className="grid lg:grid-cols-6">
                 <Sidebar sideBarItems={sideBarItems} />
-                <div className="col-span-4 lg:col-span-5 lg:border-l py-4 px-12">
-                    {currentPageName && (
-                        <h2 className="text-3xl font-bold tracking-tight">
-                            {currentPageName}
-                        </h2>
-                    )}
-                    <div className="mt-6">{children}</div>
-                </div>
+                <ScrollArea className="col-span-4 lg:col-span-5 lg:border-l px-12">
+                    <div className="py-4 h-screen">
+                        {currentPageName && (
+                            <h2 className="text-3xl font-bold tracking-tight">
+                                {currentPageName}
+                            </h2>
+                        )}
+                        <div className="py-6">{children}</div>
+                    </div>
+                </ScrollArea>
             </div>
         </div>
     );

@@ -21,7 +21,6 @@ import { Lease } from "@/models/lease";
 import { MainButton } from "@/components/buttons/main-button";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -35,7 +34,6 @@ export function InfoEditDialog({
     description,
     editLeaseInfo,
 }: InfoEditDialogProps) {
-    const router = useRouter();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const form = useForm<UpdateLeaseDescriptionFormValues>({
