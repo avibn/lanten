@@ -5,6 +5,7 @@ import { InfoEditDialog } from "./info-edit-dialog";
 import { Lease } from "@/models/lease";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { UpdateLeaseDescriptionFormValues } from "@/schemas/lease";
+import { WithAuthorized } from "@/providers/with-authorized";
 import { revalidateTag } from "next/cache";
 import { sanitizeText } from "@/utils/sanitizeText";
 import { updateLeaseDescription } from "@/network/server/leases";
@@ -37,10 +38,12 @@ export default function LeaseInfoCard({ lease }: LeaseInfoCardProps) {
                     <CardTitle className="text-lg font-medium">
                         Lease Information
                     </CardTitle>
-                    <InfoEditDialog
-                        description={lease.description}
-                        editLeaseInfo={editLeaseInfo}
-                    />
+                    <WithAuthorized role="LANDLORD">
+                        <InfoEditDialog
+                            description={lease.description}
+                            editLeaseInfo={editLeaseInfo}
+                        />
+                    </WithAuthorized>
                 </div>
                 {lease.description ? (
                     <ScrollArea>

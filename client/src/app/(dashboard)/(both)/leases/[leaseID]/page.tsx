@@ -5,6 +5,7 @@ import { DeleteLeaseClient } from "./delete-lease-client";
 import { EditButton } from "@/components/buttons/edit-button";
 import { LandlordPage } from "./landlord-page";
 import { Lease } from "@/models/lease";
+import { TenantPage } from "./tenant-page";
 import { formatTimeToDateString } from "@/utils/format-time";
 import { getLease } from "@/network/server/leases";
 import { getSessionUser } from "@/network/server/users";
@@ -78,7 +79,7 @@ export default async function Page({ params: { leaseID } }: PageProps) {
                 {user?.userType === "LANDLORD" ? (
                     <LandlordPage user={user} lease={lease} />
                 ) : (
-                    <></> // todo
+                    <TenantPage user={user} lease={lease} />
                 )}
             </div>
         </div>

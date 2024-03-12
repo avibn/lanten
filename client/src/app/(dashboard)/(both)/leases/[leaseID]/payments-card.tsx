@@ -2,6 +2,7 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Lease } from "@/models/lease";
 import { MainButton } from "@/components/buttons/main-button";
+import { WithAuthorized } from "@/providers/with-authorized";
 
 interface PaymentsCardProps {
     lease: Lease;
@@ -15,7 +16,9 @@ export default function PaymentsCard({ lease }: PaymentsCardProps) {
                     <CardTitle className="text-lg font-medium">
                         Payments ({lease._count?.payments})
                     </CardTitle>
-                    <MainButton text="Add Payment" />
+                    <WithAuthorized role="LANDLORD">
+                        <MainButton text="Add Payment" />
+                    </WithAuthorized>
                 </div>
             </CardHeader>
         </Card>

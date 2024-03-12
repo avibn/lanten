@@ -3,6 +3,7 @@ import { formatTime, formatTimeToDateString } from "@/utils/format-time";
 
 import { Lease } from "@/models/lease";
 import Link from "next/link";
+import { WithAuthorized } from "@/providers/with-authorized";
 
 interface LeaseDetailsCardProps {
     lease: Lease;
@@ -37,12 +38,17 @@ export default function LeaseDetailsCard({ lease }: LeaseDetailsCardProps) {
                     <p>£{lease.totalRent} / month</p>
                     <p className="font-medium leading-none">Property</p>
                     <p>
-                        <Link
-                            href={`/properties/${lease.propertyId}`}
-                            className="link-primary"
-                        >
+                        <WithAuthorized role="LANDLORD">
+                            <Link
+                                href={`/properties/${lease.propertyId}`}
+                                className="link-primary"
+                            >
+                                {lease.property?.name}
+                            </Link>
+                        </WithAuthorized>
+                        <WithAuthorized role="TENANT">
                             {lease.property?.name}
-                        </Link>
+                        </WithAuthorized>
                     </p>
                     {lease.updatedAt > lease.createdAt ? (
                         <>
