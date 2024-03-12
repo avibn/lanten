@@ -10,7 +10,7 @@ interface CardTenantsProps {
     lease: Lease;
 }
 
-export default async function CardTenats({ lease }: CardTenantsProps) {
+export default async function TenantsCard({ lease }: CardTenantsProps) {
     const tenants = await getAllLeaseTenants(lease.id);
     // todo :: catch error
 
