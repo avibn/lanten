@@ -10,7 +10,7 @@ export default function CardLoadingSkeleton({
 }: CardLoadingSkeletonProps) {
     return (
         <Card className="flex-1 relative">
-            <Skeleton className="h-full w-full" />
+            <Skeleton className="min-h-24 h-full w-full" />
             <div className="absolute inset-0 flex items-center justify-center">
                 <span className="text-lg font-light">{loadingText}</span>
             </div>
