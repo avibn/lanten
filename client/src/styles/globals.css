@@ -103,3 +103,7 @@
 .ql-editor > p {
     @apply break-all hyphens-auto;
 }
+
+textarea {
+    @apply max-h-60 h-32;
+}

@@ -11,7 +11,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Loader2, X } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 
 import { Button } from "../ui/button";
 import { cn } from "@/utils/tw-merge";
@@ -40,7 +40,8 @@ export function DeleteIconButton(props: DeleteIconButtonProps) {
                     )}
                     disabled={isLoading}
                 >
-                    <X size={18} className="text-red-500" />
+                    {/* <X size={18} className="text-red-500" /> */}
+                    <Trash2 size={18} className="text-red-500" />
                 </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>

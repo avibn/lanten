@@ -11,7 +11,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { TenantInviteFormValues, tenantInviteSchema } from "@/schemas/tenant";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     useInviteTenantMutation,
     useRemoveInviteMutation,
@@ -51,14 +51,14 @@ export function InviteDialog({ lease, getCurrentInvites }: InviteDialogProps) {
     const inviteTenantMutation = useInviteTenantMutation(lease.id);
     const removeInviteMutation = useRemoveInviteMutation(lease.id);
 
-    const fetchInvites = async () => {
+    const fetchInvites = useCallback(async () => {
         const invites = await getCurrentInvites();
         setInvites(invites);
-    };
+    }, [getCurrentInvites]);
 
     useEffect(() => {
         fetchInvites();
-    }, []);
+    }, [fetchInvites]);
 
     // Set invite URL
     useEffect(() => {

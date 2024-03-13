@@ -61,6 +61,13 @@ export const createAnnouncement: RequestHandler = async (req, res, next) => {
 export const getAnnouncements: RequestHandler = async (req, res, next) => {
     try {
         const leaseId = req.params.id;
+        const max = req.query.max
+            ? parseInt(req.query.max as string)
+            : undefined;
+
+        if (max != undefined && max < 1) {
+            throw createHttpError(400, "max must be greater than 0");
+        }
 
         // Get lease
         const lease = await prisma.lease.findUnique({
@@ -100,6 +107,10 @@ export const getAnnouncements: RequestHandler = async (req, res, next) => {
                 leaseId,
                 isDeleted: false,
             },
+            orderBy: {
+                createdAt: "desc",
+            },
+            take: max,
         });
 
         res.status(200).json(announcements);

@@ -33,7 +33,13 @@ export function LandlordPage({ user, lease }: LandlordPageProps) {
                 <PaymentsCard lease={lease} />
             </div>
             <div className="flex flex-col xl:flex-row gap-4 w-full">
-                <AnnouncementsCard lease={lease} />
+                <Suspense
+                    fallback={
+                        <CardLoadingSkeleton loadingText="Loading announcements" />
+                    }
+                >
+                    <AnnouncementsCard lease={lease} />
+                </Suspense>
                 <MaintenanceCard lease={lease} />
                 <DocumentsCard lease={lease} />
             </div>
