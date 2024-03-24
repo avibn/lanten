@@ -104,21 +104,28 @@ enum paymentType {
   OTHER
 }
 
+enum recurringInterval {
+  NONE
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
 model Payment {
-  id                String       @id @default(uuid())
+  id                String            @id @default(uuid())
   amount            Float
   name              String
   description       String?
-  type              paymentType  @default(OTHER)
+  type              paymentType       @default(OTHER)
   paymentDate       DateTime
-  isRecurring       Boolean      @default(false)
-  recurringInterval Int?
-  isDeleted         Boolean      @default(false)
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
-  lease             Lease?       @relation(fields: [leaseId], references: [id])
+  recurringInterval recurringInterval @default(NONE)
+  isDeleted         Boolean           @default(false)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  lease             Lease?            @relation(fields: [leaseId], references: [id])
   leaseId           String?
-  leaseTenant       LeaseTenant? @relation(fields: [leaseTenantId], references: [id])
+  leaseTenant       LeaseTenant?      @relation(fields: [leaseTenantId], references: [id])
   leaseTenantId     String?
   reminders         Reminder[]
 }

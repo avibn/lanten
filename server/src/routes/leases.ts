@@ -1,5 +1,6 @@
 import * as AnnouncementController from "../controllers/announcements";
 import * as LeaseController from "../controllers/leases";
+import * as PaymentController from "../controllers/payments";
 import * as TenantController from "../controllers/tenants";
 
 import express from "express";
@@ -30,6 +31,10 @@ router.post(
     requiresAuth,
     AnnouncementController.createAnnouncement
 );
+
+// Payments
+router.get("/:id/payments", requiresAuth, PaymentController.getPayments);
+router.post("/:id/payments", requiresAuth, PaymentController.createPayment);
 
 // Tenants
 router.get("/tenants", requiresAuth, TenantController.getAllTenants);

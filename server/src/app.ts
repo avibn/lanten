@@ -8,6 +8,7 @@ import { errorHandler } from "./configs/errorHandler";
 import express from "express";
 import leasesRouter from "./routes/leases";
 import morgan from "morgan";
+import paymentsRouter from "./routes/payments";
 import propertiesRouter from "./routes/properties";
 import { sessionMiddleware } from "./configs/sessions";
 import usersRouter from "./routes/users";
@@ -32,6 +33,7 @@ app.use("/users", usersRouter);
 app.use("/properties", propertiesRouter);
 app.use("/leases", leasesRouter);
 app.use("/announcements", announcementsRouter);
+app.use("/payments", paymentsRouter);
 
 // Error handling
 app.use((req, res, next) => {
