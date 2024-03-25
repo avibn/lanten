@@ -151,11 +151,32 @@ export const getPayment: RequestHandler = async (req, res, next) => {
             },
             include: {
                 reminders: true,
+                lease: {
+                    include: {
+                        property: true,
+                        tenants: {
+                            where: {
+                                AND: {
+                                    tenantId: req.session.userId,
+                                    isDeleted: false,
+                                },
+                            },
+                        },
+                    },
+                },
             },
         });
 
         if (!payment) {
             throw createHttpError(404, "Specified payment not found");
+        }
+
+        // Check if user is landlord or tenant
+        if (
+            payment.lease?.property.landlordId !== req.session.userId &&
+            payment.lease?.tenants.length === 0
+        ) {
+            throw createHttpError(403, "You are not the landlord or tenant");
         }
 
         res.json(payment);
@@ -183,10 +204,29 @@ export const updatePayment: RequestHandler = async (req, res, next) => {
                 id,
                 isDeleted: false,
             },
+            include: {
+                lease: {
+                    include: {
+                        property: {
+                            select: {
+                                landlordId: true,
+                            },
+                        },
+                    },
+                },
+            },
         });
 
         if (!payment) {
             throw createHttpError(404, "Specified payment not found");
+        }
+
+        // Check if user is landlord
+        if (payment.lease?.property.landlordId !== req.session.userId) {
+            throw createHttpError(
+                403,
+                "You are not the landlord of this payment"
+            );
         }
 
         // Update payment
@@ -219,6 +259,12 @@ export const deletePayment: RequestHandler = async (req, res, next) => {
             where: {
                 id,
                 isDeleted: false,
+                lease: {
+                    // Check if user is landlord
+                    property: {
+                        landlordId: req.session.userId,
+                    },
+                },
             },
             data: {
                 isDeleted: true,

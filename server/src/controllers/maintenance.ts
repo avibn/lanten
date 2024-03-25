@@ -51,6 +51,16 @@ export const createRequest: RequestHandler = async (req, res, next) => {
             throw createHttpError(403, "You are not a tenant of this lease");
         }
 
+        // Check if request type exists
+        const requestType = await prisma.requestType.findUnique({
+            where: {
+                id: requestTypeId,
+            },
+        });
+        if (!requestType) {
+            throw createHttpError(404, "Specified request type not found");
+        }
+
         const request = await prisma.maintenanceRequest.create({
             data: {
                 leaseId,
@@ -131,11 +141,30 @@ export const getRequest: RequestHandler = async (req, res, next) => {
             },
             include: {
                 requestType: true,
+                lease: {
+                    include: {
+                        property: true,
+                        tenants: {
+                            where: {
+                                tenantId: req.session.userId,
+                                isDeleted: false,
+                            },
+                        },
+                    },
+                },
             },
         });
 
         if (!request) {
             throw createHttpError(404, "Specified request not found");
+        }
+
+        // Check if user is landlord or tenant
+        if (
+            request.lease.property.landlordId !== req.session.userId &&
+            request.lease.tenants.length === 0
+        ) {
+            throw createHttpError(403, "You are not the landlord or tenant");
         }
 
         res.status(200).json(request);
@@ -149,17 +178,45 @@ export const updateRequest: RequestHandler = async (req, res, next) => {
         const { id } = req.params;
         const { description } = CreateRequestBody.parse(req.body);
 
-        const request = await prisma.maintenanceRequest.update({
+        // Get
+        const request = await prisma.maintenanceRequest.findUnique({
             where: {
                 id,
                 isDeleted: false,
+            },
+            include: {
+                lease: {
+                    include: {
+                        tenants: {
+                            where: {
+                                tenantId: req.session.userId,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        if (!request) {
+            throw createHttpError(404, "Specified request not found");
+        }
+
+        // Check if user is tenant
+        if (request.lease.tenants.length === 0) {
+            throw createHttpError(403, "You are not a tenant of this lease");
+        }
+
+        // Update the request
+        const updatedRequest = await prisma.maintenanceRequest.update({
+            where: {
+                id,
             },
             data: {
                 description,
             },
         });
 
-        res.status(200).json(request);
+        res.status(200).json(updatedRequest);
     } catch (error) {
         next(error);
     }
@@ -180,17 +237,46 @@ export const updateRequestStatus: RequestHandler = async (req, res, next) => {
         const { id } = req.params;
         const { status } = UpdateRequestStatusBody.parse(req.body);
 
-        const request = await prisma.maintenanceRequest.update({
+        const request = await prisma.maintenanceRequest.findUnique({
             where: {
                 id,
                 isDeleted: false,
+            },
+            include: {
+                lease: {
+                    include: {
+                        property: {
+                            select: {
+                                landlordId: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        if (!request) {
+            throw createHttpError(404, "Specified request not found");
+        }
+
+        // Check if user is landlord
+        if (request.lease.property.landlordId !== req.session.userId) {
+            throw createHttpError(
+                403,
+                "You are not the landlord of this lease"
+            );
+        }
+
+        const updatedRequest = await prisma.maintenanceRequest.update({
+            where: {
+                id,
             },
             data: {
                 status,
             },
         });
 
-        res.status(200).json(request);
+        res.status(200).json(updatedRequest);
     } catch (error) {
         next(error);
     }
@@ -200,19 +286,44 @@ export const deleteRequest: RequestHandler = async (req, res, next) => {
     try {
         const { id } = req.params;
 
-        const request = await prisma.maintenanceRequest.update({
+        const request = await prisma.maintenanceRequest.findUnique({
             where: {
                 id,
                 isDeleted: false,
             },
-            data: {
-                isDeleted: true,
+            include: {
+                lease: {
+                    include: {
+                        property: {
+                            select: {
+                                landlordId: true,
+                            },
+                        },
+                    },
+                },
             },
         });
 
         if (!request) {
             throw createHttpError(404, "Specified request not found");
         }
+
+        // Check if user is landlord
+        if (request.lease.property.landlordId !== req.session.userId) {
+            throw createHttpError(
+                403,
+                "Only landlords can delete maintenance requests"
+            );
+        }
+
+        await prisma.maintenanceRequest.update({
+            where: {
+                id,
+            },
+            data: {
+                isDeleted: true,
+            },
+        });
 
         res.status(204).send();
     } catch (error) {

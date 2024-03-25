@@ -7,6 +7,7 @@ import createHttpError from "http-errors";
 import { errorHandler } from "./configs/errorHandler";
 import express from "express";
 import leasesRouter from "./routes/leases";
+import maintenanceRouter from "./routes/maintenance";
 import morgan from "morgan";
 import paymentsRouter from "./routes/payments";
 import propertiesRouter from "./routes/properties";
@@ -34,6 +35,7 @@ app.use("/properties", propertiesRouter);
 app.use("/leases", leasesRouter);
 app.use("/announcements", announcementsRouter);
 app.use("/payments", paymentsRouter);
+app.use("/maintenance", maintenanceRouter);
 
 // Error handling
 app.use((req, res, next) => {
