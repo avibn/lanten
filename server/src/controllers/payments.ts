@@ -1,5 +1,6 @@
 import { CurrencySchema } from "../utils/schemas";
 import { RequestHandler } from "express";
+import addIntervalToDate from "../utils/addIntervalToDate";
 import createHttpError from "http-errors";
 import { paymentType } from "@prisma/client";
 import prisma from "../utils/prismaClient";
@@ -132,6 +133,18 @@ export const getPayments: RequestHandler = async (req, res, next) => {
             },
         });
 
+        // Convert paymentDate to add recurringInterval if any
+        payments.forEach((payment) => {
+            if (payment.recurringInterval !== "NONE") {
+                const date = new Date(payment.paymentDate);
+                const nextDate = addIntervalToDate(
+                    date,
+                    payment.recurringInterval
+                );
+                payment.paymentDate = nextDate;
+            }
+        });
+
         res.json(payments);
     } catch (error) {
         console.log(error);
@@ -177,6 +190,13 @@ export const getPayment: RequestHandler = async (req, res, next) => {
             payment.lease?.tenants.length === 0
         ) {
             throw createHttpError(403, "You are not the landlord or tenant");
+        }
+
+        // Convert paymentDate to add recurringInterval if any
+        if (payment.recurringInterval !== "NONE") {
+            const date = new Date(payment.paymentDate);
+            const nextDate = addIntervalToDate(date, payment.recurringInterval);
+            payment.paymentDate = nextDate;
         }
 
         res.json(payment);

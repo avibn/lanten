@@ -132,14 +132,19 @@ model Payment {
 }
 
 model Reminder {
+  id           String         @id @default(uuid())
+  daysBefore   Int
+  recurring    Boolean        @default(false)
+  payment      Payment        @relation(fields: [paymentId], references: [id])
+  paymentId    String
+  ReminderSent ReminderSent[]
+}
+
+model ReminderSent {
   id         String   @id @default(uuid())
-  message    String
-  daysBefore Int      @default(0)
-  isSent     Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  payment    Payment  @relation(fields: [paymentId], references: [id])
-  paymentId  String
+  sentDate   DateTime
+  reminder   Reminder @relation(fields: [reminderId], references: [id])
+  reminderId String
 }
 
 enum maintenanceRequestStatus {

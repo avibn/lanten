@@ -11,6 +11,7 @@ import maintenanceRouter from "./routes/maintenance";
 import morgan from "morgan";
 import paymentsRouter from "./routes/payments";
 import propertiesRouter from "./routes/properties";
+import remindersRouter from "./routes/reminders";
 import { sessionMiddleware } from "./configs/sessions";
 import usersRouter from "./routes/users";
 
@@ -36,6 +37,7 @@ app.use("/leases", leasesRouter);
 app.use("/announcements", announcementsRouter);
 app.use("/payments", paymentsRouter);
 app.use("/maintenance", maintenanceRouter);
+app.use("/reminders", remindersRouter);
 
 // Error handling
 app.use((req, res, next) => {
