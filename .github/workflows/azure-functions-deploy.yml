@@ -61,7 +61,7 @@ jobs:
               uses: Azure/functions-action@v1
               id: deploy-to-function
               with:
-                  app-name: "avib-cloudgroupcw"
+                  app-name: "part3avib"
                   slot-name: "production"
                   package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
                   scm-do-build-during-deployment: true
