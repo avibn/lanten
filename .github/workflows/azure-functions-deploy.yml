@@ -66,4 +66,4 @@ jobs:
                   package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
                   scm-do-build-during-deployment: true
                   enable-oryx-build: true
-                  publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DEE9D2AB9E5048DC9C5348B7F38B97B3 }}
+                  publish-profile: ${{ secrets.AzureAppService_PublishProfile_e4d4bec626be48fabd2bfa1719e5581a }}
