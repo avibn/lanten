@@ -19,7 +19,7 @@ def main(msg: QueueMessage) -> None:
 
     email = body.get("email")
     invite_code = body.get("invite_code")
-    invite_link = os.environ.get("InviteLink", "") + "/leases/invite/" + invite_code
+    invite_link = os.environ.get("ApplicationURL", "") + "/leases/invite/" + invite_code
     author_name = body.get("author_name")
     property_name = body.get("property_name")
 
@@ -27,12 +27,16 @@ def main(msg: QueueMessage) -> None:
         logging.error("Missing required fields.")
         raise ValueError("Missing required fields.")
 
-    # todo: send email
+    # Send the email
     logging.info(f"Sending email to {email}.")
-    send_email(
+    response = send_email(
         to_email=email,
-        subject="You've been invited!",
+        subject="You've been invited to join a property!",
         content=f"Hi! You've been invited by {author_name} to join property `{property_name}`. "
-        "Your invite code is: {invite_code}."
-        "\nClick here to accept: {invite_link}",
+        f"Your invite code is: {invite_code}."
+        f"\nClick here to accept: {invite_link}",
     )
+
+    logging.info(f"Email sent. Response: {response.status_code}")
+    if response.status_code != 202:
+        raise Exception("Error sending email.")

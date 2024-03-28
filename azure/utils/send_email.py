@@ -15,6 +15,20 @@ def send_email(
     content_type: str = "text/plain",
     from_email: str = "updates@lanten.site",
 ):
+    """
+    Sends an email using the SendGrid API.
+
+    Args:
+        to_email (str): The recipient's email address.
+        subject (str): The subject of the email.
+        content (str): The content of the email.
+        content_type (str, optional): The content type of the email. Defaults to "text/plain".
+        from_email (str, optional): The sender's email address. Defaults to "updates@lanten.site".
+
+    Returns:
+        Request: The response from the SendGrid API.
+
+    """
     # Create the email objects
     from_email = Email(from_email)
     to_email = To(to_email)
