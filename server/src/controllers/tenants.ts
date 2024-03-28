@@ -2,6 +2,7 @@ import { CurrencySchema } from "../utils/schemas";
 import { RequestHandler } from "express";
 import assertIsDefined from "../utils/assertIsDefined";
 import createHttpError from "http-errors";
+import { emailInvite } from "../azure/functions";
 import { nanoid } from "../utils/nanoid";
 import prisma from "../utils/prismaClient";
 import { userType } from "@prisma/client";
@@ -31,10 +32,12 @@ export const inviteTenant: RequestHandler = async (req, res, next) => {
                 },
                 property: {
                     select: {
+                        name: true,
                         landlord: {
                             select: {
                                 id: true,
                                 email: true,
+                                name: true,
                             },
                         },
                     },
@@ -93,11 +96,21 @@ export const inviteTenant: RequestHandler = async (req, res, next) => {
             );
         }
 
+        const inviteCode = nanoid(10);
+
+        // Send email invite
+        await emailInvite({
+            email: tenantEmail,
+            inviteCode,
+            authorName: lease.property.landlord.name || "Landlord",
+            propertyName: lease.property.name,
+        });
+
         // add invite to database
         await prisma.leaseTenantInvite.create({
             data: {
                 email: tenantEmail,
-                inviteCode: nanoid(10),
+                inviteCode,
                 expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
                 lease: {
                     connect: {
@@ -107,10 +120,9 @@ export const inviteTenant: RequestHandler = async (req, res, next) => {
             },
         });
 
-        // todo: add to email queue
-
         res.status(204).send();
     } catch (error) {
+        console.log(error);
         next(error);
     }
 };

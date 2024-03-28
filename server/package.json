@@ -29,6 +29,7 @@
     "dependencies": {
         "@prisma/client": "^5.9.1",
         "argon2": "^0.31.2",
+        "axios": "^1.6.8",
         "connect-redis": "^7.1.1",
         "cors": "^2.8.5",
         "dotenv": "^16.4.1",

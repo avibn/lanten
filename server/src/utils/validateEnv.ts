@@ -7,4 +7,6 @@ export default cleanEnv(process.env, {
     REDIS_URL: url(),
     SESSION_SECRET: str(),
     CLIENT_URL: url(),
+    AZURE_FUNCTION_URL: url(),
+    AZURE_FUNCTION_TOKEN: str(),
 });
