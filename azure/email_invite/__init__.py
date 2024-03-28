@@ -28,7 +28,9 @@ def main(req: HttpRequest) -> HttpResponse:
         return create_http_error(400, "Invalid request body.")
 
     # Add message to queue
-    queue.add_to_queue(invite_queue, validated_body.model_dump())
+    body_dict = validated_body.model_dump()
+    queue.add_to_queue(invite_queue, body_dict)
+    logging.info(f"Added message to queue: {body_dict}")
 
     # Return response
-    return create_json_response(200, validated_body.model_dump())
+    return create_json_response(200, body_dict)
