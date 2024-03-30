@@ -1,5 +1,6 @@
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
+import { emailAnnouncement } from "../azure/functions";
 import prisma from "../utils/prismaClient";
 import { z } from "zod";
 
@@ -51,6 +52,60 @@ export const createAnnouncement: RequestHandler = async (req, res, next) => {
                 },
             },
         });
+
+        // Send email to tenants
+        try {
+            const lease = await prisma.lease.findUnique({
+                where: {
+                    id: leaseId,
+                },
+                select: {
+                    property: {
+                        select: {
+                            name: true,
+                        },
+                    },
+                    tenants: {
+                        where: {
+                            isDeleted: false,
+                        },
+                        select: {
+                            tenant: {
+                                select: {
+                                    email: true,
+                                    name: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+
+            if (!lease) {
+                throw new Error("Lease not found");
+            }
+
+            // Create email list object
+            const emails = lease?.tenants.map((leaseTenant) => ({
+                email: leaseTenant.tenant.email,
+                name: leaseTenant.tenant.name ?? "Tenant",
+            }));
+
+            // Send email
+            if (emails) {
+                await emailAnnouncement({
+                    emails,
+                    announcementContent: message,
+                    propertyName: lease.property.name,
+                });
+
+                console.log("Email sent to tenants");
+            }
+        } catch (error) {
+            // Don't send error to main handler as it's not critical
+            // We simply log the error
+            console.error("Failed to send email to tenants", error);
+        }
 
         res.status(201).json(announcement);
     } catch (error) {
