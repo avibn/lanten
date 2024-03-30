@@ -4,7 +4,7 @@ import prisma from "../utils/prismaClient";
 import { z } from "zod";
 
 const CreateReminderBody = z.object({
-    daysBefore: z.number().int().min(0).max(25),
+    daysBefore: z.number().int().min(0).max(7),
 });
 
 export const createReminder: RequestHandler = async (req, res, next) => {

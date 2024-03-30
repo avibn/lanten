@@ -134,7 +134,6 @@ model Payment {
 model Reminder {
   id           String         @id @default(uuid())
   daysBefore   Int
-  recurring    Boolean        @default(false) // todo:: remove this
   payment      Payment        @relation(fields: [paymentId], references: [id])
   paymentId    String
   ReminderSent ReminderSent[]
