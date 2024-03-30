@@ -41,3 +41,15 @@ def get_reminder_queue_proxy() -> QueueClient:
     return QueueClient.from_connection_string(
         os.environ["AzureStorageConnectionString"], os.environ["ReminderQueueName"]
     )
+
+
+def get_announcement_queue_proxy() -> QueueClient:
+    """
+    Retrieves a proxy object for the announcement queue.
+
+    Returns:
+        A QueueClient object representing the announcement queue proxy.
+    """
+    return QueueClient.from_connection_string(
+        os.environ["AzureStorageConnectionString"], os.environ["AnnouncementQueueName"]
+    )

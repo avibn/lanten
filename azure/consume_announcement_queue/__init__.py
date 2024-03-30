@@ -1,19 +1,13 @@
 import json
 import logging
+import os
 
 from azure.functions import QueueMessage
 from utils import send_email
 
-# The email template
-email_text = """
-Hello {name},
-You have {num_reminders} reminders today:
-{reminders}
-"""
-
 
 def main(msg: QueueMessage) -> None:
-    logging.info("Reminder queue triggered.")
+    logging.info("Invite queue triggered.")
 
     # Process the message
     try:
@@ -23,30 +17,21 @@ def main(msg: QueueMessage) -> None:
         logging.error(f"Error processing message: {e}")
         raise e
 
-    # Parse the message body
     email = body.get("email")
     name = body.get("name")
-    reminders: list[dict] = body.get("reminders")
+    property_name = body.get("property_name")
+    announcement = body.get("announcement")
 
-    if any(v is None for v in [email, name, reminders]):
+    if any(v is None for v in [email, name, property_name, announcement]):
         logging.error("Missing required fields.")
         raise ValueError("Missing required fields.")
-
-    # Create the email content
-    text_reminders = "\n".join(
-        f"{reminder['date']}: £{reminder['amount']} for {reminder['name']}{reminder['description']}"
-        for reminder in reminders
-    )
-    email_content = email_text.format(
-        name=name, num_reminders=len(reminders), reminders=text_reminders
-    )
 
     # Send the email
     logging.info(f"Sending email to {email}.")
     response = send_email(
         to_email=email,
-        subject="Your reminders for today!",
-        content=email_content,
+        subject=f"New announcement for {property_name}!",
+        content=f"Hi {name}! There is a new announcement for {property_name}:\n{announcement}",
     )
 
     # Log the response
