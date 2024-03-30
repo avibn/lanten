@@ -62,9 +62,13 @@ class PaymentData:
         self.payment_id = payment_id
         self.payment_amount = payment_amount
         self.payment_name = payment_name
-        self.payment_description = payment_description
+        self.payment_description = (
+            "" if payment_description is None else f" ({payment_description})"
+        )
         self.payment_type = payment_type
-        self.payment_date = payment_date
+
+        # Convert datetime to just date text
+        self.payment_date = payment_date.strftime("%d-%m-%Y")
 
     def __str__(self):
         return f"{self.payment_id} {self.payment_amount} {self.payment_name} {self.payment_description} {self.payment_type} {self.payment_date}"
