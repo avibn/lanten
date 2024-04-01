@@ -15,7 +15,7 @@ const supportedMimeTypes = [
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ];
 
-export async function uploadDocument(
+export async function uploadDocumentToBlob(
     fileBuffer: Buffer,
     originalFileName: string,
     mimeType: string
@@ -33,7 +33,7 @@ export async function uploadDocument(
     );
 }
 
-export async function deleteDocument(blobName: string): Promise<void> {
+export async function deleteDocumentFromBlob(blobName: string): Promise<void> {
     return deleteBlob(documentContainerName, blobName);
 }
 

@@ -1,8 +1,13 @@
+import {
+    deleteDocumentFromBlob,
+    getTemporaryDocumentUrl,
+    uploadDocumentToBlob,
+} from "../azure/blobs/documents";
+
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import { documentType } from "@prisma/client";
 import prisma from "../utils/prismaClient";
-import { uploadDocument } from "../azure/blobs/documents";
 import { z } from "zod";
 
 // Schema for form data
@@ -91,7 +96,7 @@ export const addDocument: RequestHandler = async (req, res, next) => {
             );
             try {
                 // Upload the file
-                const createdBlob = await uploadDocument(
+                const createdBlob = await uploadDocumentToBlob(
                     file.buffer,
                     file.originalname,
                     file.mimetype
@@ -129,6 +134,253 @@ export const addDocument: RequestHandler = async (req, res, next) => {
             uploadedFiles,
             failedFiles,
         });
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+
+export const getDocuments: RequestHandler = async (req, res, next) => {
+    try {
+        const { id: leaseId } = req.params;
+
+        // Check if the lease exists
+        const lease = await prisma.lease.findUnique({
+            where: {
+                id: leaseId,
+                isDeleted: false,
+            },
+            include: {
+                property: {
+                    include: {
+                        landlord: true,
+                    },
+                },
+                tenants: {
+                    where: {
+                        tenantId: req.session.userId,
+                        isDeleted: false,
+                    },
+                },
+            },
+        });
+
+        if (!lease) {
+            throw createHttpError(404, "Specified lease not found");
+        }
+
+        // Check if the user is the landlord or a tenant
+        if (
+            lease.property.landlordId !== req.session.userId &&
+            lease.tenants.length === 0
+        ) {
+            throw createHttpError(
+                403,
+                "You are not a tenant or landlord of this lease"
+            );
+        }
+
+        // Get all documents for the lease
+        const documents = await prisma.document.findMany({
+            where: {
+                leaseId,
+                isDeleted: false,
+            },
+        });
+
+        const landlordDocs = documents.filter(
+            (doc) => doc.type === documentType.LANDLORD
+        );
+
+        // Only include all tenant documents if the user is the landlord else only include their own documents
+        const includeAllTenantDocs =
+            lease.property.landlordId === req.session.userId;
+        const tenantDocs = documents.filter(
+            (doc) =>
+                doc.type === documentType.TENANT &&
+                (includeAllTenantDocs || doc.authorId === req.session.userId)
+        );
+
+        res.status(200).json({
+            landlordDocs,
+            tenantDocs,
+        });
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+
+export const getDocument: RequestHandler = async (req, res, next) => {
+    try {
+        const { id: docId } = req.params;
+
+        // Check if the document exists
+        const document = await prisma.document.findUnique({
+            where: {
+                id: docId,
+                isDeleted: false,
+            },
+            include: {
+                lease: {
+                    include: {
+                        property: true,
+                    },
+                },
+            },
+        });
+
+        if (!document) {
+            throw createHttpError(404, "Document not found");
+        }
+
+        // Check if the user is the landlord or the author of the document
+        if (
+            document.authorId !== req.session.userId &&
+            document.lease?.property.landlordId !== req.session.userId
+        ) {
+            throw createHttpError(
+                403,
+                "You do not have access to this document"
+            );
+        }
+
+        if (!document.fileName) {
+            throw createHttpError(404, "Document not found");
+        }
+
+        // Get the SAS URL for the document
+        const tempUrl = await getTemporaryDocumentUrl(document.fileName);
+
+        res.status(200).json({
+            id: document.id,
+            name: document.name,
+            url: tempUrl,
+            fileName: document.fileName,
+            fileType: document.fileType,
+            type: document.type,
+            createdAt: document.createdAt,
+            updatedAt: document.updatedAt,
+        });
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+
+export const updateDocument: RequestHandler = async (req, res, next) => {
+    try {
+        const { id: docId } = req.params;
+        const { name } = AddDocumentBody.parse(req.body);
+
+        // Check if the document exists
+        const document = await prisma.document.findUnique({
+            where: {
+                id: docId,
+                isDeleted: false,
+            },
+            include: {
+                lease: {
+                    include: {
+                        property: true,
+                    },
+                },
+            },
+        });
+
+        if (!document) {
+            throw createHttpError(404, "Document not found");
+        }
+
+        // Check if the user is the landlord or the author of the document
+        if (
+            document.authorId !== req.session.userId &&
+            document.lease?.property.landlordId !== req.session.userId
+        ) {
+            throw createHttpError(
+                403,
+                "You do not have access to this document"
+            );
+        }
+
+        // Update the document
+        const updatedDocument = await prisma.document.update({
+            where: {
+                id: docId,
+            },
+            data: {
+                name,
+            },
+            select: {
+                id: true,
+                name: true,
+                fileName: true,
+                fileType: true,
+                type: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
+
+        res.status(200).json(updatedDocument);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+
+export const deleteDocument: RequestHandler = async (req, res, next) => {
+    try {
+        const { id: docId } = req.params;
+
+        // Check if the document exists
+        const document = await prisma.document.findUnique({
+            where: {
+                id: docId,
+                isDeleted: false,
+            },
+            include: {
+                lease: {
+                    include: {
+                        property: true,
+                    },
+                },
+            },
+        });
+
+        if (!document) {
+            throw createHttpError(404, "Document not found");
+        }
+
+        // Check if the user is the landlord or the author of the document
+        if (
+            document.authorId !== req.session.userId &&
+            document.lease?.property.landlordId !== req.session.userId
+        ) {
+            throw createHttpError(
+                403,
+                "You do not have access to this document"
+            );
+        }
+
+        if (!document.fileName) {
+            throw createHttpError(404, "Document not found");
+        }
+
+        // Delete the document from the blob storage
+        await deleteDocumentFromBlob(document.fileName);
+
+        // Soft delete the document
+        await prisma.document.update({
+            where: {
+                id: docId,
+            },
+            data: {
+                isDeleted: true,
+            },
+        });
+
+        res.status(204).send();
     } catch (error) {
         console.error(error);
         next(error);

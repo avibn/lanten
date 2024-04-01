@@ -61,6 +61,7 @@ router.post(
     upload.any(),
     DocumentController.addDocument
 );
+router.get("/:id/documents", requiresAuth, DocumentController.getDocuments);
 
 // Tenants
 router.get("/tenants", requiresAuth, TenantController.getAllTenants);

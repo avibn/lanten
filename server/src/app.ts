@@ -4,6 +4,7 @@ import announcementsRouter from "./routes/announcements";
 import cors from "cors";
 import { corsOptions } from "./configs/corsOptions";
 import createHttpError from "http-errors";
+import documentRouter from "./routes/documents";
 import { errorHandler } from "./configs/errorHandler";
 import express from "express";
 import leasesRouter from "./routes/leases";
@@ -38,6 +39,7 @@ app.use("/announcements", announcementsRouter);
 app.use("/payments", paymentsRouter);
 app.use("/maintenance", maintenanceRouter);
 app.use("/reminders", remindersRouter);
+app.use("/documents", documentRouter);
 
 // Error handling
 app.use((req, res, next) => {
