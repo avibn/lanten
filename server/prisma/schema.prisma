@@ -27,6 +27,7 @@ model User {
   updatedAt  DateTime      @updatedAt
   properties Property[]
   leases     LeaseTenant[]
+  documents  Document[]
 }
 
 model Property {
@@ -59,6 +60,7 @@ model Lease {
   announcements       Announcement[]
   leaseTenantInvites  LeaseTenantInvite[]
   maintenanceRequests MaintenanceRequest[]
+  documents           Document[]
 }
 
 model LeaseTenant {
@@ -173,4 +175,24 @@ model RequestType {
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   maintenanceRequests MaintenanceRequest[]
+}
+
+enum documentType {
+  LANDLORD
+  TENANT
+}
+
+model Document {
+  id        String       @id @default(uuid())
+  name      String
+  fileName  String
+  fileType  String?
+  type      documentType
+  isDeleted Boolean      @default(false)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  author    User         @relation(fields: [authorId], references: [id])
+  authorId  String
+  lease     Lease       @relation(fields: [leaseId], references: [id])
+  leaseId   String
 }

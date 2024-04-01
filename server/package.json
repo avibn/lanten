@@ -17,16 +17,21 @@
         "@types/express-session": "^1.17.10",
         "@types/http-errors": "^2.0.4",
         "@types/morgan": "^1.9.9",
+        "@types/multer": "^1.4.11",
         "@types/node": "^20.11.16",
+        "@types/streamifier": "^0.1.2",
+        "@types/uuid": "^9.0.8",
         "@typescript-eslint/eslint-plugin": "^6.19.1",
         "@typescript-eslint/parser": "^6.19.1",
         "eslint": "^8.56.0",
         "nodemon": "^3.0.3",
         "prisma": "^5.9.1",
         "ts-node": "^10.9.2",
-        "typescript": "^5.3.3"
+        "typescript": "^5.4.3"
     },
     "dependencies": {
+        "@azure/identity": "^4.0.1",
+        "@azure/storage-blob": "^12.17.0",
         "@prisma/client": "^5.9.1",
         "argon2": "^0.31.2",
         "axios": "^1.6.8",
@@ -38,8 +43,10 @@
         "express-session": "^1.18.0",
         "http-errors": "^2.0.0",
         "morgan": "^1.10.0",
+        "multer": "^1.4.5-lts.1",
         "nanoid": "^3.3.7",
         "redis": "^4.6.12",
+        "streamifier": "^0.1.1",
         "zod": "^3.22.4"
     }
 }

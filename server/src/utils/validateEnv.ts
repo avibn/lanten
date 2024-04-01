@@ -9,4 +9,6 @@ export default cleanEnv(process.env, {
     CLIENT_URL: url(),
     AZURE_FUNCTION_URL: url(),
     AZURE_FUNCTION_TOKEN: str(),
+    AZURE_STORAGE_CONNECTION_STRING: str(),
+    DOCUMENT_BLOB_CONTAINER: str(),
 });

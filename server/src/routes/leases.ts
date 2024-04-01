@@ -1,13 +1,18 @@
 import * as AnnouncementController from "../controllers/announcements";
+import * as DocumentController from "../controllers/documents";
 import * as LeaseController from "../controllers/leases";
 import * as MaintenanceController from "../controllers/maintenance";
 import * as PaymentController from "../controllers/payments";
 import * as TenantController from "../controllers/tenants";
 
 import express from "express";
+import multer from "multer";
 import { requiresAuth } from "../middleware/requiresAuth";
 
 const router = express.Router();
+
+// Multer
+const upload = multer();
 
 // Lease routes
 router.get("/", requiresAuth, LeaseController.getLeases);
@@ -38,11 +43,23 @@ router.get("/:id/payments", requiresAuth, PaymentController.getPayments);
 router.post("/:id/payments", requiresAuth, PaymentController.createPayment);
 
 // Maintenance
-router.get("/:id/maintenance/requests", requiresAuth, MaintenanceController.getRequests);
+router.get(
+    "/:id/maintenance/requests",
+    requiresAuth,
+    MaintenanceController.getRequests
+);
 router.post(
     "/:id/maintenance/requests",
     requiresAuth,
     MaintenanceController.createRequest
+);
+
+// Documents
+router.post(
+    "/:id/documents",
+    requiresAuth,
+    upload.any(),
+    DocumentController.addDocument
 );
 
 // Tenants
