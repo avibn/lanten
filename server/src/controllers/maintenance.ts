@@ -1,7 +1,20 @@
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import prisma from "../utils/prismaClient";
+import { uploadMaintenanceDocToBlob } from "../azure/blobs/maintenance";
 import { z } from "zod";
+
+// Form data schema
+const CreateRequestFiles = z
+    .array(
+        z.object({
+            originalname: z.string(),
+            mimetype: z.string(),
+            buffer: z.instanceof(Buffer),
+        })
+    )
+    .max(5)
+    .default([]);
 
 const CreateRequestBody = z.object({
     requestTypeId: z.string(),
@@ -13,6 +26,7 @@ export const createRequest: RequestHandler = async (req, res, next) => {
         const { requestTypeId, description } = CreateRequestBody.parse(
             req.body
         );
+        const files = CreateRequestFiles.parse(req.files);
         const { id: leaseId } = req.params;
 
         // Check if lease exists
@@ -69,7 +83,40 @@ export const createRequest: RequestHandler = async (req, res, next) => {
             },
         });
 
-        res.status(201).json(request);
+        const failedUploads: string[] = [];
+        const successfulUploads: string[] = [];
+
+        // Upload files to blob storage
+        for (const file of files) {
+            try {
+                const createdBlob = await uploadMaintenanceDocToBlob(
+                    file.buffer,
+                    file.originalname,
+                    file.mimetype
+                );
+                const blobName = createdBlob.fileName;
+
+                // Add blob info to database
+                await prisma.maintenanceImage.create({
+                    data: {
+                        url: createdBlob.url,
+                        fileName: blobName,
+                        fileType: file.mimetype,
+                        maintenanceRequestId: request.id,
+                    },
+                });
+
+                successfulUploads.push(file.originalname);
+            } catch (error) {
+                failedUploads.push(file.originalname);
+            }
+        }
+
+        res.status(201).json({
+            ...request,
+            successfulUploads,
+            failedUploads,
+        });
     } catch (error) {
         next(error);
     }
@@ -120,6 +167,7 @@ export const getRequests: RequestHandler = async (req, res, next) => {
                         name: true,
                     },
                 },
+                images: true,
             },
         });
 
@@ -152,6 +200,7 @@ export const getRequest: RequestHandler = async (req, res, next) => {
                         },
                     },
                 },
+                images: true,
             },
         });
 

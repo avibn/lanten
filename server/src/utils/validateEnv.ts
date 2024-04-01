@@ -11,4 +11,5 @@ export default cleanEnv(process.env, {
     AZURE_FUNCTION_TOKEN: str(),
     AZURE_STORAGE_CONNECTION_STRING: str(),
     DOCUMENT_BLOB_CONTAINER: str(),
+    MAINTENANCE_BLOB_CONTAINER: str(),
 });

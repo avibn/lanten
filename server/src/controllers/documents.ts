@@ -81,6 +81,23 @@ export const addDocument: RequestHandler = async (req, res, next) => {
             );
         }
 
+        // Check max uploads
+        const documents = await prisma.document.findMany({
+            where: {
+                leaseId,
+                isDeleted: false,
+                // todo: check if this is correct
+                authorId: req.session.userId,
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (documents.length >= 5) {
+            throw createHttpError(400, "Maximum number of documents reached");
+        }
+
         const type =
             lease.property.landlordId === req.session.userId
                 ? documentType.LANDLORD

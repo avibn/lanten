@@ -51,6 +51,7 @@ router.get(
 router.post(
     "/:id/maintenance/requests",
     requiresAuth,
+    upload.any(),
     MaintenanceController.createRequest
 );
 

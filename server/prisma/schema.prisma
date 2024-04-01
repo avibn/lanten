@@ -167,6 +167,19 @@ model MaintenanceRequest {
   updatedAt     DateTime                 @updatedAt
   lease         Lease                    @relation(fields: [leaseId], references: [id])
   leaseId       String
+  images        MaintenanceImage[]
+}
+
+model MaintenanceImage {
+  id                   String             @id @default(uuid())
+  url                  String
+  fileName             String?
+  fileType             String?
+  isDeleted            Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  maintenanceRequest   MaintenanceRequest @relation(fields: [maintenanceRequestId], references: [id])
+  maintenanceRequestId String
 }
 
 model RequestType {
@@ -193,6 +206,6 @@ model Document {
   updatedAt DateTime     @updatedAt
   author    User         @relation(fields: [authorId], references: [id])
   authorId  String
-  lease     Lease       @relation(fields: [leaseId], references: [id])
+  lease     Lease        @relation(fields: [leaseId], references: [id])
   leaseId   String
 }
