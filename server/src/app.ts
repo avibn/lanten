@@ -9,6 +9,7 @@ import { errorHandler } from "./configs/errorHandler";
 import express from "express";
 import leasesRouter from "./routes/leases";
 import maintenanceRouter from "./routes/maintenance";
+import messagesRouter from "./routes/messages";
 import morgan from "morgan";
 import paymentsRouter from "./routes/payments";
 import propertiesRouter from "./routes/properties";
@@ -40,6 +41,7 @@ app.use("/payments", paymentsRouter);
 app.use("/maintenance", maintenanceRouter);
 app.use("/reminders", remindersRouter);
 app.use("/documents", documentRouter);
+app.use("/messages", messagesRouter);
 
 // Error handling
 app.use((req, res, next) => {

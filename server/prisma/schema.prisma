@@ -17,17 +17,19 @@ enum userType {
 }
 
 model User {
-  id         String        @id @default(uuid())
-  email      String        @unique
-  name       String?
-  password   String
-  userType   userType      @default(TENANT)
-  isActive   Boolean       @default(true)
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
-  properties Property[]
-  leases     LeaseTenant[]
-  documents  Document[]
+  id               String        @id @default(uuid())
+  email            String        @unique
+  name             String?
+  password         String
+  userType         userType      @default(TENANT)
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  properties       Property[]
+  leases           LeaseTenant[]
+  documents        Document[]
+  messagesSent     Message[]     @relation("Author")
+  messagesReceived Message[]     @relation("Recipient")
 }
 
 model Property {
@@ -208,4 +210,16 @@ model Document {
   authorId  String
   lease     Lease        @relation(fields: [leaseId], references: [id])
   leaseId   String
+}
+
+model Message {
+  id          String   @id @default(uuid())
+  message     String
+  isDeleted   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  author      User     @relation(name: "Author", fields: [authorId], references: [id])
+  authorId    String
+  recipient   User     @relation(name: "Recipient", fields: [recipientId], references: [id])
+  recipientId String
 }
