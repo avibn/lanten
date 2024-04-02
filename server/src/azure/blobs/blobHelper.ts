@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 const blobServiceClient = BlobServiceClient.fromConnectionString(
     env.AZURE_STORAGE_CONNECTION_STRING
 );
+const maxBlobSize = 20 * 1024 * 1024; // 20 MB
 
 export interface UploadFileResponse {
     url: string;
@@ -18,8 +19,15 @@ export async function uploadFile(
     containerName: string,
     fileBuffer: Buffer,
     originalFileName: string | undefined,
-    mimeType: string
+    mimeType: string,
+    maxFileSize: number = maxBlobSize
 ): Promise<UploadFileResponse> {
+    // Check if the file size is within the limit
+    if (fileBuffer.length > maxFileSize) {
+        throw new Error("File size exceeds the limit");
+    }
+
+    // Create blob instance
     const uniqueFileName = originalFileName
         ? `${uuidv4()}/${originalFileName}`
         : uuidv4();

@@ -147,6 +147,13 @@ export const addDocument: RequestHandler = async (req, res, next) => {
             }
         }
 
+        if (failedFiles.length > 0) {
+            throw createHttpError(
+                400,
+                `Failed to upload file. Make sure correct file type and size is uploaded.`
+            );
+        }
+
         res.status(200).json({
             uploadedFiles,
             failedFiles,
