@@ -163,6 +163,65 @@ export const getMessages: RequestHandler = async (req, res, next) => {
     }
 };
 
+export const getAllMessagedUsers: RequestHandler = async (req, res, next) => {
+    try {
+        assertIsDefined(req.session.userId);
+
+        // Get all the messages that the user has sent or received
+        const messages = await prisma.message.findMany({
+            where: {
+                OR: [
+                    {
+                        authorId: req.session.userId,
+                    },
+                    {
+                        recipientId: req.session.userId,
+                    },
+                ],
+                isDeleted: false,
+            },
+            select: {
+                authorId: true,
+                recipientId: true,
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+        });
+
+        const userIds = new Set<string>();
+
+        // Add all the ids to the set
+        for (const message of messages) {
+            if (message.authorId !== req.session.userId) {
+                userIds.add(message.authorId);
+            }
+
+            if (message.recipientId !== req.session.userId) {
+                userIds.add(message.recipientId);
+            }
+        }
+
+        // Get the users from the ids
+        const users = await prisma.user.findMany({
+            where: {
+                id: {
+                    in: Array.from(userIds),
+                },
+            },
+            select: {
+                id: true,
+                email: true,
+                name: true,
+            },
+        });
+
+        res.status(200).json(users);
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const deleteMessage: RequestHandler = async (req, res, next) => {
     try {
         assertIsDefined(req.session.userId);
