@@ -12,11 +12,13 @@ import {
 } from "@/network/server/payments";
 
 import CardError from "@/components/card-error";
+import { DeleteAnnouncementClient } from "../(announcements)/delete-announcement-client";
 import { Error } from "@/models/error";
 import { Lease } from "@/models/lease";
 import { Payment } from "@/models/payment";
 import { PaymentFormDialog } from "./payment-form-dialog";
 import { PaymentFormValues } from "@/schemas/payment";
+import { RemindersDialog } from "./reminders-dialog";
 import { TextIconButton } from "@/components/buttons/text-icon-button";
 import { WithAuthorized } from "@/providers/with-authorized";
 import { formatTimeToDateString } from "@/utils/format-time";
@@ -98,8 +100,8 @@ export default async function PaymentsCard({ lease }: PaymentsCardProps) {
                                     </TooltipProvider>
                                 )}
                             </div>
-                            <div className="flex items-center gap-3">
-                                <p className="text-gray-600 text-sm">
+                            <div className="flex items-center gap-4">
+                                <p className="text-gray-600 text-sm font-semibold">
                                     £{payment.amount.toFixed(2)}
                                 </p>
                                 <p className="text-gray-600 text-sm">
@@ -108,16 +110,25 @@ export default async function PaymentsCard({ lease }: PaymentsCardProps) {
                                     )}
                                 </p>
                                 <WithAuthorized role="LANDLORD">
-                                    <PaymentFormDialog
-                                        paymentToEdit={payment}
-                                        handleFormSubmit={async (data) => {
-                                            "use server";
-                                            return handleEditPayment(
-                                                payment.id,
-                                                data
-                                            );
-                                        }}
-                                    />
+                                    <div className="flex items-center">
+                                        <RemindersDialog
+                                            payment={payment}
+                                            reminders={payment.reminders || []}
+                                        />
+                                        <PaymentFormDialog
+                                            paymentToEdit={payment}
+                                            handleFormSubmit={async (data) => {
+                                                "use server";
+                                                return handleEditPayment(
+                                                    payment.id,
+                                                    data
+                                                );
+                                            }}
+                                        />
+                                        <DeleteAnnouncementClient
+                                            announcementID={payment.id}
+                                        />
+                                    </div>
                                 </WithAuthorized>
                             </div>
                         </div>

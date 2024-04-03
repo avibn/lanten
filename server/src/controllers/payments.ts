@@ -292,6 +292,13 @@ export const deletePayment: RequestHandler = async (req, res, next) => {
             },
         });
 
+        // Delete reminders of the payment
+        await prisma.reminder.deleteMany({
+            where: {
+                paymentId: id,
+            },
+        });
+
         res.status(204).send();
     } catch (error) {
         console.log(error);

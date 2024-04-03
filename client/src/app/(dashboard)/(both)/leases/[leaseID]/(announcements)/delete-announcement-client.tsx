@@ -1,7 +1,6 @@
 "use client";
 
 import { DeleteIconButton } from "@/components/buttons/delete-icon-button";
-import { revalidateTag } from "next/cache";
 import { toast } from "sonner";
 import { useDeleteAnnouncementMutation } from "@/network/client/announcements";
 import { useRouter } from "next/navigation";
