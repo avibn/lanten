@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sheet";
 import { addReminder, deleteReminder } from "@/network/server/reminders";
 
+import { BadRequestError } from "@/network/errors/httpErrors";
 import { Bell } from "lucide-react";
 import { DeleteReminderClient } from "./delete-reminder-client";
 import { IconButton } from "@/components/buttons/icon-button";
@@ -36,6 +37,11 @@ export function RemindersDialog({ payment, reminders }: RemindersDialogProps) {
             revalidateTag("LeasePayments");
             return response;
         } catch (error) {
+            if (error instanceof BadRequestError) {
+                return {
+                    error: "Reminder already exists. Please try another.",
+                };
+            }
             return { error: "Something went wrong!" };
         }
     };

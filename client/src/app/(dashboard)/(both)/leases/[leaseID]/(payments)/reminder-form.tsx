@@ -32,7 +32,7 @@ export function ReminderForm({
         const response = await handleFormSubmit(data);
         // check if response has error
         if ("error" in response) {
-            toast.error("Something went wrong. Please try again later.");
+            toast.error(response.error);
         }
         setLoading(false);
     };

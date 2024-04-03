@@ -42,6 +42,21 @@ export const createReminder: RequestHandler = async (req, res, next) => {
             );
         }
 
+        // Check if reminder with same daysBefore already exists
+        const existingReminder = await prisma.reminder.findFirst({
+            where: {
+                daysBefore,
+                paymentId,
+            },
+        });
+
+        if (existingReminder) {
+            throw createHttpError(
+                400,
+                "A reminder with the same daysBefore already exists"
+            );
+        }
+
         // Create reminder
         const reminder = await prisma.reminder.create({
             data: {
