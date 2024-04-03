@@ -1,13 +1,13 @@
-import AnnouncementsCard from "./announcements-card";
+import AnnouncementsCard from "./(announcements)/announcements-card";
 import CardLoadingSkeleton from "@/components/card-loading-skeleton";
-import DocumentsCard from "./documents-card";
+import DocumentsCard from "./(documents)/documents-card";
 import { Lease } from "@/models/lease";
-import LeaseDetailsCard from "./lease-details-card";
-import LeaseInfoCard from "./lease-info-card";
-import MaintenanceCard from "./maintenance-card";
+import LeaseDetailsCard from "./(details)/lease-details-card";
+import LeaseInfoCard from "./(info)/lease-info-card";
+import MaintenanceCard from "./(maintenance)/maintenance-card";
 import PaymentsCard from "./(payments)/payments-card";
 import { Suspense } from "react";
-import TenantsCard from "./tenants-card";
+import TenantsCard from "./(tenants)/tenants-card";
 import { User } from "@/models/user";
 
 interface LandlordPageProps {
