@@ -4,7 +4,7 @@ import { Lease } from "@/models/lease";
 import LeaseDetailsCard from "./lease-details-card";
 import LeaseInfoCard from "./lease-info-card";
 import MaintenanceCard from "./maintenance-card";
-import PaymentsCard from "./payments-card";
+import PaymentsCard from "./(payments)/payments-card";
 import { User } from "@/models/user";
 
 interface TenantPageProps {

@@ -5,7 +5,7 @@ import { Lease } from "@/models/lease";
 import LeaseDetailsCard from "./lease-details-card";
 import LeaseInfoCard from "./lease-info-card";
 import MaintenanceCard from "./maintenance-card";
-import PaymentsCard from "./payments-card";
+import PaymentsCard from "./(payments)/payments-card";
 import { Suspense } from "react";
 import TenantsCard from "./tenants-card";
 import { User } from "@/models/user";
@@ -30,7 +30,13 @@ export function LandlordPage({ user, lease }: LandlordPageProps) {
                 >
                     <TenantsCard lease={lease} />
                 </Suspense>
-                <PaymentsCard lease={lease} />
+                <Suspense
+                    fallback={
+                        <CardLoadingSkeleton loadingText="Loading payments" />
+                    }
+                >
+                    <PaymentsCard lease={lease} />
+                </Suspense>
             </div>
             <div className="flex flex-col xl:flex-row gap-4 w-full">
                 <Suspense

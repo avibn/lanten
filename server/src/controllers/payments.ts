@@ -8,7 +8,7 @@ import { z } from "zod";
 
 const CreatePaymentBody = z.object({
     amount: CurrencySchema,
-    name: z.string().min(1).max(255),
+    name: z.string().min(1).max(25),
     description: z.string().max(255).optional(),
     type: z.enum(["RENT", "DEPOSIT", "UTILITIES", "OTHER"]).optional(),
     paymentDate: z.string().datetime({ message: "Invalid date format" }),
@@ -127,6 +127,7 @@ export const getPayments: RequestHandler = async (req, res, next) => {
         const payments = await prisma.payment.findMany({
             where: {
                 leaseId,
+                isDeleted: false,
             },
             include: {
                 reminders: true,

@@ -1,9 +1,11 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAllLeaseTenants, getLeaseInvites } from "@/network/server/tenants";
 
+import CardError from "@/components/card-error";
 import { Invite } from "@/models/invite";
 import { InviteDialog } from "./invite-dialog";
 import { Lease } from "@/models/lease";
+import { LeaseTenant } from "@/models/lease-tenant";
 import TenantList from "./tenant-list";
 
 interface CardTenantsProps {
@@ -11,8 +13,13 @@ interface CardTenantsProps {
 }
 
 export default async function TenantsCard({ lease }: CardTenantsProps) {
-    const tenants = await getAllLeaseTenants(lease.id);
-    // todo :: catch error
+    let tenants: LeaseTenant[] = [];
+    try {
+        tenants = await getAllLeaseTenants(lease.id);
+    } catch (error) {
+        console.error("Error fetching lease tenants", error);
+        return <CardError message="Tenants could not be loaded." />;
+    }
 
     const getCurrentInvites = async (): Promise<Invite[]> => {
         "use server";
