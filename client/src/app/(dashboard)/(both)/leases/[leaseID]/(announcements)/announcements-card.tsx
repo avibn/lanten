@@ -102,7 +102,7 @@ export default async function AnnouncementsCard({
                                 </div>
                             </WithAuthorized>
                         </div>
-                        <p className="text-wrap break-words text-gray-600 max-w-lg">
+                        <p className="text-wrap break-words text-gray-600 max-w-[300px]">
                             {announcement.message}
                         </p>
                         <p className="text-sm text-gray-500">

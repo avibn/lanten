@@ -122,9 +122,16 @@ export const createRequest: RequestHandler = async (req, res, next) => {
     }
 };
 
+const GetRequestTypesQuery = z
+    .object({
+        max: z.coerce.number().min(1).max(100).optional(),
+    })
+    .partial();
+
 export const getRequests: RequestHandler = async (req, res, next) => {
     try {
         const { id: leaseId } = req.params;
+        const { max } = GetRequestTypesQuery.parse(req.query);
 
         // Check if lease exists
         const lease = await prisma.lease.findUnique({
@@ -168,6 +175,10 @@ export const getRequests: RequestHandler = async (req, res, next) => {
                     },
                 },
                 images: true,
+            },
+            take: max,
+            orderBy: {
+                createdAt: "desc",
             },
         });
 
