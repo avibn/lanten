@@ -1,10 +1,12 @@
 "use client";
 
+import { File, Link } from "lucide-react";
+
 import { Document as Doc } from "@/models/document";
-import { File } from "lucide-react";
+import { DocumentDialog } from "./document-dialog";
+import { IconButton } from "@/components/buttons/icon-button";
 import LoadingSpinner from "@/components/loading-spinner";
 import { formatTimeToDateString } from "@/utils/format-time";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface DocumentContainerProps {
@@ -14,7 +16,6 @@ interface DocumentContainerProps {
 export default function DocumentContainer({
     document,
 }: DocumentContainerProps) {
-    const router = useRouter();
     const [loading, setLoading] = useState(false);
 
     const handleClick = async () => {
@@ -33,21 +34,51 @@ export default function DocumentContainer({
     };
 
     return (
-        <div
-            key={document.id}
-            className={
-                "flex flex-row gap-1 items-center justify-between w-full border rounded p-2 text-sm " +
-                "cursor-pointer hover:bg-gray-100 transition-colors ease-in-out duration-200 " +
-                (loading ? "cursor-not-allowed opacity-50" : "")
-            }
-            onClick={handleClick}
-        >
-            <File size={18} className={fileMimeToColor[document.fileType]} />
-            <p className="truncate w-1/2 max-w-[200px]">{document.name}</p>
-            <p className="text-gray-600 text-sm">
-                {formatTimeToDateString(document.createdAt)}
-            </p>
-            {loading && <LoadingSpinner size={4} textOff className="ml-2" />}
-        </div>
+        <DocumentDialog loading={loading} document={document}>
+            <div
+                key={document.id}
+                className={
+                    "flex flex-row gap-1 items-center justify-between w-full border rounded p-2 text-sm " +
+                    "cursor-pointer hover:bg-gray-50 transition-colors ease-in-out duration-200 " +
+                    (loading ? "!cursor-not-allowed opacity-50" : "")
+                }
+                // onClick={handleClick}
+            >
+                <File
+                    size={18}
+                    className={fileMimeToColor[document.fileType]}
+                />
+                <p className="truncate w-1/2 max-w-[200px]">{document.name}</p>
+                <p className="text-gray-600 text-sm">
+                    {formatTimeToDateString(document.createdAt)}
+                </p>
+                <a
+                    target="_blank"
+                    href={`/documents/${document.id}`}
+                    rel="noreferrer noopener"
+                    className="z-50"
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    <IconButton
+                        icon={
+                            <>
+                                {loading ? (
+                                    // Center this
+                                    <LoadingSpinner
+                                        size={4}
+                                        textOff
+                                        className="ml-2"
+                                    />
+                                ) : (
+                                    <Link size={14} />
+                                )}
+                            </>
+                        }
+                        variant="outline"
+                        isDisabled={loading}
+                    />
+                </a>
+            </div>
+        </DocumentDialog>
     );
 }

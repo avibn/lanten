@@ -31,3 +31,16 @@ export const useUploadDocumentMutation = (leaseId: string) => {
         mutationFn: (data: UpdateDocumentData) => uploadDocument(leaseId, data),
     });
 };
+
+async function deleteDocument(documentId: string): Promise<void> {
+    await fetchData(`/documents/${documentId}`, {
+        method: "DELETE",
+        credentials: "include",
+    });
+}
+
+export const useDeleteDocumentMutation = () => {
+    return useMutation({
+        mutationFn: (documentId: string) => deleteDocument(documentId),
+    });
+};
