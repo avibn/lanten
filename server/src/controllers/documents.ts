@@ -210,6 +210,15 @@ export const getDocuments: RequestHandler = async (req, res, next) => {
                 leaseId,
                 isDeleted: false,
             },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                    },
+                },
+            },
         });
 
         const landlordDocs = documents.filter(

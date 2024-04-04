@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 export interface Document {
     id: string;
     name: string;
@@ -7,6 +9,7 @@ export interface Document {
     type: "LANDLORD" | "TENANT";
     createdAt: string;
     updatedAt: string;
+    author?: Partial<User>;
 }
 
 export interface DocumentsList {

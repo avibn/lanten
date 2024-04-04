@@ -4,10 +4,15 @@ import { statusCodeErrorMap } from "../errors/httpErrors";
  * Fetches data from the server.
  * @param input - The URL to fetch.
  * @param init - The optional RequestInit object for additional configuration.
+ * @param json - Whether to add content-type header as application/json.
  * @returns A Promise that resolves to the Response object representing the fetched data.
  * @throws Error if the base URL is not set, if fetching data fails, or if an HTTP error occurs.
  */
-export async function fetchData(input: RequestInfo, init: RequestInit = {}) {
+export async function fetchData(
+    input: RequestInfo,
+    init: RequestInit = {},
+    json = true
+) {
     const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
     if (!baseURL) {
@@ -18,7 +23,7 @@ export async function fetchData(input: RequestInfo, init: RequestInit = {}) {
     if (init.body) {
         init.headers = {
             ...init.headers,
-            "Content-Type": "application/json",
+            ...(json && { "Content-Type": "application/json" }),
         };
     }
 

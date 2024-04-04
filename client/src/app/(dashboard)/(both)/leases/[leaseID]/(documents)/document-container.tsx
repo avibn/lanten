@@ -24,6 +24,7 @@ export default function DocumentContainer({
         setLoading(false);
     };
 
+    // Map file mime type to tailwind color
     const fileMimeToColor: { [key: string]: string } = {
         "application/pdf": "text-red-500",
         "application/msword": "text-blue-500",
@@ -43,7 +44,7 @@ export default function DocumentContainer({
         >
             <File size={18} className={fileMimeToColor[document.fileType]} />
             <p className="truncate w-1/2 max-w-[200px]">{document.name}</p>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm">
                 {formatTimeToDateString(document.createdAt)}
             </p>
             {loading && <LoadingSpinner size={4} textOff className="ml-2" />}
