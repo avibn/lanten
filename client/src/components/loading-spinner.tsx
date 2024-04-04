@@ -1,11 +1,27 @@
-export default function LoadingSpinner() {
+import { cn } from "@/utils/tw-merge";
+
+interface LoadingSpinnerProps {
+    size?: number;
+    loadingText?: string;
+    textOff?: boolean;
+    className?: string;
+}
+
+export default function LoadingSpinner({
+    size = 8,
+    loadingText = "Loading...",
+    textOff = false,
+    className,
+}: LoadingSpinnerProps) {
     return (
-        <div className="flex justify-center items-center gap-4">
+        <div
+            className={cn(className, "flex justify-center items-center gap-4")}
+        >
             {/* https://flowbite.com/docs/components/spinner/ */}
             <div role="status">
                 <svg
                     aria-hidden="true"
-                    className="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-gray-300"
+                    className={`inline w-${size} h-${size} mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-gray-300`}
                     viewBox="0 0 100 101"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -19,9 +35,9 @@ export default function LoadingSpinner() {
                         fill="currentFill"
                     />
                 </svg>
-                <span className="sr-only">Loading...</span>
+                <span className="sr-only">{loadingText}</span>
             </div>
-            <p>Loading...</p>
+            {!textOff && <p>{loadingText}</p>}
         </div>
     );
 }

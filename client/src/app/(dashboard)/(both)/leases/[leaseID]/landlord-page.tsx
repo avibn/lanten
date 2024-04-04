@@ -46,8 +46,20 @@ export function LandlordPage({ user, lease }: LandlordPageProps) {
                 >
                     <AnnouncementsCard lease={lease} />
                 </Suspense>
-                <MaintenanceCard lease={lease} />
-                <DocumentsCard lease={lease} />
+                <Suspense
+                    fallback={
+                        <CardLoadingSkeleton loadingText="Loading maintenance" />
+                    }
+                >
+                    <MaintenanceCard lease={lease} />
+                </Suspense>
+                <Suspense
+                    fallback={
+                        <CardLoadingSkeleton loadingText="Loading documents" />
+                    }
+                >
+                    <DocumentsCard lease={lease} />
+                </Suspense>
             </div>
         </>
     );
