@@ -1,7 +1,9 @@
 "use client";
 
 import { Document as Doc } from "@/models/document";
+import { File } from "lucide-react";
 import LoadingSpinner from "@/components/loading-spinner";
+import { formatTimeToDateString } from "@/utils/format-time";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -22,6 +24,13 @@ export default function DocumentContainer({
         setLoading(false);
     };
 
+    const fileMimeToColor: { [key: string]: string } = {
+        "application/pdf": "text-red-500",
+        "application/msword": "text-blue-500",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+            "text-blue-500",
+    };
+
     return (
         <div
             key={document.id}
@@ -32,10 +41,11 @@ export default function DocumentContainer({
             }
             onClick={handleClick}
         >
-            <p className="truncate w-1/2 max-w-[200px] text-gray-600">
-                {document.name}
+            <File size={18} className={fileMimeToColor[document.fileType]} />
+            <p className="truncate w-1/2 max-w-[200px]">{document.name}</p>
+            <p className="text-gray-600">
+                {formatTimeToDateString(document.createdAt)}
             </p>
-            <p>{document.fileType}</p>
             {loading && <LoadingSpinner size={4} textOff className="ml-2" />}
         </div>
     );
