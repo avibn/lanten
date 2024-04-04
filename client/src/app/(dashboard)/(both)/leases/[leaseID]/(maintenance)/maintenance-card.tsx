@@ -7,6 +7,7 @@ import {
 
 import CardError from "@/components/card-error";
 import { Lease } from "@/models/lease";
+import { MaintenanceDialog } from "./maintenance-dialog";
 import { formatTimeToDateString } from "@/utils/format-time";
 import { getMaintenanceRequests } from "@/network/server/maintenance";
 
@@ -32,30 +33,35 @@ export default async function MaintenanceCard({ lease }: MaintenanceCardProps) {
                 </CardTitle>
                 <p className="text-gray-500">Latest requests:</p>
                 {maintenanceRequests.map((request) => (
-                    <div
+                    <MaintenanceDialog
                         key={request.id}
-                        className={
-                            "flex flex-col gap-2 justify-between items-center px-3 w-full border rounded p-2 text-sm " +
-                            "cursor-pointer hover:bg-gray-50 transition-colors ease-in-out duration-200 "
-                        }
+                        maintenanceRequest={request}
                     >
-                        <div className="flex flex-row gap-1 items-center justify-between w-full">
-                            <p>{request.requestType.name}</p>
-                            <p className="text-gray-600 text-sm">
-                                {formatTimeToDateString(request.createdAt)}
+                        <div
+                            className={
+                                "flex flex-col gap-2 justify-between items-center px-3 w-full border rounded p-2 text-sm " +
+                                "cursor-pointer hover:bg-gray-50 transition-colors ease-in-out duration-200 "
+                            }
+                        >
+                            <div className="flex flex-row gap-1 items-center justify-between w-full">
+                                <p>{request.requestType.name}</p>
+                                <p className="text-gray-600 text-sm">
+                                    {formatTimeToDateString(request.createdAt)}
+                                </p>
+                                <span
+                                    className={`${
+                                        STATUS_BACKGROUND_COLORS[request.status]
+                                    } px-1 py-1 rounded-full`}
+                                >
+                                    {STATUS_TEXT[request.status] ||
+                                        request.status}
+                                </span>
+                            </div>
+                            <p className="truncate w-full max-w-[200px]">
+                                {request.description}
                             </p>
-                            <span
-                                className={`${
-                                    STATUS_BACKGROUND_COLORS[request.status]
-                                } px-2 py-1 rounded-full`}
-                            >
-                                {STATUS_TEXT[request.status] || request.status}
-                            </span>
                         </div>
-                        <p className="truncate w-full max-w-[200px]">
-                            {request.description}
-                        </p>
-                    </div>
+                    </MaintenanceDialog>
                 ))}
             </CardHeader>
         </Card>

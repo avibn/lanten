@@ -93,7 +93,6 @@ export function DocumentDialog({
                         <p>File type</p>
                         <p>{document.fileType}</p>
                     </div>
-                    {/* Buttons in a row width full evenly */}
                     <div className="flex w-full justify-between gap-2 mt-6">
                         <a
                             target="_blank"

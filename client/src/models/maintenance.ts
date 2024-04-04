@@ -39,7 +39,7 @@ export const STATUS_BACKGROUND_COLORS: { [key: string]: string } = {
 };
 
 export const STATUS_TEXT: { [key: string]: string } = {
-    PENDING: "In-Progress",
+    PENDING: "Pending",
     IN_PROGRESS: "In Progress",
     RESOLVED: "Resolved",
     CANCELLED: "Cancelled",
