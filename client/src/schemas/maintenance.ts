@@ -8,7 +8,7 @@ export const maintenanceRequestSchema = z.object({
     description: z.string().min(20).max(500),
     files: z
         .array(z.instanceof(File))
-        .max(5)
+        .max(5, { message: "You can only upload up to 5 files" })
         .refine((files) => files.every((file) => file.size <= MAX_FILE_SIZE), {
             message: `File size should be less than ${
                 MAX_FILE_SIZE / 1024 / 1024
