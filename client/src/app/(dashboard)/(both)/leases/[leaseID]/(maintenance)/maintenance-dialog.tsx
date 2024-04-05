@@ -8,6 +8,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { FileImage, Trash2 } from "lucide-react";
 import {
     MaintenanceRequest,
     STATUS_BACKGROUND_COLORS,
@@ -20,11 +21,15 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { FileImage } from "lucide-react";
 import { IconButton } from "@/components/buttons/icon-button";
 import Image from "next/image";
+import { MainButton } from "@/components/buttons/main-button";
+import { WithAuthorized } from "@/providers/with-authorized";
 import { formatTime } from "@/utils/format-time";
+import { toast } from "sonner";
 import { useAuthStore } from "@/stores/use-auth-store";
+import { useDeleteMaintenanceRequestMutation } from "@/network/client/maintenance";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface MaintenanceDialogProps {
@@ -38,10 +43,28 @@ export function MaintenanceDialog({
 }: MaintenanceDialogProps) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const user = useAuthStore((state) => state.user);
+    const router = useRouter();
+    const deleteRequestMutation = useDeleteMaintenanceRequestMutation();
 
     const handleDelete = async () => {
-        // mutate(maintenanceRequest.id);
+        deleteRequestMutation.mutate(maintenanceRequest.id);
     };
+
+    if (deleteRequestMutation.isSuccess) {
+        toast.success("Maintenance request deleted successfully.");
+        setDialogOpen(false);
+        deleteRequestMutation.reset();
+
+        // Refresh the page
+        router.refresh();
+    }
+
+    if (deleteRequestMutation.isError) {
+        toast.error(
+            "Failed to delete maintenance request. Please try again later."
+        );
+        deleteRequestMutation.reset();
+    }
 
     const formatFileName = (fileName: string) => {
         return fileName.split("/").pop();
@@ -124,10 +147,31 @@ export function MaintenanceDialog({
                             {STATUS_TEXT[maintenanceRequest.status] ||
                                 maintenanceRequest.status}
                         </span>
+                        {maintenanceRequest.author && (
+                            <>
+                                <p className="font-semibold">Author:</p>
+                                <p>
+                                    {maintenanceRequest.author?.name} (
+                                    {maintenanceRequest.author?.email})
+                                </p>
+                            </>
+                        )}
                         <p className="font-semibold">Created:</p>
                         <p>{formatTime(maintenanceRequest.createdAt)}</p>
                         <p className="font-semibold">Last Updated:</p>
                         <p>{formatTime(maintenanceRequest.updatedAt)}</p>
+                    </div>
+                    <div className="flex w-full justify-between gap-2 mt-6">
+                        <WithAuthorized role="TENANT">
+                            <MainButton
+                                icon={<Trash2 size={18} />}
+                                text="Delete Document"
+                                variant="destructive"
+                                className="flex-grow"
+                                isLoading={deleteRequestMutation.isPending}
+                                onClick={handleDelete}
+                            />
+                        </WithAuthorized>
                     </div>
                 </div>
             </DialogContent>

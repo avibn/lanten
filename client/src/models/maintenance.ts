@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 export interface MaintenanceRequest {
     id: string;
     description: string;
@@ -7,6 +9,7 @@ export interface MaintenanceRequest {
     createdAt: string;
     updatedAt: string;
     images: MaintenanceImage[];
+    author?: Partial<User>;
 }
 
 export interface MaintenanceImage {

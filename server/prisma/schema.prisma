@@ -17,19 +17,20 @@ enum userType {
 }
 
 model User {
-  id               String        @id @default(uuid())
-  email            String        @unique
-  name             String?
-  password         String
-  userType         userType      @default(TENANT)
-  isActive         Boolean       @default(true)
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  properties       Property[]
-  leases           LeaseTenant[]
-  documents        Document[]
-  messagesSent     Message[]     @relation("Author")
-  messagesReceived Message[]     @relation("Recipient")
+  id                  String               @id @default(uuid())
+  email               String               @unique
+  name                String?
+  password            String
+  userType            userType             @default(TENANT)
+  isActive            Boolean              @default(true)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  properties          Property[]
+  leases              LeaseTenant[]
+  documents           Document[]
+  maintenanceRequests MaintenanceRequest[]
+  messagesSent        Message[]            @relation("Author")
+  messagesReceived    Message[]            @relation("Recipient")
 }
 
 model Property {
@@ -169,6 +170,8 @@ model MaintenanceRequest {
   updatedAt     DateTime                 @updatedAt
   lease         Lease                    @relation(fields: [leaseId], references: [id])
   leaseId       String
+  author        User                     @relation(fields: [authorId], references: [id])
+  authorId      String
   images        MaintenanceImage[]
 }
 

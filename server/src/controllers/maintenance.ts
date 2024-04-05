@@ -1,7 +1,12 @@
+import {
+    deleteMaintenanceDocFromBlob,
+    uploadMaintenanceDocToBlob,
+} from "../azure/blobs/maintenance";
+
 import { RequestHandler } from "express";
+import assertIsDefined from "../utils/assertIsDefined";
 import createHttpError from "http-errors";
 import prisma from "../utils/prismaClient";
-import { uploadMaintenanceDocToBlob } from "../azure/blobs/maintenance";
 import { z } from "zod";
 
 // Form data schema
@@ -23,6 +28,8 @@ const CreateRequestBody = z.object({
 
 export const createRequest: RequestHandler = async (req, res, next) => {
     try {
+        assertIsDefined(req.session.userId);
+
         const { requestTypeId, description } = CreateRequestBody.parse(
             req.body
         );
@@ -80,6 +87,7 @@ export const createRequest: RequestHandler = async (req, res, next) => {
                 leaseId,
                 requestTypeId,
                 description,
+                authorId: req.session.userId,
             },
         });
 
@@ -167,6 +175,7 @@ export const getRequests: RequestHandler = async (req, res, next) => {
         const requests = await prisma.maintenanceRequest.findMany({
             where: {
                 leaseId,
+                isDeleted: false,
             },
             include: {
                 requestType: {
@@ -175,6 +184,12 @@ export const getRequests: RequestHandler = async (req, res, next) => {
                     },
                 },
                 images: true,
+                author: {
+                    select: {
+                        name: true,
+                        email: true,
+                    },
+                },
             },
             take: max,
             orderBy: {
@@ -230,6 +245,12 @@ export const getRequest: RequestHandler = async (req, res, next) => {
                     },
                 },
                 images: true,
+                author: {
+                    select: {
+                        name: true,
+                        email: true,
+                    },
+                },
             },
         });
 
@@ -386,13 +407,41 @@ export const deleteRequest: RequestHandler = async (req, res, next) => {
             throw createHttpError(404, "Specified request not found");
         }
 
-        // Check if user is landlord
-        if (request.lease.property.landlordId !== req.session.userId) {
+        // Check if user is landlord or author
+        if (
+            request.lease.property.landlordId !== req.session.userId &&
+            request.authorId !== req.session.userId
+        ) {
             throw createHttpError(
                 403,
-                "Only landlords can delete maintenance requests"
+                "You are not the landlord or author of this request"
             );
         }
+
+        // Delete the maintenance images
+        const images = await prisma.maintenanceImage.findMany({
+            where: {
+                maintenanceRequestId: id,
+            },
+        });
+
+        // Delete images from blob storage
+        for (const image of images) {
+            if (image.fileName) {
+                await deleteMaintenanceDocFromBlob(image.fileName);
+            }
+        }
+
+        // Set images as deleted
+        await prisma.maintenanceImage.updateMany({
+            where: {
+                maintenanceRequestId: id,
+                isDeleted: false,
+            },
+            data: {
+                isDeleted: true,
+            },
+        });
 
         await prisma.maintenanceRequest.update({
             where: {
