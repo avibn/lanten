@@ -22,6 +22,7 @@ interface DeleteIconButtonProps {
     isLoading?: boolean;
     onConfirm: () => void;
     className?: string;
+    children?: React.ReactNode;
 }
 
 export function DeleteIconButton(props: DeleteIconButtonProps) {
@@ -31,18 +32,22 @@ export function DeleteIconButton(props: DeleteIconButtonProps) {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button
-                    size="icon"
-                    variant="ghost"
-                    className={cn(
-                        "h-6 w-6 hover:bg-transparent hover:opacity-70 align-middle ml-2",
-                        className
-                    )}
-                    disabled={isLoading}
-                >
-                    {/* <X size={18} className="text-red-500" /> */}
-                    <Trash2 size={18} className="text-red-500" />
-                </Button>
+                {!props.children ? (
+                    <Button
+                        size="icon"
+                        variant="ghost"
+                        className={cn(
+                            "h-6 w-6 hover:bg-transparent hover:opacity-70 align-middle ml-2",
+                            className
+                        )}
+                        disabled={isLoading}
+                    >
+                        {/* <X size={18} className="text-red-500" /> */}
+                        <Trash2 size={18} className="text-red-500" />
+                    </Button>
+                ) : (
+                    props.children
+                )}
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>

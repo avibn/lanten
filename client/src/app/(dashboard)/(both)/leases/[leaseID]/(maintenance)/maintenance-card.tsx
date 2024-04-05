@@ -2,8 +2,6 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     MaintenanceRequest,
     MaintenanceRequestType,
-    STATUS_BACKGROUND_COLORS,
-    STATUS_TEXT,
 } from "@/models/maintenance";
 import {
     getMaintenanceRequestTypes,
@@ -15,6 +13,7 @@ import { Error } from "@/models/error";
 import { Lease } from "@/models/lease";
 import { MaintenanceDialog } from "./maintenance-dialog";
 import { MaintenanceFormDialog } from "./maintenance-form-dialog";
+import { RequestBadge } from "./request-badge";
 import { WithAuthorized } from "@/providers/with-authorized";
 import { formatTimeToDateString } from "@/utils/format-time";
 
@@ -77,14 +76,7 @@ export default async function MaintenanceCard({ lease }: MaintenanceCardProps) {
                                 <p className="text-gray-600 text-sm">
                                     {formatTimeToDateString(request.createdAt)}
                                 </p>
-                                <span
-                                    className={`${
-                                        STATUS_BACKGROUND_COLORS[request.status]
-                                    } px-1 py-1 rounded-full`}
-                                >
-                                    {STATUS_TEXT[request.status] ||
-                                        request.status}
-                                </span>
+                                <RequestBadge status={request.status} />
                             </div>
                             <p className="truncate w-full max-w-[200px]">
                                 {request.description}

@@ -8,12 +8,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { Edit2, FileImage, Save, Trash2 } from "lucide-react";
-import {
-    MaintenanceRequest,
-    STATUS_BACKGROUND_COLORS,
-    STATUS_TEXT,
-} from "@/models/maintenance";
+import { Edit2, FileImage, Save } from "lucide-react";
 import {
     MaintenanceRequestUpdateFormValues,
     maintenanceRequestUpdateSchema,
@@ -24,17 +19,17 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-    useDeleteMaintenanceRequestMutation,
-    useUpdateMaintenanceRequestMutation,
-} from "@/network/client/maintenance";
 import { useEffect, useState } from "react";
 
+import { DeleteRequestDialog } from "./delete-request-dialog";
 import { Form } from "@/components/ui/form";
 import { FormTextAreaField } from "@/components/forms/fields/form-text-area-field";
 import { IconButton } from "@/components/buttons/icon-button";
 import Image from "next/image";
 import { MainButton } from "@/components/buttons/main-button";
+import { MaintenanceRequest } from "@/models/maintenance";
+import { MaintenanceStatusBox } from "./maintenance-status-box";
+import { RequestBadge } from "./request-badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { WithAuthorized } from "@/providers/with-authorized";
 import { formatTime } from "@/utils/format-time";
@@ -42,6 +37,7 @@ import { toast } from "sonner";
 import { useAuthStore } from "@/stores/use-auth-store";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { useUpdateMaintenanceRequestMutation } from "@/network/client/maintenance";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface MaintenanceDialogProps {
@@ -57,7 +53,6 @@ export function MaintenanceDialog({
     const [isUpdateView, setIsUpdateView] = useState(false);
     const user = useAuthStore((state) => state.user);
     const router = useRouter();
-    const deleteRequestMutation = useDeleteMaintenanceRequestMutation();
     const updateRequestMutation = useUpdateMaintenanceRequestMutation(
         maintenanceRequest.id
     );
@@ -78,27 +73,6 @@ export function MaintenanceDialog({
     const handleUpdate = async (data: MaintenanceRequestUpdateFormValues) => {
         updateRequestMutation.mutate(data);
     };
-
-    const handleDelete = async () => {
-        deleteRequestMutation.mutate(maintenanceRequest.id);
-    };
-
-    // Deletion event handlers
-    if (deleteRequestMutation.isSuccess) {
-        toast.success("Maintenance request deleted successfully.");
-        setDialogOpen(false);
-        deleteRequestMutation.reset();
-
-        // Refresh the page
-        router.refresh();
-    }
-
-    if (deleteRequestMutation.isError) {
-        toast.error(
-            "Failed to delete maintenance request. Please try again later."
-        );
-        deleteRequestMutation.reset();
-    }
 
     // Updatation event handlers
     if (updateRequestMutation.isSuccess) {
@@ -210,16 +184,20 @@ export function MaintenanceDialog({
                         <p className="font-semibold">Request Type:</p>
                         <p>{maintenanceRequest.requestType.name}</p>
                         <p className="font-semibold">Status:</p>
-                        <span
-                            className={`${
-                                STATUS_BACKGROUND_COLORS[
-                                    maintenanceRequest.status
-                                ]
-                            } px-4 py-1 rounded-full w-max`}
-                        >
-                            {STATUS_TEXT[maintenanceRequest.status] ||
-                                maintenanceRequest.status}
-                        </span>
+                        <WithAuthorized role="TENANT">
+                            <RequestBadge status={maintenanceRequest.status} />
+                        </WithAuthorized>
+                        <WithAuthorized role="LANDLORD">
+                            <div>
+                                <MaintenanceStatusBox
+                                    requestID={maintenanceRequest.id}
+                                    initialStatus={maintenanceRequest.status}
+                                />
+                                <p className="text-sm text-gray-500 mt-1">
+                                    Click to update.
+                                </p>
+                            </div>
+                        </WithAuthorized>
                         {maintenanceRequest.author && (
                             <>
                                 <p className="font-semibold">Author:</p>
@@ -255,15 +233,11 @@ export function MaintenanceDialog({
                                     className="flex-grow"
                                 />
                             )}
-                            <MainButton
-                                icon={<Trash2 size={18} />}
-                                text="Delete"
-                                variant="destructive"
-                                className="flex-grow"
-                                isLoading={deleteRequestMutation.isPending}
-                                onClick={handleDelete}
-                            />
                         </WithAuthorized>
+                        <DeleteRequestDialog
+                            requestID={maintenanceRequest.id}
+                            setDialogOpen={setDialogOpen}
+                        />
                     </div>
                 </div>
             </DialogContent>

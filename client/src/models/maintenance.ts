@@ -1,3 +1,12 @@
+import {
+    AlertCircle,
+    CheckCircle2,
+    CircleEllipsis,
+    Hammer,
+    LucideIcon,
+    XCircle,
+} from "lucide-react";
+
 import { User } from "./user";
 
 export interface MaintenanceRequest {
@@ -34,11 +43,11 @@ export interface MaintenanceRequestType {
 }
 
 export const STATUS_BACKGROUND_COLORS: { [key: string]: string } = {
-    PENDING: "bg-yellow-100",
-    IN_PROGRESS: "bg-blue-100",
-    RESOLVED: "bg-green-100",
-    CANCELLED: "bg-red-100",
-    REJECTED: "bg-red-100",
+    PENDING: "bg-yellow-50 hover:bg-yellow-100",
+    IN_PROGRESS: "bg-blue-50 hover:bg-blue-100",
+    RESOLVED: "bg-green-50 hover:bg-green-100",
+    CANCELLED: "bg-red-50 hover:bg-red-100",
+    REJECTED: "bg-red-50 hover:bg-red-100",
 };
 
 export const STATUS_TEXT: { [key: string]: string } = {
@@ -47,4 +56,12 @@ export const STATUS_TEXT: { [key: string]: string } = {
     RESOLVED: "Resolved",
     CANCELLED: "Cancelled",
     REJECTED: "Rejected",
+};
+
+export const STATUS_ICONS: { [key: string]: LucideIcon } = {
+    PENDING: CircleEllipsis,
+    IN_PROGRESS: Hammer,
+    RESOLVED: CheckCircle2,
+    CANCELLED: AlertCircle,
+    REJECTED: XCircle,
 };
