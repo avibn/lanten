@@ -41,13 +41,6 @@ export function LandlordPage({ user, lease }: LandlordPageProps) {
             <div className="flex flex-col xl:flex-row gap-4 w-full">
                 <Suspense
                     fallback={
-                        <CardLoadingSkeleton loadingText="Loading announcements" />
-                    }
-                >
-                    <AnnouncementsCard lease={lease} />
-                </Suspense>
-                <Suspense
-                    fallback={
                         <CardLoadingSkeleton loadingText="Loading maintenance" />
                     }
                 >
@@ -59,6 +52,15 @@ export function LandlordPage({ user, lease }: LandlordPageProps) {
                     }
                 >
                     <DocumentsCard lease={lease} />
+                </Suspense>
+            </div>
+            <div className="flex flex-col xl:flex-row gap-4 w-full">
+                <Suspense
+                    fallback={
+                        <CardLoadingSkeleton loadingText="Loading announcements" />
+                    }
+                >
+                    <AnnouncementsCard lease={lease} />
                 </Suspense>
             </div>
         </>

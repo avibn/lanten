@@ -58,6 +58,10 @@
     }
 }
 
+body {
+    @apply text-sm;
+}
+
 /* p {
     @apply text-base;
 } */
