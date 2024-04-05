@@ -55,16 +55,15 @@ export const useDeleteMaintenanceRequestMutation = () => {
 
 interface UpdateMaintenanceRequestData {
     description: string;
-    requestTypeId: string;
 }
 
 async function updateMaintenanceRequest(
     requestId: string,
-    { description, requestTypeId }: UpdateMaintenanceRequestData
+    { description }: UpdateMaintenanceRequestData
 ): Promise<MaintenanceRequest> {
     const response = await fetchData(`/maintenance/requests/${requestId}`, {
         method: "PUT",
-        body: JSON.stringify({ description, requestTypeId }),
+        body: JSON.stringify({ description }),
         credentials: "include",
     });
     return await response.json();

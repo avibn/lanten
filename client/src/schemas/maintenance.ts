@@ -24,7 +24,6 @@ export const maintenanceRequestSchema = z.object({
 });
 
 export const maintenanceRequestUpdateSchema = z.object({
-    requestTypeId: z.string(),
     description: z.string().min(20).max(500),
 });
 

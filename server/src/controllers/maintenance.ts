@@ -272,10 +272,14 @@ export const getRequest: RequestHandler = async (req, res, next) => {
     }
 };
 
+const UpdateRequestBody = z.object({
+    description: z.string().min(20).max(500),
+});
+
 export const updateRequest: RequestHandler = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { description } = CreateRequestBody.parse(req.body);
+        const { description } = UpdateRequestBody.parse(req.body);
 
         // Get
         const request = await prisma.maintenanceRequest.findUnique({
@@ -283,26 +287,18 @@ export const updateRequest: RequestHandler = async (req, res, next) => {
                 id,
                 isDeleted: false,
             },
-            include: {
-                lease: {
-                    include: {
-                        tenants: {
-                            where: {
-                                tenantId: req.session.userId,
-                            },
-                        },
-                    },
-                },
-            },
         });
 
         if (!request) {
             throw createHttpError(404, "Specified request not found");
         }
 
-        // Check if user is tenant
-        if (request.lease.tenants.length === 0) {
-            throw createHttpError(403, "You are not a tenant of this lease");
+        // Check if user is author
+        if (request.authorId !== req.session.userId) {
+            throw createHttpError(
+                403,
+                "You are not the author of this request"
+            );
         }
 
         // Update the request
@@ -317,6 +313,7 @@ export const updateRequest: RequestHandler = async (req, res, next) => {
 
         res.status(200).json(updatedRequest);
     } catch (error) {
+        console.log(error);
         next(error);
     }
 };
