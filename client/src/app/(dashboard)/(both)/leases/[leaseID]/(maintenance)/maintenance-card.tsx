@@ -7,7 +7,9 @@ import {
 
 import CardError from "@/components/card-error";
 import { Lease } from "@/models/lease";
+import { MainButton } from "@/components/buttons/main-button";
 import { MaintenanceDialog } from "./maintenance-dialog";
+import { WithAuthorized } from "@/providers/with-authorized";
 import { formatTimeToDateString } from "@/utils/format-time";
 import { getMaintenanceRequests } from "@/network/server/maintenance";
 
@@ -28,9 +30,14 @@ export default async function MaintenanceCard({ lease }: MaintenanceCardProps) {
     return (
         <Card className="flex-1">
             <CardHeader>
-                <CardTitle className="text-lg font-medium">
-                    Maintenance Requests
-                </CardTitle>
+                <div className="flex items-center justify-between w-full">
+                    <CardTitle className="text-lg font-medium">
+                        Maintenance Requests
+                    </CardTitle>
+                    <WithAuthorized role="TENANT">
+                        <MainButton text="Add Request" />
+                    </WithAuthorized>
+                </div>
                 <p className="text-gray-500">Latest requests:</p>
                 {maintenanceRequests.map((request) => (
                     <MaintenanceDialog

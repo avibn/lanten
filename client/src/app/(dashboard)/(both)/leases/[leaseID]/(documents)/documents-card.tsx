@@ -5,7 +5,6 @@ import CardError from "@/components/card-error";
 import DocumentContainer from "./document-container";
 import { DocumentUploadDialog } from "./document-upload-dialog";
 import { Lease } from "@/models/lease";
-import { WithAuthorized } from "@/providers/with-authorized";
 import { getDocuments } from "@/network/server/documents";
 
 interface DocumentsCardProps {
@@ -33,12 +32,10 @@ export default async function DocumentsCard({ lease }: DocumentsCardProps) {
                     <CardTitle className="text-lg font-medium">
                         Documents
                     </CardTitle>
-                    <WithAuthorized role="LANDLORD">
-                        <DocumentUploadDialog
-                            leaseID={lease.id}
-                            documents={allDocs}
-                        />
-                    </WithAuthorized>
+                    <DocumentUploadDialog
+                        leaseID={lease.id}
+                        documents={allDocs}
+                    />
                 </div>
                 <div className="flex flex-wrap gap-2">
                     <h2 className="text-base font-medium">

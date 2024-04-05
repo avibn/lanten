@@ -257,7 +257,22 @@ export const getDocument: RequestHandler = async (req, res, next) => {
             include: {
                 lease: {
                     include: {
-                        property: true,
+                        // Get the property of the lease
+                        property: {
+                            include: {
+                                leases: {
+                                    include: {
+                                        // Get the tenants of the lease
+                                        tenants: {
+                                            where: {
+                                                tenantId: req.session.userId,
+                                                isDeleted: false,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
                     },
                 },
             },
@@ -267,10 +282,16 @@ export const getDocument: RequestHandler = async (req, res, next) => {
             throw createHttpError(404, "Document not found");
         }
 
-        // Check if the user is the landlord or the author of the document
+        // Check if tenant from document.lease.property.leases
+        const isTenant = document.lease?.property.leases.some(
+            (lease) => lease.tenants.length > 0
+        );
+
+        // Check if the user is the landlord or the author of the document or a tenant
         if (
             document.authorId !== req.session.userId &&
-            document.lease?.property.landlordId !== req.session.userId
+            document.lease?.property.landlordId !== req.session.userId &&
+            !isTenant
         ) {
             throw createHttpError(
                 403,
