@@ -11,9 +11,9 @@ import {
 import CardError from "@/components/card-error";
 import { Error } from "@/models/error";
 import { Lease } from "@/models/lease";
-import { MaintenanceDialog } from "./maintenance-dialog";
-import { MaintenanceFormDialog } from "./maintenance-form-dialog";
-import { RequestBadge } from "./request-badge";
+import { MaintenanceDialog } from "@/components/segments/maintenance/maintenance-dialog";
+import { MaintenanceFormDialog } from "@/components/segments/maintenance/maintenance-form-dialog";
+import { RequestBadge } from "@/components/segments/maintenance/request-badge";
 import { WithAuthorized } from "@/providers/with-authorized";
 import { formatTimeToDateString } from "@/utils/format-time";
 

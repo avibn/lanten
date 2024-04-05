@@ -21,15 +21,15 @@ import {
 } from "@/components/ui/tooltip";
 import { useEffect, useState } from "react";
 
-import { DeleteRequestDialog } from "./delete-request-dialog";
+import { DeleteRequestDialog } from "@/components/segments/maintenance/delete-request-dialog";
 import { Form } from "@/components/ui/form";
 import { FormTextAreaField } from "@/components/forms/fields/form-text-area-field";
 import { IconButton } from "@/components/buttons/icon-button";
 import Image from "next/image";
 import { MainButton } from "@/components/buttons/main-button";
 import { MaintenanceRequest } from "@/models/maintenance";
-import { MaintenanceStatusBox } from "./maintenance-status-box";
-import { RequestBadge } from "./request-badge";
+import { MaintenanceStatusBox } from "@/components/segments/maintenance/maintenance-status-box";
+import { RequestBadge } from "@/components/segments/maintenance/request-badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { WithAuthorized } from "@/providers/with-authorized";
 import { formatTime } from "@/utils/format-time";
