@@ -188,6 +188,24 @@ export const getRequests: RequestHandler = async (req, res, next) => {
     }
 };
 
+export const getRequestTypes: RequestHandler = async (req, res, next) => {
+    try {
+        const { max } = GetRequestTypesQuery.parse(req.query);
+
+        const requestTypes = await prisma.requestType.findMany({
+            take: max,
+            select: {
+                id: true,
+                name: true,
+            },
+        });
+
+        res.status(200).json(requestTypes);
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const getRequest: RequestHandler = async (req, res, next) => {
     try {
         const { id } = req.params;

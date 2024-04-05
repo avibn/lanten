@@ -1,4 +1,8 @@
-import { MaintenanceRequest } from "@/models/maintenance";
+import {
+    MaintenanceRequest,
+    MaintenanceRequestType,
+} from "@/models/maintenance";
+
 import { fetchDataServer } from "../helpers/fetch-data-server";
 
 export async function getMaintenanceRequests(
@@ -16,5 +20,17 @@ export async function getMaintenanceRequests(
             },
         }
     );
+    return await response.json();
+}
+
+export async function getMaintenanceRequestTypes(): Promise<
+    MaintenanceRequestType[]
+> {
+    const response = await fetchDataServer("/maintenance/types", {
+        next: {
+            revalidate: 1 * 60 * 60, // 1 hour
+            tags: ["MaintenanceTypes"],
+        },
+    });
     return await response.json();
 }

@@ -1,17 +1,22 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     MaintenanceRequest,
+    MaintenanceRequestType,
     STATUS_BACKGROUND_COLORS,
     STATUS_TEXT,
 } from "@/models/maintenance";
+import {
+    getMaintenanceRequestTypes,
+    getMaintenanceRequests,
+} from "@/network/server/maintenance";
 
 import CardError from "@/components/card-error";
+import { Error } from "@/models/error";
 import { Lease } from "@/models/lease";
-import { MainButton } from "@/components/buttons/main-button";
 import { MaintenanceDialog } from "./maintenance-dialog";
+import { MaintenanceFormDialog } from "./maintenance-form-dialog";
 import { WithAuthorized } from "@/providers/with-authorized";
 import { formatTimeToDateString } from "@/utils/format-time";
-import { getMaintenanceRequests } from "@/network/server/maintenance";
 
 interface MaintenanceCardProps {
     lease: Lease;
@@ -27,6 +32,20 @@ export default async function MaintenanceCard({ lease }: MaintenanceCardProps) {
         return <CardError message="Failed to load maintenance requests" />;
     }
 
+    const getRequestTypes = async (): Promise<
+        MaintenanceRequestType[] | Error
+    > => {
+        "use server";
+
+        try {
+            const response = await getMaintenanceRequestTypes();
+            return response;
+        } catch (error) {
+            console.error(error);
+            return { error: "Failed to load maintenance request types" };
+        }
+    };
+
     return (
         <Card className="flex-1">
             <CardHeader>
@@ -35,7 +54,10 @@ export default async function MaintenanceCard({ lease }: MaintenanceCardProps) {
                         Maintenance Requests
                     </CardTitle>
                     <WithAuthorized role="TENANT">
-                        <MainButton text="Add Request" />
+                        <MaintenanceFormDialog
+                            leaseID={lease.id}
+                            getRequestTypes={getRequestTypes}
+                        />
                     </WithAuthorized>
                 </div>
                 <p className="text-gray-500">Latest requests:</p>

@@ -7,14 +7,14 @@ import { fetchData } from "../helpers/fetch-data";
 import { useMutation } from "@tanstack/react-query";
 
 interface UploadMaintenanceRequestData {
-    file: File[];
+    files: File[];
     description: string;
     requestTypeId: string;
 }
 
 async function uploadMaintenanceRequest(
     leaseId: string,
-    { file, description, requestTypeId }: UploadMaintenanceRequestData
+    { files: file, description, requestTypeId }: UploadMaintenanceRequestData
 ): Promise<MaintenanceRequest> {
     const formData = new FormData();
     formData.append("description", description);

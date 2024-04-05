@@ -18,4 +18,7 @@ router.delete(
     MaintenanceController.deleteRequest
 );
 
+// Request types
+router.get("/types", requiresAuth, MaintenanceController.getRequestTypes);
+
 export default router;

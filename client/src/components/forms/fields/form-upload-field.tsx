@@ -20,6 +20,7 @@ interface FormUploadFieldProps {
     description?: string | JSX.Element;
     readOnly?: boolean;
     accept?: string[];
+    multiple?: boolean;
 }
 
 export function FormUploadField({
@@ -30,6 +31,7 @@ export function FormUploadField({
     inputPlaceholder,
     readOnly = false,
     accept,
+    multiple = false,
 }: FormUploadFieldProps) {
     // Create a string of accepted file types
     const acceptString = accept?.join(", ") || "";
@@ -47,11 +49,20 @@ export function FormUploadField({
                             type="file"
                             readOnly={readOnly}
                             accept={acceptString}
-                            onChange={(e) =>
-                                field.onChange(
-                                    e.target.files ? e.target.files[0] : null
-                                )
-                            }
+                            onChange={(e) => {
+                                if (!multiple) {
+                                    field.onChange(
+                                        e.target.files
+                                            ? e.target.files[0]
+                                            : null
+                                    );
+                                } else {
+                                    field.onChange([
+                                        ...Array.from(e.target.files ?? []),
+                                    ]);
+                                }
+                            }}
+                            multiple={multiple}
                         />
                     </FormControl>
                     {description && (
