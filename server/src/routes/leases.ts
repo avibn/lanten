@@ -17,6 +17,10 @@ const upload = multer();
 // Lease list (shortened version of /)
 router.get("/list", requiresAuth, LeaseController.getLeaseList);
 
+// Tenants
+router.get("/tenants", requiresAuth, TenantController.getAllTenants);
+router.post("/join", requiresAuth, TenantController.acceptInvite); // Accept invite to lease
+
 // Lease routes
 router.get("/", requiresAuth, LeaseController.getLeases);
 router.post("/", requiresAuth, LeaseController.createLease);
@@ -66,10 +70,6 @@ router.post(
     DocumentController.addDocument
 );
 router.get("/:id/documents", requiresAuth, DocumentController.getDocuments);
-
-// Tenants
-router.get("/tenants", requiresAuth, TenantController.getAllTenants);
-router.post("/join", requiresAuth, TenantController.acceptInvite); // Accept invite to lease
 
 // Tenant routes
 const tenantRouter = express.Router({ mergeParams: true });

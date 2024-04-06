@@ -554,18 +554,35 @@ export const getAllTenants: RequestHandler = async (req, res, next) => {
             where: {
                 isDeleted: false,
                 lease: {
+                    // Get leases where the landlord is the logged in user
                     property: {
                         landlordId: req.session.userId,
+                        isDeleted: false,
                     },
+                },
+                tenant: {
+                    isActive: true,
                 },
             },
             include: {
                 tenant: true,
+                lease: {
+                    select: {
+                        id: true,
+                        property: {
+                            select: {
+                                id: true,
+                                name: true,
+                            },
+                        },
+                    },
+                },
             },
         });
 
         res.status(200).json(tenants);
     } catch (error) {
+        console.log(error);
         next(error);
     }
 };

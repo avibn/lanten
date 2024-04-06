@@ -5,7 +5,7 @@ import { fetchDataServer } from "../helpers/fetch-data-server";
 export async function getAllTenants(): Promise<LeaseTenant[]> {
     const response = await fetchDataServer("/leases/tenants", {
         next: {
-            revalidate: 20,
+            revalidate: 10,
         },
     });
     return await response.json();
