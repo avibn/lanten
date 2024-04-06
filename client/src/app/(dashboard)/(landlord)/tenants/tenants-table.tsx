@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Search } from "lucide-react";
 import {
     Column,
     ColumnDef,
@@ -24,10 +24,10 @@ import {
 } from "@/components/ui/table";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Lease } from "@/models/lease";
 import { LeaseTenant } from "@/models/lease-tenant";
 import Link from "next/link";
-import { User } from "@/models/user";
 import { formatTime } from "@/utils/format-time";
 import { useState } from "react";
 
@@ -58,7 +58,7 @@ function getSortIcon(column: Column<LeaseTenant, unknown>) {
 
 export const columns: ColumnDef<LeaseTenant>[] = [
     {
-        accessorKey: "tenant",
+        accessorKey: "email",
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => sortColumn(column)}>
@@ -67,9 +67,12 @@ export const columns: ColumnDef<LeaseTenant>[] = [
                 </Button>
             );
         },
-        cell: ({ row }) => {
-            const tenant = row.getValue("tenant") as Partial<User>;
-            return <div>{tenant?.email}</div>;
+        // cell: ({ row }) => {
+        //     const tenant = row.getValue("tenant") as Partial<User>;
+        //     return <div>{tenant?.email}</div>;
+        // },
+        accessorFn: (row: LeaseTenant) => {
+            return row.tenant?.email;
         },
     },
     {
@@ -82,9 +85,12 @@ export const columns: ColumnDef<LeaseTenant>[] = [
                 </Button>
             );
         },
-        cell: ({ row }) => {
-            const tenant: User = row.getValue("tenant");
-            return <div className="capitalize">{tenant?.name}</div>;
+        // cell: ({ row }) => {
+        //     const tenant: User = row.getValue("tenant");
+        //     return <div className="capitalize">{tenant?.name}</div>;
+        // },
+        accessorFn: (row: LeaseTenant) => {
+            return row.tenant?.name;
         },
     },
     {
@@ -162,6 +168,18 @@ export function TenantsTable({ leaseTenants }: TenantsTableProps) {
 
     return (
         <div className="w-full">
+            <div className="flex items-center gap-2 mb-4">
+                <Search size={19} className="text-gray-500" />
+                <Input
+                    placeholder="Search by email"
+                    onChange={(event) =>
+                        table
+                            .getColumn("email")
+                            ?.setFilterValue(event.target.value)
+                    }
+                    className="max-w-sm"
+                />
+            </div>
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -211,7 +229,6 @@ export function TenantsTable({ leaseTenants }: TenantsTableProps) {
                 </Table>
             </div>
             <div className="flex items-center justify-end space-x-2 py-4">
-                {/* <div className="flex-1"></div> */}
                 <div className="space-x-2 float-right">
                     <Button
                         variant="outline"
