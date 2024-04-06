@@ -7,6 +7,7 @@ import { RequestHandler } from "express";
 import assertIsDefined from "../utils/assertIsDefined";
 import createHttpError from "http-errors";
 import prisma from "../utils/prismaClient";
+import { userType } from "@prisma/client";
 import { z } from "zod";
 
 // Form data schema
@@ -217,6 +218,125 @@ export const getRequestTypes: RequestHandler = async (req, res, next) => {
 
         res.status(200).json(requestTypes);
     } catch (error) {
+        next(error);
+    }
+};
+
+export const getAllRequests: RequestHandler = async (req, res, next) => {
+    try {
+        const { max } = GetRequestTypesQuery.parse(req.query);
+
+        // Get user
+        const user = await prisma.user.findUnique({
+            where: {
+                id: req.session.userId,
+            },
+        });
+
+        if (!user) {
+            throw createHttpError(404, "User not found");
+        }
+
+        // Check if user is tenant
+        if (user.userType === userType.TENANT) {
+            // Get all requests for tenant
+            const requests = await prisma.maintenanceRequest.findMany({
+                take: max,
+                where: {
+                    authorId: req.session.userId,
+                    isDeleted: false,
+                },
+                include: {
+                    requestType: {
+                        select: {
+                            id: true,
+                            name: true,
+                        },
+                    },
+                    author: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                        },
+                    },
+                    lease: {
+                        select: {
+                            id: true,
+                            startDate: true,
+                            endDate: true,
+                            property: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    address: true,
+                                },
+                            },
+                        },
+                    },
+                    images: true,
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+            });
+
+            return res.status(200).json(requests);
+        } else if (user.userType === userType.LANDLORD) {
+            const requests = await prisma.maintenanceRequest.findMany({
+                take: max,
+                where: {
+                    isDeleted: false,
+                    lease: {
+                        property: {
+                            landlordId: req.session.userId,
+                        },
+                    },
+                },
+                include: {
+                    requestType: {
+                        select: {
+                            id: true,
+                            name: true,
+                        },
+                    },
+                    author: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                        },
+                    },
+                    images: true,
+                    lease: {
+                        select: {
+                            id: true,
+                            startDate: true,
+                            endDate: true,
+                            property: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    address: true,
+                                },
+                            },
+                        },
+                    },
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+            });
+
+            return res.status(200).json(requests);
+        }
+
+        throw createHttpError(
+            403,
+            "You are not authorized to view this resource"
+        );
+    } catch (error) {
+        console.log(error);
         next(error);
     }
 };

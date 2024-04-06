@@ -5,6 +5,7 @@ import { requiresAuth } from "../middleware/requiresAuth";
 
 const router = express.Router();
 
+router.get("/requests/all", requiresAuth, MaintenanceController.getAllRequests);
 router.get("/requests/:id", requiresAuth, MaintenanceController.getRequest);
 router.put("/requests/:id", requiresAuth, MaintenanceController.updateRequest);
 router.put(

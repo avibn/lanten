@@ -7,6 +7,7 @@ import {
     XCircle,
 } from "lucide-react";
 
+import { Lease } from "./lease";
 import { User } from "./user";
 
 export interface MaintenanceRequest {
@@ -19,6 +20,7 @@ export interface MaintenanceRequest {
     updatedAt: string;
     images: MaintenanceImage[];
     author?: Partial<User>;
+    lease?: Partial<Lease>;
 }
 
 export interface MaintenanceImage {

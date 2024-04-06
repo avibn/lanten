@@ -23,6 +23,21 @@ export async function getMaintenanceRequests(
     return await response.json();
 }
 
+export async function getAllMaintenanceRequests(
+    maxResults: number | null = null
+): Promise<MaintenanceRequest[]> {
+    const response = await fetchDataServer(
+        `/maintenance/requests/all${maxResults ? `?max=${maxResults}` : ""}`,
+        {
+            next: {
+                revalidate: 0,
+                tags: ["AllMaintenance"],
+            },
+        }
+    );
+    return await response.json();
+}
+
 export async function getMaintenanceRequestTypes(): Promise<
     MaintenanceRequestType[]
 > {
