@@ -28,7 +28,7 @@ import { cn } from "@/utils/tw-merge";
 import { useState } from "react";
 
 interface FormComboboxFieldProps {
-    form: UseFormReturn<any>;
+    form?: UseFormReturn<any>;
     name: string;
     label: string;
     placeholder?: string;
@@ -36,6 +36,8 @@ interface FormComboboxFieldProps {
     options: { value: string; label: string }[] | undefined;
     optionName?: string;
     isLoading?: boolean;
+    onValueChange?: (value: string) => void;
+    disabled?: boolean;
 }
 
 export function FormComboboxField({
@@ -47,8 +49,11 @@ export function FormComboboxField({
     options,
     optionName = "option",
     isLoading = false,
+    onValueChange,
+    disabled = false,
 }: FormComboboxFieldProps) {
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [selectedOption, setSelectedOption] = useState<string | undefined>();
 
     if (!options) {
         options = [];
@@ -56,7 +61,7 @@ export function FormComboboxField({
 
     return (
         <FormField
-            control={form.control}
+            control={form?.control}
             name={name}
             render={({ field }) => (
                 <FormItem className="flex flex-col gap-0.5 w-full">
@@ -71,7 +76,7 @@ export function FormComboboxField({
                                         "w-full justify-between",
                                         !field.value && "text-muted-foreground"
                                     )}
-                                    disabled={isLoading}
+                                    disabled={isLoading || disabled}
                                 >
                                     {isLoading ? (
                                         <LoadingSpinner
@@ -80,11 +85,13 @@ export function FormComboboxField({
                                         />
                                     ) : (
                                         <>
-                                            {field.value
+                                            {field.value || selectedOption
                                                 ? options.find(
                                                       (option) =>
                                                           option.value ===
-                                                          field.value
+                                                              field.value ||
+                                                          option.value ===
+                                                              selectedOption
                                                   )?.label
                                                 : placeholder}
                                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -93,7 +100,7 @@ export function FormComboboxField({
                                 </Button>
                             </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[200px] p-0">
+                        <PopoverContent className="w-[300px] p-0">
                             <Command>
                                 <CommandInput
                                     placeholder={`Search ${optionName}...`}
@@ -108,8 +115,17 @@ export function FormComboboxField({
                                                 value={option.label}
                                                 key={index}
                                                 onSelect={() => {
-                                                    form.setValue(
-                                                        name,
+                                                    if (onValueChange) {
+                                                        onValueChange(
+                                                            option.value
+                                                        );
+                                                    } else {
+                                                        form?.setValue(
+                                                            name,
+                                                            option.value
+                                                        );
+                                                    }
+                                                    setSelectedOption(
                                                         option.value
                                                     );
                                                     setDialogOpen(false);

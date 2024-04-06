@@ -114,6 +114,51 @@ export const getLeases: RequestHandler = async (req, res, next) => {
     }
 };
 
+export const getLeaseList: RequestHandler = async (req, res, next) => {
+    try {
+        // Get all leases of of the user (landlord or tenant)
+        const leases = await prisma.lease.findMany({
+            where: {
+                OR: [
+                    // Find leases where the user is the landlord
+                    {
+                        property: {
+                            landlordId: req.session.userId,
+                        },
+                    },
+                    // Find leases where the user is the tenant
+                    {
+                        tenants: {
+                            some: {
+                                AND: {
+                                    tenantId: req.session.userId,
+                                    isDeleted: false,
+                                },
+                            },
+                        },
+                    },
+                ],
+            },
+            select: {
+                id: true,
+                startDate: true,
+                endDate: true,
+                property: {
+                    select: {
+                        id: true,
+                        name: true,
+                        address: true,
+                    },
+                },
+            },
+        });
+
+        res.status(200).json(leases);
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const getLease: RequestHandler = async (req, res, next) => {
     try {
         const { id } = req.params;

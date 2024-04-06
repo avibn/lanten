@@ -7,15 +7,18 @@ import { fetchData } from "../helpers/fetch-data";
 import { useMutation } from "@tanstack/react-query";
 
 interface UploadMaintenanceRequestData {
+    leaseId: string;
     files: File[];
     description: string;
     requestTypeId: string;
 }
 
-async function uploadMaintenanceRequest(
-    leaseId: string,
-    { files: file, description, requestTypeId }: UploadMaintenanceRequestData
-): Promise<MaintenanceRequest> {
+async function uploadMaintenanceRequest({
+    leaseId,
+    files: file,
+    description,
+    requestTypeId,
+}: UploadMaintenanceRequestData): Promise<MaintenanceRequest> {
     const formData = new FormData();
     formData.append("description", description);
     formData.append("requestTypeId", requestTypeId);
@@ -33,10 +36,10 @@ async function uploadMaintenanceRequest(
     return await response.json();
 }
 
-export const useUploadMaintenanceRequestMutation = (leaseId: string) => {
+export const useUploadMaintenanceRequestMutation = () => {
     return useMutation({
         mutationFn: (data: UploadMaintenanceRequestData) =>
-            uploadMaintenanceRequest(leaseId, data),
+            uploadMaintenanceRequest(data),
     });
 };
 

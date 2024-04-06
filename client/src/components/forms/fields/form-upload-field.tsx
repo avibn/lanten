@@ -21,6 +21,7 @@ interface FormUploadFieldProps {
     readOnly?: boolean;
     accept?: string[];
     multiple?: boolean;
+    disabled?: boolean;
 }
 
 export function FormUploadField({
@@ -32,6 +33,7 @@ export function FormUploadField({
     readOnly = false,
     accept,
     multiple = false,
+    disabled = false,
 }: FormUploadFieldProps) {
     // Create a string of accepted file types
     const acceptString = accept?.join(", ") || "";
@@ -63,6 +65,7 @@ export function FormUploadField({
                                 }
                             }}
                             multiple={multiple}
+                            disabled={disabled}
                         />
                     </FormControl>
                     {description && (

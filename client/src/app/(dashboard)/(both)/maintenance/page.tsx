@@ -8,9 +8,11 @@ import {
 } from "@/network/server/maintenance";
 
 import { Error } from "@/models/error";
+import { Lease } from "@/models/lease";
 import { MaintenanceFormDialog } from "@/components/segments/maintenance/maintenance-form-dialog";
 import { RequestsTable } from "./requests-table";
 import { WithAuthorized } from "@/providers/with-authorized";
+import { getLeasesList } from "@/network/server/leases";
 
 export const metadata = {
     title: "Maintenance Requests",
@@ -37,7 +39,19 @@ export default async function Page() {
             return response;
         } catch (error) {
             console.error(error);
-            return { error: "Failed to load maintenance request types" };
+            return { error: "Failed to load request types" };
+        }
+    };
+
+    const getListOfLeases = async (): Promise<Partial<Lease>[] | Error> => {
+        "use server";
+
+        try {
+            const response = await getLeasesList();
+            return response;
+        } catch (error) {
+            console.error(error);
+            return { error: "Failed to load leases list" };
         }
     };
 
@@ -52,8 +66,8 @@ export default async function Page() {
                 </h3>
                 <WithAuthorized role="TENANT">
                     <MaintenanceFormDialog
-                        leaseID={"abc"} // todo: get lease id
                         getRequestTypes={getRequestTypes}
+                        getLeasesList={getListOfLeases}
                     />
                 </WithAuthorized>
             </div>

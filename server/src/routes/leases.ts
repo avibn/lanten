@@ -14,6 +14,9 @@ const router = express.Router();
 // Multer
 const upload = multer();
 
+// Lease list (shortened version of /)
+router.get("/list", requiresAuth, LeaseController.getLeaseList);
+
 // Lease routes
 router.get("/", requiresAuth, LeaseController.getLeases);
 router.post("/", requiresAuth, LeaseController.createLease);

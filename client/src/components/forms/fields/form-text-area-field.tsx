@@ -17,6 +17,7 @@ interface FormTextAreaFieldProps {
     inputPlaceholder: string;
     description?: string | JSX.Element;
     readOnly?: boolean;
+    disabled?: boolean;
 }
 
 export function FormTextAreaField({
@@ -26,6 +27,7 @@ export function FormTextAreaField({
     description,
     inputPlaceholder,
     readOnly = false,
+    disabled = false,
 }: FormTextAreaFieldProps) {
     return (
         <FormField
@@ -39,6 +41,7 @@ export function FormTextAreaField({
                             placeholder={inputPlaceholder}
                             {...field}
                             readOnly={readOnly}
+                            disabled={disabled}
                         />
                     </FormControl>
                     {description && (

@@ -11,6 +11,16 @@ export async function getLeases(): Promise<Lease[]> {
     return await response.json();
 }
 
+export async function getLeasesList(): Promise<Partial<Lease>[]> {
+    const response = await fetchDataServer("/leases/list", {
+        next: {
+            revalidate: 20,
+            tags: ["leases"],
+        },
+    });
+    return await response.json();
+}
+
 export async function getLease(id: string): Promise<Lease> {
     const response = await fetchDataServer(`/leases/${id}`, {
         next: {
