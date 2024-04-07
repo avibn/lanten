@@ -129,7 +129,25 @@ export const getMessages: RequestHandler = async (req, res, next) => {
         assertIsDefined(req.session.userId);
 
         const { id: recipientId } = req.params;
-        const { from, max = 20 } = getMessagesQuerySchema.parse(req.query);
+        const { from, max = 50 } = getMessagesQuerySchema.parse(req.query);
+
+        // Check if the recipient exists
+        const recipient = await prisma.user.findUnique({
+            where: {
+                id: recipientId,
+                isActive: true,
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                userType: true,
+            },
+        });
+
+        if (!recipient) {
+            throw createHttpError(404, "Recipient not found");
+        }
 
         // Get all messages between the sender and recipient
         const messages = await prisma.message.findMany({
@@ -146,18 +164,35 @@ export const getMessages: RequestHandler = async (req, res, next) => {
                 ],
                 isDeleted: false,
             },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true,
+                    },
+                },
+                recipient: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true,
+                    },
+                },
+            },
             orderBy: {
                 createdAt: "asc",
             },
             // Get the last `max` messages
             take: -1 * max,
-            cursor: {
-                id: from,
-            },
-            skip: 1,
+            ...(from && { cursor: { id: from } }),
+            ...(from && { skip: 1 }),
         });
 
-        res.json(messages);
+        res.json({
+            recipient,
+            messages,
+        });
     } catch (error) {
         next(error);
     }
@@ -183,27 +218,38 @@ export const getAllMessagedUsers: RequestHandler = async (req, res, next) => {
             select: {
                 authorId: true,
                 recipientId: true,
+                updatedAt: true,
             },
             orderBy: {
-                createdAt: "desc",
+                updatedAt: "asc",
             },
         });
 
         const userIds = new Set<string>();
+        const lastMessages = new Map<string, Date>(); // User to last message mapping
 
         // Add all the ids to the set
         for (const message of messages) {
             if (message.authorId !== req.session.userId) {
                 userIds.add(message.authorId);
+                lastMessages.set(message.authorId, message.updatedAt);
             }
 
             if (message.recipientId !== req.session.userId) {
                 userIds.add(message.recipientId);
+                lastMessages.set(message.recipientId, message.updatedAt);
             }
         }
 
+        interface UserWithLastMessaged {
+            id: string;
+            name: string | null;
+            email: string;
+            lastMessaged?: Date;
+        }
+
         // Get the users from the ids
-        const users = await prisma.user.findMany({
+        const users: UserWithLastMessaged[] = await prisma.user.findMany({
             where: {
                 id: {
                     in: Array.from(userIds),
@@ -215,6 +261,11 @@ export const getAllMessagedUsers: RequestHandler = async (req, res, next) => {
                 name: true,
             },
         });
+
+        // Add the last messaged time to the users
+        for (const user of users) {
+            user.lastMessaged = lastMessages.get(user.id);
+        }
 
         res.status(200).json(users);
     } catch (error) {

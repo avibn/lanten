@@ -110,7 +110,7 @@ export function MaintenanceDialog({
                         <p className="font-semibold">Description:</p>
                         <p>
                             {!isUpdateView ? (
-                                <ScrollArea className="h-24 pr-2 text-sm">
+                                <ScrollArea className="h-24 pr-2 text-sm overflow-y-auto flex">
                                     <p className="overflow-hidden [overflow-wrap:anywhere]">
                                         {maintenanceRequest.description}
                                     </p>

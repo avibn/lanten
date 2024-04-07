@@ -36,6 +36,12 @@ const sideBarItems: SidebarItem[] = [
         roles: ["TENANT", "LANDLORD"],
         icon: "Construction",
     },
+    {
+        name: "Messages",
+        href: "/messages",
+        roles: ["TENANT", "LANDLORD"],
+        icon: "MessageCircle",
+    },
 ];
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -55,7 +61,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                                 {currentPageName}
                             </h2>
                         )}
-                        <div className="py-6">{children}</div>
+                        <div className="h-full">{children}</div>
                     </div>
                 </ScrollArea>
             </div>
