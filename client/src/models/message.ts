@@ -5,6 +5,13 @@ export interface MessageResponse {
     messages: Message[];
 }
 
+export interface MessageChannel {
+    id: string;
+    email: string;
+    name: string;
+    lastMessaged: string;
+}
+
 export interface Message {
     id: string;
     message: string;
