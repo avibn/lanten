@@ -1,6 +1,13 @@
 "use client";
 
-import { ArrowDown, ArrowUp, ArrowUpDown, Search } from "lucide-react";
+import {
+    ArrowDown,
+    ArrowUp,
+    ArrowUpDown,
+    Mail,
+    MessageCircle,
+    Search,
+} from "lucide-react";
 import {
     Column,
     ColumnDef,
@@ -24,6 +31,7 @@ import {
 } from "@/components/ui/table";
 
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/buttons/icon-button";
 import { Input } from "@/components/ui/input";
 import { Lease } from "@/models/lease";
 import { LeaseTenant } from "@/models/lease-tenant";
@@ -134,6 +142,25 @@ export const columns: ColumnDef<LeaseTenant>[] = [
                         {lease?.property?.name}
                     </Link>
                 </Button>
+            );
+        },
+    },
+    {
+        id: "actions",
+        cell: ({ row }) => {
+            const leaseTenant: LeaseTenant = row.original;
+            return (
+                <div className="flex items-center">
+                    <IconButton
+                        icon={<MessageCircle size={18} />}
+                        href={`/messages/${leaseTenant.tenant?.id}`}
+                    />
+                    <IconButton
+                        icon={<Mail size={18} />}
+                        href={`mailto:${leaseTenant.tenant?.email}`}
+                        hrefNewTab
+                    />
+                </div>
             );
         },
     },

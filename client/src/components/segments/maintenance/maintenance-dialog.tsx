@@ -8,7 +8,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { Edit2, FileImage, Save } from "lucide-react";
+import { Edit2, FileImage, Mail, MessageCircle, Save } from "lucide-react";
 import {
     MaintenanceRequestUpdateFormValues,
     maintenanceRequestUpdateSchema,
@@ -98,7 +98,7 @@ export function MaintenanceDialog({
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
                     <DialogTitle>Maintenance Request</DialogTitle>
                     <DialogDescription>
@@ -201,10 +201,26 @@ export function MaintenanceDialog({
                         {maintenanceRequest.author && (
                             <>
                                 <p className="font-semibold">Author:</p>
-                                <p>
-                                    {maintenanceRequest.author?.name} (
-                                    {maintenanceRequest.author?.email})
-                                </p>
+                                <div className="flex flex-row items-center gap-3">
+                                    <p>{maintenanceRequest.author?.name}</p>
+                                    <WithAuthorized role="LANDLORD">
+                                        <IconButton
+                                            icon={<MessageCircle size={14} />}
+                                            href={`/messages/${maintenanceRequest.author?.id}`}
+                                        />
+                                    </WithAuthorized>
+                                </div>
+                                <p className="font-semibold">Author Email:</p>
+                                <div className="flex flex-row items-center gap-3">
+                                    <p>{maintenanceRequest.author?.email}</p>
+                                    <WithAuthorized role="LANDLORD">
+                                        <IconButton
+                                            icon={<Mail size={14} />}
+                                            href={`mailto:${maintenanceRequest.author?.email}`}
+                                            hrefNewTab
+                                        />
+                                    </WithAuthorized>
+                                </div>
                             </>
                         )}
                         <p className="font-semibold">Created:</p>

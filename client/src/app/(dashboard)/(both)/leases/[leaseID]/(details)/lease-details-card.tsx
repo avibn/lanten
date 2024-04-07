@@ -1,6 +1,8 @@
 import { Card, CardHeader } from "@/components/ui/card";
+import { Mail, MessageCircle } from "lucide-react";
 import { formatTime, formatTimeToDateString } from "@/utils/format-time";
 
+import { IconButton } from "@/components/buttons/icon-button";
 import { Lease } from "@/models/lease";
 import Link from "next/link";
 import { WithAuthorized } from "@/providers/with-authorized";
@@ -50,6 +52,26 @@ export default function LeaseDetailsCard({ lease }: LeaseDetailsCardProps) {
                             {lease.property?.name}
                         </WithAuthorized>
                     </p>
+                    <p className="font-medium leading-none">Landlord</p>
+                    <div className="flex items-center gap-3">
+                        <p>
+                            {lease.property?.landlord?.name || "Unknown"} (
+                            {lease.property?.landlord?.email || "Unknown"})
+                        </p>
+                        <WithAuthorized role="TENANT">
+                            <div className="flex items-center gap-1">
+                                <IconButton
+                                    icon={<MessageCircle size={14} />}
+                                    href={`/messages/${lease.property?.landlord?.id}`}
+                                />
+                                <IconButton
+                                    icon={<Mail size={14} />}
+                                    href={`mailto:${lease.property?.landlord?.email}`}
+                                    hrefNewTab
+                                />
+                            </div>
+                        </WithAuthorized>
+                    </div>
                     {lease.updatedAt > lease.createdAt ? (
                         <>
                             <p className="font-medium leading-none">

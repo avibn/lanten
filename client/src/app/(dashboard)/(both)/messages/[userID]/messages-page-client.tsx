@@ -1,5 +1,6 @@
 "use client";
 
+import { Send, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
     useGetMessagesQuery,
@@ -9,7 +10,6 @@ import {
 import { IconButton } from "@/components/buttons/icon-button";
 import { Message } from "@/models/message";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { formatTime } from "@/utils/format-time";
 import { toast } from "sonner";
@@ -73,12 +73,20 @@ export default function MessagesPageClient({
     return (
         <div className="flex flex-col w-full h-[95%]">
             <div className="flex items-center justify-between w-full h-[5%]">
-                <p className="text-sm text-gray-500">
-                    {recipient.name} ({recipient.email})
+                <p className="text-sm text-gray-500 mx-10 flex items-center">
+                    <User size={16} className="mr-2" />
+                    <p>
+                        Chatting with: {recipient.name} ({recipient.email})
+                    </p>
                 </p>
             </div>
             <div className="flex mx-10 h-[80%]">
                 <ScrollArea className="w-full overflow-y-auto flex flex-col h-full justify-end px-4">
+                    {messages.length === 0 && (
+                        <p className="text-center text-gray-500">
+                            Send a message to start chatting! 🚀
+                        </p>
+                    )}
                     {messages.map((message) => {
                         const isAuthor = message.authorId === user?.id;
 

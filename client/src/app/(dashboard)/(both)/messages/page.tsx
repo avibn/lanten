@@ -1,8 +1,5 @@
 import { Card, CardHeader } from "@/components/ui/card";
-import {
-    MessagesSquare,
-    User
-} from "lucide-react";
+import { MessagesSquare, User } from "lucide-react";
 
 import Link from "next/link";
 import { MessageChannel } from "@/models/message";
@@ -30,10 +27,18 @@ export default async function Page() {
                 </h3>
             </div>
             <div className="mt-5 flex flex-col gap-4">
+                {messageChannels.length === 0 && (
+                    <p className="text-sm font-light">
+                        No recent messages found. Start a conversation with a
+                        tenant or landlord to get started.
+                    </p>
+                )}
                 {messageChannels.map((channel) => (
                     <Link key={channel.id} href={`/messages/${channel.id}`}>
-                        {/* Animate */}
-                        <Card key={channel.id} className="hover:bg-gray-100 duration-500">
+                        <Card
+                            key={channel.id}
+                            className="hover:bg-gray-100 duration-500"
+                        >
                             <CardHeader className="flex flex-row items-center justify-between">
                                 <div className="flex items-center gap-4">
                                     <User size={24} />

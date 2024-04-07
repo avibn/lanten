@@ -1,6 +1,9 @@
 "use client";
 
+import { Mail, MessageCircle } from "lucide-react";
+
 import { DeleteIconButton } from "@/components/buttons/delete-icon-button";
+import { IconButton } from "@/components/buttons/icon-button";
 import { LeaseTenant } from "@/models/lease-tenant";
 import { toast } from "sonner";
 import { useRemoveTenantFromLeaseMutation } from "@/network/client/tenants";
@@ -35,24 +38,40 @@ export default function TenantList({
     }
 
     return (
-        <ol className="list-decimal list-inside !mt-4">
-            {leaseTenants?.map((LeaseTenant) => (
-                <li key={LeaseTenant.id}>
+        <div>
+            {leaseTenants?.map((leaseTenant, index) => (
+                <div
+                    key={leaseTenant.id}
+                    className="flex flex-row items-center gap-2"
+                >
+                    <p className="text-sm font-light select-none">
+                        {index + 1}.
+                    </p>
                     <span>
-                        {LeaseTenant.tenant?.name}
+                        {leaseTenant.tenant?.name}
                         <span className="text-gray-500 ml-2">
-                            ({LeaseTenant.tenant?.email})
+                            ({leaseTenant.tenant?.email})
                         </span>
                     </span>
-                    <DeleteIconButton
-                        alertTitle="Remove Tenant"
-                        alertDescription={`Are you sure you want to remove ${LeaseTenant.tenant?.name} from this lease?`}
-                        onConfirm={() => removeTenant(LeaseTenant.id || "")}
-                        isLoading={isPending}
-                        className="ml-2"
-                    />
-                </li>
+                    <div className="flex items-center">
+                        <IconButton
+                            icon={<MessageCircle size={18} />}
+                            href={`/messages/${leaseTenant.tenant?.id}`}
+                        />
+                        <IconButton
+                            icon={<Mail size={18} />}
+                            href={`mailto:${leaseTenant.tenant?.email}`}
+                            hrefNewTab
+                        />
+                        <DeleteIconButton
+                            alertTitle="Remove Tenant"
+                            alertDescription={`Are you sure you want to remove ${leaseTenant.tenant?.name} from this lease?`}
+                            onConfirm={() => removeTenant(leaseTenant.id || "")}
+                            isLoading={isPending}
+                        />
+                    </div>
+                </div>
             ))}
-        </ol>
+        </div>
     );
 }

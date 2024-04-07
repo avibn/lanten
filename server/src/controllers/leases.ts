@@ -197,6 +197,13 @@ export const getLease: RequestHandler = async (req, res, next) => {
                     select: {
                         name: true,
                         address: true,
+                        landlord: {
+                            select: {
+                                id: true,
+                                name: true,
+                                email: true,
+                            },
+                        },
                     },
                 },
                 // tenants: user?.userType === "LANDLORD",

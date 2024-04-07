@@ -7,6 +7,7 @@ interface BackButtonProps {
     isDisabled?: boolean;
     className?: string;
     href?: string;
+    customText?: boolean;
 }
 
 export function BackButton({
@@ -14,8 +15,9 @@ export function BackButton({
     isDisabled,
     className,
     href,
+    customText = false,
 }: BackButtonProps) {
-    const buttonContent = `Back to ${text}`;
+    const buttonContent = customText ? text : `Back to ${text}`;
     return (
         <Button
             disabled={isDisabled}
