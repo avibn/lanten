@@ -28,7 +28,7 @@ export default async function Page({ params: { leaseID } }: PageProps) {
     }
 
     return (
-        <div className="flex flex-col items-start gap-5">
+        <div className="flex flex-col items-start gap-5 page-content">
             <BackButton text="Lease" href={`/leases/${leaseID}`} />
             <div className="flex gap-4 items-center">
                 <h1 className="text-xl font-bold">

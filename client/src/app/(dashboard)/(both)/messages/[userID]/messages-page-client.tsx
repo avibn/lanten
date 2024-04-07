@@ -71,81 +71,83 @@ export default function MessagesPageClient({
     };
 
     return (
-        <div className="flex flex-col w-full h-[95%]">
-            <div className="flex items-center justify-between w-full h-[5%]">
-                <p className="text-sm text-gray-500 mx-10 flex items-center">
-                    <User size={16} className="mr-2" />
-                    <p>
-                        Chatting with: {recipient.name} ({recipient.email})
-                    </p>
-                </p>
-            </div>
-            <div className="flex mx-10 h-[80%]">
-                <ScrollArea className="w-full overflow-y-auto flex flex-col h-full justify-end px-4">
-                    {messages.length === 0 && (
-                        <p className="text-center text-gray-500">
-                            Send a message to start chatting! 🚀
+        <div className="h-[95%]">
+            <div className="flex flex-col w-full h-full">
+                <div className="flex items-center justify-between w-full h-[5%]">
+                    <p className="text-sm text-gray-500 mx-10 flex items-center">
+                        <User size={16} className="mr-2" />
+                        <p>
+                            Chatting with: {recipient.name} ({recipient.email})
                         </p>
-                    )}
-                    {messages.map((message) => {
-                        const isAuthor = message.authorId === user?.id;
-
-                        return (
-                            <div
-                                key={message.id}
-                                className={`flex flex-col gap-1 w-full mb-3 ${
-                                    isAuthor ? "items-end" : "items-start"
-                                }`}
-                            >
-                                <div
-                                    className={`flex flex-col gap-1 px-5 text-message max-w-fit
-                            ${isAuthor ? "right-text" : "left-text"}`}
-                                >
-                                    <p>{message.message}</p>
-                                </div>
-                                <div className="flex flex-row gap-2">
-                                    <p className="text-xs text-gray-500">
-                                        {formatTime(message.createdAt)},
-                                    </p>
-                                    <p className="text-xs text-gray-500">
-                                        {isAuthor ? "You" : recipient.name}
-                                    </p>
-                                </div>
-                            </div>
-                        );
-                    })}
-                    <div ref={scrollDiv}></div>
-                </ScrollArea>
-            </div>
-            <div className="flex items-center gap-3 mx-10 h-[15%]">
-                <div className="relative flex flex-col w-full">
-                    <Textarea
-                        placeholder="Type a message..."
-                        className="flex-1 min-h-12 resize-none pb-4"
-                        onChange={(e) => {
-                            if (e.target.value.length > 250) {
-                                return;
-                            }
-                            setNewMessage(e.target.value);
-                        }}
-                        value={newMessage}
-                        disabled={sendMessageMutation.isPending}
-                    />
-                    <p
-                        className={`absolute bottom-0 right-0 pr-4 text-gray-500 text-xs ${
-                            newMessage.length >= 250 ? "text-red-500" : ""
-                        }`}
-                    >
-                        {newMessage.length} / 250
                     </p>
                 </div>
-                <IconButton
-                    icon={<Send size={19} />}
-                    className="h-12 w-12"
-                    onClick={handleSendMessage}
-                    isDisabled={!newMessage}
-                    isLoading={sendMessageMutation.isPending}
-                />
+                <div className="flex mx-10 h-[80%]">
+                    <ScrollArea className="w-full overflow-y-auto flex flex-col h-full justify-end px-4">
+                        {messages.length === 0 && (
+                            <p className="text-center text-gray-500">
+                                Send a message to start chatting! 🚀
+                            </p>
+                        )}
+                        {messages.map((message) => {
+                            const isAuthor = message.authorId === user?.id;
+
+                            return (
+                                <div
+                                    key={message.id}
+                                    className={`flex flex-col gap-1 w-full mb-3 ${
+                                        isAuthor ? "items-end" : "items-start"
+                                    }`}
+                                >
+                                    <div
+                                        className={`flex flex-col gap-1 px-5 text-message max-w-fit
+                            ${isAuthor ? "right-text" : "left-text"}`}
+                                    >
+                                        <p>{message.message}</p>
+                                    </div>
+                                    <div className="flex flex-row gap-2">
+                                        <p className="text-xs text-gray-500">
+                                            {formatTime(message.createdAt)},
+                                        </p>
+                                        <p className="text-xs text-gray-500">
+                                            {isAuthor ? "You" : recipient.name}
+                                        </p>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                        <div ref={scrollDiv}></div>
+                    </ScrollArea>
+                </div>
+                <div className="flex items-center gap-3 mx-10 h-[15%]">
+                    <div className="relative flex flex-col w-full">
+                        <Textarea
+                            placeholder="Type a message..."
+                            className="flex-1 min-h-12 resize-none pb-4"
+                            onChange={(e) => {
+                                if (e.target.value.length > 250) {
+                                    return;
+                                }
+                                setNewMessage(e.target.value);
+                            }}
+                            value={newMessage}
+                            disabled={sendMessageMutation.isPending}
+                        />
+                        <p
+                            className={`absolute bottom-0 right-0 pr-4 text-gray-500 text-xs ${
+                                newMessage.length >= 250 ? "text-red-500" : ""
+                            }`}
+                        >
+                            {newMessage.length} / 250
+                        </p>
+                    </div>
+                    <IconButton
+                        icon={<Send size={19} />}
+                        className="h-12 w-12"
+                        onClick={handleSendMessage}
+                        isDisabled={!newMessage}
+                        isLoading={sendMessageMutation.isPending}
+                    />
+                </div>
             </div>
         </div>
     );

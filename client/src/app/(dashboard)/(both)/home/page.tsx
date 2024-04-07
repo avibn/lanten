@@ -23,7 +23,7 @@ export default async function Home({ searchParams }: HomeProps) {
     let error = searchParams?.error as string | undefined;
 
     return (
-        <div>
+        <div className="page-content">
             {error && <ClientToast message={error} type="error" />}
             <h3 className="text-xl font-semibold tracking-tight title-text">
                 Welcome, {user?.name}!

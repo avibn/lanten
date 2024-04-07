@@ -50,7 +50,7 @@ export default async function Page({ params: { leaseID } }: PageProps) {
     }
 
     return (
-        <div className="flex flex-col items-start gap-5">
+        <div className="flex flex-col items-start gap-5 page-content">
             <BackButton text="Leases" href="/leases" />
             <div className="flex items-center justify-between w-full">
                 <div className="flex gap-4 items-center">

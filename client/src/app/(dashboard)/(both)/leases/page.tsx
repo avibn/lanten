@@ -36,7 +36,7 @@ export default async function Page() {
     // todo:: add inactive leases
 
     return (
-        <div>
+        <div className="page-content">
             <div className="flex items-center justify-between title-text">
                 <h3 className="text-xl font-semibold tracking-tight">
                     {user?.userType === "LANDLORD"

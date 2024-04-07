@@ -84,7 +84,7 @@ export default async function Page({ params: { propertyID } }: PageProps) {
     };
 
     return (
-        <div className="flex flex-col items-start gap-5">
+        <div className="flex flex-col items-start gap-5 page-content">
             <BackButton text="Properties" href="/properties" />
             <div className="flex items-center justify-between w-full">
                 <h1 className="text-xl font-bold">{property.name}</h1>
