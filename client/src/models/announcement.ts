@@ -1,3 +1,5 @@
+import { Lease } from "./lease";
+
 export interface Announcement {
     id: string;
     title: string;
@@ -6,4 +8,5 @@ export interface Announcement {
     isDeleted: boolean;
     createdAt: string;
     updatedAt: string;
+    lease?: Partial<Lease>;
 }

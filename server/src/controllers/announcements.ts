@@ -113,16 +113,14 @@ export const createAnnouncement: RequestHandler = async (req, res, next) => {
     }
 };
 
+const AnnouncementsQueryParams = z.object({
+    max: z.coerce.number().min(1).max(100).optional(),
+});
+
 export const getAnnouncements: RequestHandler = async (req, res, next) => {
     try {
         const leaseId = req.params.id;
-        const max = req.query.max
-            ? parseInt(req.query.max as string)
-            : undefined;
-
-        if (max != undefined && max < 1) {
-            throw createHttpError(400, "max must be greater than 0");
-        }
+        const { max } = AnnouncementsQueryParams.parse(req.query);
 
         // Get lease
         const lease = await prisma.lease.findUnique({
@@ -170,6 +168,65 @@ export const getAnnouncements: RequestHandler = async (req, res, next) => {
 
         res.status(200).json(announcements);
     } catch (error) {
+        next(error);
+    }
+};
+
+export const getLatestAnnouncements: RequestHandler = async (
+    req,
+    res,
+    next
+) => {
+    try {
+        const { max } = AnnouncementsQueryParams.parse(req.query);
+
+        const announcements = await prisma.announcement.findMany({
+            where: {
+                isDeleted: false,
+                OR: [
+                    {
+                        lease: {
+                            property: {
+                                landlordId: req.session.userId,
+                            },
+                        },
+                    },
+                    {
+                        lease: {
+                            tenants: {
+                                some: {
+                                    tenantId: req.session.userId,
+                                },
+                            },
+                        },
+                    },
+                ],
+            },
+            include: {
+                lease: {
+                    select: {
+                        id: true,
+                        startDate: true,
+                        endDate: true,
+                        property: {
+                            select: {
+                                id: true,
+                                name: true,
+                                address: true,
+                            },
+                        },
+                    },
+                },
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+            take: max,
+        });
+
+        res.status(200).json(announcements);
+    } catch (error) {
+        console.log(error);
         next(error);
     }
 };

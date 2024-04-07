@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronRight } from "lucide-react";
 import { Lease } from "@/models/lease";
 import Link from "next/link";
+import { WithAuthorized } from "@/providers/with-authorized";
 import { getLeases } from "@/network/server/leases";
 import { getSessionUser } from "@/network/server/users";
 
@@ -42,7 +43,9 @@ export default async function Page() {
                         ? "Active Leases"
                         : "Your Leases"}
                 </h3>
-                <AddButton text="Create Lease" href="/leases/create" />
+                <WithAuthorized role="LANDLORD">
+                    <AddButton text="Create Lease" href="/leases/create" />
+                </WithAuthorized>
             </div>
             <div className="mt-5 flex flex-col gap-4">
                 {activeLeases.map((lease) => (

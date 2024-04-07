@@ -17,6 +17,21 @@ export async function getAnnouncements(
     return await response.json();
 }
 
+export async function getLatestAnnouncements(
+    max?: number
+): Promise<Announcement[]> {
+    const response = await fetchDataServer(
+        `/announcements/latest` + (max ? `?max=${max}` : ""),
+        {
+            next: {
+                revalidate: 20,
+                tags: ["Announcements"],
+            },
+        }
+    );
+    return await response.json();
+}
+
 interface AnnouncementCreateBody {
     title: string;
     message: string;

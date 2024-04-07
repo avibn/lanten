@@ -5,6 +5,12 @@ import { requiresAuth } from "../middleware/requiresAuth";
 
 const router = express.Router();
 
+router.get(
+    "/latest",
+    requiresAuth,
+    AnnouncementController.getLatestAnnouncements
+);
+
 router.get("/:id", requiresAuth, AnnouncementController.getAnnouncement);
 router.put("/:id", requiresAuth, AnnouncementController.updateAnnouncement);
 router.delete("/:id", requiresAuth, AnnouncementController.deleteAnnouncement);

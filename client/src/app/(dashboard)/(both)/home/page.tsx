@@ -1,5 +1,6 @@
 import CardLoadingSkeleton from "@/components/card-loading-skeleton";
 import { ClientToast } from "@/components/client-toast";
+import { LatestAnnouncementsCard } from "./(announcements)/latest-announcements-card";
 import { LatestLeasesCard } from "./(leases)/latest-leases-card";
 import { LatestMessagesCard } from "./(messages)/latest-messages-card";
 import { LatestRequestsCard } from "./(maintenance)/latest-requests-card";
@@ -48,6 +49,13 @@ export default async function Home({ searchParams }: HomeProps) {
                     </Suspense>
                 </div>
                 <div className="flex flex-col xl:flex-row gap-4 w-full">
+                    <Suspense
+                        fallback={
+                            <CardLoadingSkeleton loadingText="Loading latest announcements" />
+                        }
+                    >
+                        <LatestAnnouncementsCard />
+                    </Suspense>
                     <Suspense
                         fallback={
                             <CardLoadingSkeleton loadingText="Loading latest maintenance requests" />
