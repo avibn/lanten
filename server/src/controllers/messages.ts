@@ -198,9 +198,15 @@ export const getMessages: RequestHandler = async (req, res, next) => {
     }
 };
 
+const getMessagesChannelsQuerySchema = z.object({
+    max: z.coerce.number().min(1).max(100).optional(),
+});
+
 export const getAllMessagedUsers: RequestHandler = async (req, res, next) => {
     try {
         assertIsDefined(req.session.userId);
+
+        const { max } = getMessagesChannelsQuerySchema.parse(req.query);
 
         // Get all the messages that the user has sent or received
         const messages = await prisma.message.findMany({
@@ -265,6 +271,24 @@ export const getAllMessagedUsers: RequestHandler = async (req, res, next) => {
         // Add the last messaged time to the users
         for (const user of users) {
             user.lastMessaged = lastMessages.get(user.id);
+        }
+
+        // Sort the users by the last messaged time
+        users.sort((a, b) => {
+            if (!a.lastMessaged) {
+                return 1;
+            }
+
+            if (!b.lastMessaged) {
+                return -1;
+            }
+
+            return b.lastMessaged.getTime() - a.lastMessaged.getTime();
+        });
+
+        // Get the last `max` users
+        if (max) {
+            users.splice(max);
         }
 
         res.status(200).json(users);

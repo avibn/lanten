@@ -72,6 +72,7 @@ export const getLeases: RequestHandler = async (req, res, next) => {
         // Get all leases of of the user (landlord or tenant)
         const leases = await prisma.lease.findMany({
             where: {
+                isDeleted: false,
                 OR: [
                     // Find leases where the user is the landlord
                     {
