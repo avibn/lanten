@@ -52,6 +52,8 @@ export default function LeaseDetailsCard({ lease }: LeaseDetailsCardProps) {
                             {lease.property?.name}
                         </WithAuthorized>
                     </p>
+                    <p className="font-medium leading-none">Address</p>
+                    <p>{lease.property?.address}</p>
                     <p className="font-medium leading-none">Landlord</p>
                     <div className="flex items-center gap-3">
                         <p>

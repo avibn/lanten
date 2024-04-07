@@ -1,20 +1,17 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     addAnnouncement,
-    editAnnouncement,
     getAnnouncements,
 } from "@/network/server/announcements";
 
 import { Announcement } from "@/models/announcement";
+import { AnnouncementContainer } from "@/components/segments/announcement/announcement-container";
 import { AnnouncementFormDialog } from "./announcement-form-dialog";
 import { AnnouncementFormValues } from "@/schemas/announcement";
-import { DeleteAnnouncementClient } from "./delete-announcement-client";
 import { Error } from "@/models/error";
 import { Lease } from "@/models/lease";
 import { MainButton } from "@/components/buttons/main-button";
-import { Separator } from "@/components/ui/separator";
 import { WithAuthorized } from "@/providers/with-authorized";
-import { formatTime } from "@/utils/format-time";
 import { revalidateTag } from "next/cache";
 
 interface AnnouncementsCardProps {
@@ -43,21 +40,6 @@ export default async function AnnouncementsCard({
         } catch (error) {
             return { error: "Something went wrong!" };
         }
-    }; // todo:: lease.tenants shouldnt return password!!
-
-    const handleEditAnnouncement = async (
-        announcementId: string,
-        data: AnnouncementFormValues
-    ): Promise<Announcement | Error> => {
-        "use server";
-
-        try {
-            const response = await editAnnouncement(announcementId, data);
-            revalidateTag("LeaseAnnouncements");
-            return response;
-        } catch (error) {
-            return { error: "Something went wrong!" };
-        }
     };
 
     return (
@@ -69,7 +51,11 @@ export default async function AnnouncementsCard({
                     </CardTitle>
                     {/* View all link */}
                     <div className="flex items-center gap-2">
-                        <MainButton text="View All" variant="link" />
+                        <MainButton
+                            text={`View All (${lease._count?.announcements})`}
+                            variant="link"
+                            href={`/leases/${lease.id}/announcements`}
+                        />
                         <WithAuthorized role="LANDLORD">
                             <AnnouncementFormDialog
                                 handleFormSubmit={handleAddAnnouncement}
@@ -77,47 +63,11 @@ export default async function AnnouncementsCard({
                         </WithAuthorized>
                     </div>
                 </div>
-                {/* <Separator /> */}
                 {announcements.map((announcement, index) => (
-                    <div key={announcement.id} className="flex flex-col gap-1">
-                        <div className="flex items-center justify-between">
-                            <p className="text-lg leading-none">
-                                {announcement.title}
-                            </p>
-                            <WithAuthorized role="LANDLORD">
-                                <div className="flex items-center">
-                                    <AnnouncementFormDialog
-                                        announcementToEdit={announcement}
-                                        handleFormSubmit={async (data) => {
-                                            "use server";
-                                            return handleEditAnnouncement(
-                                                announcement.id,
-                                                data
-                                            );
-                                        }}
-                                    />
-                                    <DeleteAnnouncementClient
-                                        announcementID={announcement.id}
-                                    />
-                                </div>
-                            </WithAuthorized>
-                        </div>
-                        <p className="text-wrap break-words text-gray-600 max-w-[300px]">
-                            {announcement.message}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                            {announcement.updatedAt > announcement.createdAt
-                                ? `Updated at ${formatTime(
-                                      announcement.updatedAt
-                                  )}`
-                                : `Created at ${formatTime(
-                                      announcement.createdAt
-                                  )}`}
-                        </p>
-                        {index !== announcements.length - 1 && (
-                            <Separator className="my-3" />
-                        )}
-                    </div>
+                    <AnnouncementContainer
+                        key={index}
+                        announcement={announcement}
+                    />
                 ))}
             </CardHeader>
         </Card>

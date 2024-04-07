@@ -1,6 +1,5 @@
 import { LeaseTenant } from "./lease-tenant";
 import { Property } from "./property";
-import { User } from "./user";
 
 export interface Lease {
     id: string;
@@ -19,5 +18,8 @@ export interface Lease {
     _count?: {
         tenants: number;
         payments: number;
+        announcements: number;
+        documents: number;
+        maintenanceRequests: number;
     };
 }

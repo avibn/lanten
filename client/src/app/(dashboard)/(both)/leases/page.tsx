@@ -68,6 +68,10 @@ export default async function Page() {
                                     <Badge variant="outline">
                                         {lease._count?.payments} Payments
                                     </Badge>
+                                    <Badge variant="outline">
+                                        {lease._count?.announcements}{" "}
+                                        Announcements
+                                    </Badge>
                                 </div>
                             </div>
                             <Link

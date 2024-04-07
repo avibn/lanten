@@ -68,7 +68,7 @@ export function AnnouncementFormDialog({
                     <MainButton text="Add Announcement" />
                 )}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
                     <DialogTitle>
                         {announcementToEdit

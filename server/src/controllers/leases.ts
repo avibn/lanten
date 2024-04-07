@@ -102,7 +102,10 @@ export const getLeases: RequestHandler = async (req, res, next) => {
                 _count: {
                     select: {
                         tenants: { where: { isDeleted: false } },
-                        payments: true,
+                        payments: { where: { isDeleted: false } },
+                        announcements: { where: { isDeleted: false } },
+                        documents: { where: { isDeleted: false } },
+                        maintenanceRequests: { where: { isDeleted: false } },
                     },
                 },
             },
@@ -217,7 +220,10 @@ export const getLease: RequestHandler = async (req, res, next) => {
                 _count: {
                     select: {
                         tenants: { where: { isDeleted: false } },
-                        payments: true,
+                        payments: { where: { isDeleted: false } },
+                        announcements: { where: { isDeleted: false } },
+                        documents: { where: { isDeleted: false } },
+                        maintenanceRequests: { where: { isDeleted: false } },
                     },
                 },
             },
