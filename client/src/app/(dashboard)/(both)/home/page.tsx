@@ -25,13 +25,13 @@ export default async function Home({ searchParams }: HomeProps) {
     return (
         <div>
             {error && <ClientToast message={error} type="error" />}
-            <h3 className="text-xl font-semibold tracking-tight">
+            <h3 className="text-xl font-semibold tracking-tight title-text">
                 Welcome, {user?.name}!
             </h3>
             <p className="mt-2 text-gray-500">
-                The date is {new Date().toLocaleDateString()}.
+                Todays date is {new Date().toLocaleDateString()}.
             </p>
-            <div className="mt-10 flex flex-col gap-4">
+            <div className="mt-5 flex flex-col gap-4">
                 <div className="flex flex-col xl:flex-row gap-4 w-full">
                     <Suspense
                         fallback={

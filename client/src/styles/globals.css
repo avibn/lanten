@@ -129,3 +129,7 @@ textarea {
 .hover-card {
     @apply hover:bg-gray-50 transition-colors ease-in-out duration-200;
 }
+
+.title-text {
+    @apply my-3
+}

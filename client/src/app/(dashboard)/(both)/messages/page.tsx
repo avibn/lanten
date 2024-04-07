@@ -21,7 +21,7 @@ export default async function Page() {
 
     return (
         <div>
-            <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center justify-between title-text">
                 <h3 className="text-xl font-semibold tracking-tight">
                     Recent Messages
                 </h3>
