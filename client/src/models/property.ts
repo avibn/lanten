@@ -14,4 +14,12 @@ export interface Property {
     _count?: {
         leases: number;
     };
+    propertyImage?: PropertyImage;
+}
+
+export interface PropertyImage {
+    id: string;
+    url: string;
+    fileName?: string;
+    fileType?: string;
 }

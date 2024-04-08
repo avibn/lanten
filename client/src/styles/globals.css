@@ -117,7 +117,7 @@ textarea {
 }
 
 .right-text {
-    @apply bg-blue-500 text-white;
+    @apply bg-green-600 text-white;
     @apply rounded-tl-xl rounded-tr-xl rounded-bl-xl;
 }
 
@@ -136,4 +136,8 @@ textarea {
 
 .page-content {
     @apply pb-8;
+}
+
+.trancuted-text {
+    @apply truncate max-w-48;
 }

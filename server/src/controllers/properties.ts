@@ -122,6 +122,9 @@ export const getProperties: RequestHandler = async (req, res, next) => {
             include: {
                 propertyImage: true,
             },
+            orderBy: {
+                updatedAt: "desc",
+            },
         });
 
         res.status(200).json(properties);

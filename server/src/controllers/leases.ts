@@ -110,6 +110,9 @@ export const getLeases: RequestHandler = async (req, res, next) => {
                     },
                 },
             },
+            orderBy: {
+                updatedAt: "desc",
+            },
         });
 
         res.status(200).json(leases);

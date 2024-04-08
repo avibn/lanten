@@ -1,15 +1,14 @@
 import {
     Card,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
 
 import { AddButton } from "@/components/buttons/add-button";
 import { ForbiddenError } from "@/network/errors/httpErrors";
+import Image from "next/image";
 import Link from "next/link";
-import { MainButton } from "@/components/buttons/main-button";
 import { Property } from "@/models/property";
 import { formatTime } from "@/utils/format-time";
 import { getProperties } from "@/network/server/properties";
@@ -39,7 +38,7 @@ export default async function Page() {
                 </h3>
                 <AddButton text="Create Property" href="/properties/create" />
             </div>
-            <div className="flex flex-wrap gap-3 mt-5">
+            <div className="flex flex-wrap gap-5 mt-5">
                 {properties.length === 0 && (
                     <p className="text-lg font-light tracking-tight">
                         You have no properties yet.{" "}
@@ -54,44 +53,55 @@ export default async function Page() {
                 )}
 
                 {properties.map((property) => (
-                    <Card key={property.id}>
-                        <CardHeader>
-                            <CardTitle className="text-xl font-semibold tracking-tight">
-                                {property.name}
-                            </CardTitle>
-                            <CardDescription>
-                                {property.description}
-                            </CardDescription>
-                            <CardDescription>
-                                {property.address}
-                            </CardDescription>
-                        </CardHeader>
-                        <CardFooter>
-                            <div className="flex flex-col gap-3">
-                                <p className="text-sm font-light tracking text-gray-500">
-                                    {property.createdAt ===
-                                    property.updatedAt ? (
-                                        <>
-                                            Created:{" "}
-                                            {formatTime(property.createdAt)}
-                                        </>
-                                    ) : (
-                                        <>
-                                            Last updated:{" "}
-                                            {formatTime(property.updatedAt)}
-                                        </>
-                                    )}
-                                </p>
-                                <MainButton
-                                    text="View Property"
-                                    href={`/properties/${property.id}`}
-                                    className="mt-3 w-full"
-                                    variant="secondary"
-                                    linkPrefetch={false}
+                    <Link key={property.id} href={`/properties/${property.id}`}>
+                        <Card className="hover-card">
+                            <div className="relative aspect-video overflow-hidden rounded-t-xl">
+                                <Image
+                                    src={
+                                        property.propertyImage?.url ||
+                                        "/house-placeholder.jpg"
+                                    }
+                                    alt="Property Image"
+                                    layout="fill"
+                                    objectFit="cover"
                                 />
+                                {/* Gradient overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-b from-black via-black to-transparent opacity-70" />
+                                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-2 px-4 text-center">
+                                    <div className="text-white font-semibold tracking-wider trancuted-text">
+                                        {property.name}
+                                    </div>
+                                    <div className="text-sm text-gray-300 trancuted-text">
+                                        {property.address}
+                                    </div>
+                                </div>
                             </div>
-                        </CardFooter>
-                    </Card>
+                            <CardHeader className="py-4">
+                                <CardTitle className="text-lg font-semibold tracking-tight trancuted-text">
+                                    {property.name}
+                                </CardTitle>
+                                <CardDescription className="trancuted-text">
+                                    {property.description}
+                                </CardDescription>
+                                <div className="flex flex-col gap-3">
+                                    <p className="text-sm font-light tracking text-gray-500">
+                                        {property.createdAt ===
+                                        property.updatedAt ? (
+                                            <>
+                                                Created:{" "}
+                                                {formatTime(property.createdAt)}
+                                            </>
+                                        ) : (
+                                            <>
+                                                Last updated:{" "}
+                                                {formatTime(property.updatedAt)}
+                                            </>
+                                        )}
+                                    </p>
+                                </div>
+                            </CardHeader>
+                        </Card>
+                    </Link>
                 ))}
             </div>
         </div>
