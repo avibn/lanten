@@ -12,4 +12,5 @@ export default cleanEnv(process.env, {
     AZURE_STORAGE_CONNECTION_STRING: str(),
     DOCUMENT_BLOB_CONTAINER: str(),
     MAINTENANCE_BLOB_CONTAINER: str(),
+    PROPERTY_BLOB_CONTAINER: str(),
 });

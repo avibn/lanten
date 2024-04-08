@@ -34,16 +34,28 @@ model User {
 }
 
 model Property {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  address     String
-  isDeleted   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  landlord    User     @relation(fields: [landlordId], references: [id])
-  landlordId  String
-  leases      Lease[]
+  id              String         @id @default(uuid())
+  name            String
+  description     String?
+  address         String
+  isDeleted       Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  landlord        User           @relation(fields: [landlordId], references: [id])
+  landlordId      String
+  leases          Lease[]
+  propertyImage   PropertyImage? @relation(fields: [propertyImageId], references: [id])
+  propertyImageId String?        @unique
+}
+
+model PropertyImage {
+  id        String    @id @default(uuid())
+  url       String
+  fileName  String
+  fileType  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  property  Property?
 }
 
 model Lease {
