@@ -5,6 +5,7 @@ import { AddButton } from "@/components/buttons/add-button";
 import { BackButton } from "@/components/buttons/back-button";
 import { DeletePropertyClient } from "./delete-property-client";
 import { EditButton } from "@/components/buttons/edit-button";
+import Image from "next/image";
 import { Lease } from "@/models/lease";
 import { MainButton } from "@/components/buttons/main-button";
 import { Property } from "@/models/property";
@@ -85,7 +86,12 @@ export default async function Page({ params: { propertyID } }: PageProps) {
 
     return (
         <div className="flex flex-col items-start gap-5 page-content">
-            <BackButton text="Properties" href="/properties" />
+            <div className="w-full flex items-center justify-between">
+                <BackButton text="Properties" href="/properties" />
+                <p className="text-sm font-light text-gray-500">
+                    Last Updated: {formatTime(property.updatedAt)}
+                </p>
+            </div>
             <div className="flex items-center justify-between w-full">
                 <h1 className="text-xl font-bold">{property.name}</h1>
                 <div className="flex items-center gap-2">
@@ -99,18 +105,31 @@ export default async function Page({ params: { propertyID } }: PageProps) {
                     />
                 </div>
             </div>
-
-            <h2 className="text-lg font-bold">Description</h2>
-            <p>{property.description}</p>
-            <h2 className="text-lg font-bold">Address</h2>
-            <p>{property.address}</p>
-
-            <p className="text-sm font-light">
-                Created: {formatTime(property.createdAt)}
-            </p>
-            <p className="text-sm font-light">
-                Last Updated: {formatTime(property.updatedAt)}
-            </p>
+            {property.propertyImage && (
+                <div className="relative aspect-video overflow-hidden rounded-lg h-[200px] w-full">
+                    <Image
+                        src={property.propertyImage.url}
+                        fill
+                        alt="Property Image"
+                        style={{ objectFit: "cover" }}
+                        className="rounded-md object-cover"
+                    />
+                </div>
+            )}
+            <div className="flex flex-col gap-2 flex-1">
+                <h2 className="text-lg font-bold mt-0">Description</h2>
+                {property.description ? (
+                    <p>{property.description}</p>
+                ) : (
+                    <p className="text-sm text-gray-500">
+                        No description has been provided.
+                    </p>
+                )}
+            </div>
+            <div className="flex flex-col gap-2 flex-1">
+                <h2 className="text-lg font-bold">Address</h2>
+                <p>{property.address}</p>
+            </div>
 
             {/* List of leases */}
             <div className="w-full">

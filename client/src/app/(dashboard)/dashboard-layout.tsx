@@ -54,7 +54,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <div className="bg-background h-screen">
             <div className="grid lg:grid-cols-6">
                 <Sidebar sideBarItems={sideBarItems} />
-                <ScrollArea className="col-span-4 lg:col-span-5 lg:border-l px-12 h-screen">
+                <ScrollArea className="col-span-4 lg:col-span-5 lg:border-l lg:px-12 max-lg:px-5 h-screen !flex">
                     <div className="py-4 h-screen">
                         {currentPageName && (
                             <h2 className="text-3xl font-bold tracking-tight">

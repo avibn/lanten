@@ -74,14 +74,14 @@ export default function MessagesPageClient({
         <div className="h-[95%]">
             <div className="flex flex-col w-full h-full">
                 <div className="flex items-center justify-between w-full h-[5%]">
-                    <p className="text-sm text-gray-500 mx-10 flex items-center">
+                    <p className="text-sm text-gray-500 mx-10 max-lg:mx-3 flex items-center">
                         <User size={16} className="mr-2" />
                         <p>
                             Chatting with: {recipient.name} ({recipient.email})
                         </p>
                     </p>
                 </div>
-                <div className="flex mx-10 h-[80%]">
+                <div className="flex mx-10 max-lg:mx-3 h-[80%]">
                     <ScrollArea className="w-full overflow-y-auto flex flex-col h-full justify-end px-4">
                         {messages.length === 0 && (
                             <p className="text-center text-gray-500">
@@ -118,7 +118,7 @@ export default function MessagesPageClient({
                         <div ref={scrollDiv}></div>
                     </ScrollArea>
                 </div>
-                <div className="flex items-center gap-3 mx-10 h-[15%]">
+                <div className="flex items-center gap-3 mx-10 max-lg:mx-3 h-[15%]">
                     <div className="relative flex flex-col w-full">
                         <Textarea
                             placeholder="Type a message..."

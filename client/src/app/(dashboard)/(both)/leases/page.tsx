@@ -49,7 +49,8 @@ export default async function Page() {
             </div>
             <div className="mt-5 flex flex-col gap-4">
                 {activeLeases.map((lease) => (
-                    <Card key={lease.id}>
+                    <Link key={lease.id} href={`/leases/${lease.id}`} passHref>
+                    <Card className="hover-card">
                         <CardHeader className="flex flex-row items-center justify-between">
                             <div className="flex flex-col gap-2">
                                 <div className="flex items-center">
@@ -87,6 +88,7 @@ export default async function Page() {
                             </Link>
                         </CardHeader>
                     </Card>
+                    </Link>
                 ))}
             </div>
         </div>
