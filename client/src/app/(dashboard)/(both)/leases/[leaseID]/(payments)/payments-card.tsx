@@ -76,6 +76,11 @@ export default async function PaymentsCard({ lease }: PaymentsCardProps) {
                         />
                     </WithAuthorized>
                 </div>
+                {payments.length === 0 && (
+                    <p className="text-gray-500 text-sm">
+                        No payments have been added to this lease yet.
+                    </p>
+                )}
 
                 {/* Payments list */}
                 <div className="mt-4">

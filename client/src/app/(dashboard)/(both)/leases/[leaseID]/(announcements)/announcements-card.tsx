@@ -63,6 +63,11 @@ export default async function AnnouncementsCard({
                         </WithAuthorized>
                     </div>
                 </div>
+                {announcements.length === 0 && (
+                    <p className="text-gray-500 text-sm">
+                        No announcements have been made for this lease yet.
+                    </p>
+                )}
                 {announcements.map((announcement, index) => (
                     <AnnouncementContainer
                         key={index}

@@ -44,6 +44,11 @@ export default async function TenantsCard({ lease }: CardTenantsProps) {
                         getCurrentInvites={getCurrentInvites}
                     />
                 </div>
+                {tenants.length === 0 && (
+                    <p className="text-gray-500 text-sm">
+                        No tenants have been added to this lease yet.
+                    </p>
+                )}
                 <TenantList leaseId={lease.id} leaseTenants={tenants} />
             </CardHeader>
         </Card>

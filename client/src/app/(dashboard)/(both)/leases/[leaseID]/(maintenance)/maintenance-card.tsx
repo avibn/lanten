@@ -59,7 +59,11 @@ export default async function MaintenanceCard({ lease }: MaintenanceCardProps) {
                         />
                     </WithAuthorized>
                 </div>
-                <p className="text-gray-500">Latest requests:</p>
+                <p className="text-gray-500 text-sm">
+                    {maintenanceRequests.length === 0
+                        ? "No maintenance requests yet."
+                        : "Latest requests:"}
+                </p>
                 {maintenanceRequests.map((request) => (
                     <MaintenanceDialog
                         key={request.id}

@@ -41,12 +41,22 @@ export default async function DocumentsCard({ lease }: DocumentsCardProps) {
                     <h2 className="text-base font-medium">
                         Landlord Documents
                     </h2>
+                    {landlordDocs.length === 0 && (
+                        <p className="text-gray-500 text-sm">
+                            No documents have been uploaded by the landlord yet.
+                        </p>
+                    )}
                     {landlordDocs.map((doc) => (
                         <DocumentContainer key={doc.id} document={doc} />
                     ))}
                 </div>
                 <div className="flex flex-wrap gap-2">
                     <h2 className="text-base font-medium">Tenant Documents</h2>
+                    {tenantDocs.length === 0 && (
+                        <p className="text-gray-500 text-sm">
+                            No documents have been uploaded by the tenants yet.
+                        </p>
+                    )}
                     {tenantDocs.map((doc) => (
                         <DocumentContainer key={doc.id} document={doc} />
                     ))}
