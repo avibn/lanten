@@ -1,10 +1,7 @@
 import { LoginFormValues, loginSchema } from "@/schemas/login";
 
-import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { FormTextField } from "./fields/form-text-field";
-import { Label } from "../ui/label";
-import Link from "next/link";
 import { MainButton } from "../buttons/main-button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,14 +46,6 @@ export function LoginForm({ onSubmit, loading }: LoginFormProps) {
                     className="w-full"
                 />
             </form>
-            <div className="text-center mt-4">
-                <Label className="font-normal">
-                    Don&apos;t have an account?
-                    <Button variant="link" asChild>
-                        <Link href="/signup">Sign up</Link>
-                    </Button>
-                </Label>
-            </div>
         </Form>
     );
 }

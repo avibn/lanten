@@ -62,8 +62,36 @@ body {
     @apply text-sm;
 }
 
+.text-sm {
+    @apply !text-xs;
+}
+
+.text-base {
+    @apply !text-sm;
+}
+
+.text-lg {
+    @apply !text-base;
+}
+
+.text-xl {
+    @apply !text-lg;
+}
+
+.text-2xl {
+    @apply !text-xl;
+}
+
+.text-3xl {
+    @apply !text-2xl;
+}
+
+.text-4xl {
+    @apply !text-3xl;
+}
+
 /* p {
-    @apply text-base;
+    @apply !text-base;
 } */
 
 .rich-text-area {

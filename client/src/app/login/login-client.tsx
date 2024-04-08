@@ -34,12 +34,5 @@ export function LoginClient() {
         router.push("/home");
     }
 
-    return (
-        // Center the form
-        <div className="flex justify-center items-center h-screen">
-            <div className="w-1/3">
-                <LoginForm onSubmit={onSubmit} loading={isPending} />
-            </div>
-        </div>
-    );
+    return <LoginForm onSubmit={onSubmit} loading={isPending} />;
 }

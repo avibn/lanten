@@ -1,11 +1,8 @@
 import { SignupFormValues, signupSchema } from "@/schemas/signup";
 
-import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { FormRadioField } from "./fields/form-radio-field";
 import { FormTextField } from "./fields/form-text-field";
-import { Label } from "../ui/label";
-import Link from "next/link";
 import { MainButton } from "../buttons/main-button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -83,14 +80,6 @@ export function SignupForm({ onSubmit, loading }: SignupFormProps) {
                     className="w-full"
                 />
             </form>
-            <div className="text-center mt-4">
-                <Label className="font-normal">
-                    Already have an account?{" "}
-                    <Button variant="link" asChild>
-                        <Link href="/login">Login</Link>
-                    </Button>
-                </Label>
-            </div>
         </Form>
     );
 }
