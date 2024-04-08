@@ -4,6 +4,7 @@ import { PropertyFormValues, propertySchema } from "@/schemas/property";
 
 import { Form } from "@/components/ui/form";
 import { FormTextField } from "@/components/forms/fields/form-text-field";
+import { FormUploadField } from "./fields/form-upload-field";
 import { MainButton } from "@/components/buttons/main-button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -52,6 +53,13 @@ export function CreatePropertyForm({
                     label="Address"
                     inputPlaceholder="1 Main Road, City, County, Postcode"
                     description="This is the address of your property."
+                />
+                <FormUploadField
+                    form={form}
+                    name="file"
+                    label="Banner Image"
+                    inputPlaceholder="Select an image"
+                    accept={["image/png", "image/jpeg", "image/jpg"]}
                 />
                 <MainButton
                     text={defaultValues ? "Update Property" : "Create Property"}

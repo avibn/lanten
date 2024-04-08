@@ -38,7 +38,7 @@ export default async function Page() {
                 </h3>
                 <AddButton text="Create Property" href="/properties/create" />
             </div>
-            <div className="flex flex-wrap gap-5 mt-5">
+            <div className="flex flex-wrap gap-5 mt-5 max-md:justify-center">
                 {properties.length === 0 && (
                     <p className="text-lg font-light tracking-tight">
                         You have no properties yet.{" "}
@@ -53,17 +53,21 @@ export default async function Page() {
                 )}
 
                 {properties.map((property) => (
-                    <Link key={property.id} href={`/properties/${property.id}`}>
-                        <Card className="hover-card">
-                            <div className="relative aspect-video overflow-hidden rounded-t-xl">
+                    <Link
+                        key={property.id}
+                        href={`/properties/${property.id}`}
+                        className="flex-grow flex-shrink basis-0 max-w-80"
+                    >
+                        <Card className="hover-card h-full">
+                            <div className="relative aspect-video overflow-hidden rounded-t-lg h-[150px] w-full">
                                 <Image
                                     src={
                                         property.propertyImage?.url ||
                                         "/house-placeholder.jpg"
                                     }
                                     alt="Property Image"
-                                    layout="fill"
-                                    objectFit="cover"
+                                    fill
+                                    style={{ objectFit: "cover" }}
                                 />
                                 {/* Gradient overlay */}
                                 <div className="absolute inset-0 bg-gradient-to-b from-black via-black to-transparent opacity-70" />

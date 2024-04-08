@@ -4,7 +4,7 @@ import { fetchDataServer } from "../helpers/fetch-data-server";
 export async function getProperties(): Promise<Property[]> {
     const response = await fetchDataServer("/properties", {
         next: {
-            revalidate: 20,
+            revalidate: 0,
         },
     });
     return await response.json();
@@ -13,7 +13,7 @@ export async function getProperties(): Promise<Property[]> {
 export async function getProperty(id: string): Promise<Property> {
     const response = await fetchDataServer(`/properties/${id}`, {
         next: {
-            revalidate: 20,
+            revalidate: 0,
         },
     });
     return await response.json();

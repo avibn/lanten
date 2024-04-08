@@ -24,7 +24,12 @@ export function EditPropertyClient({
 
     const onSubmit = async (values: PropertyFormValues) => {
         // Send the form data to the server
-        mutate(values);
+        mutate({
+            name: values.name,
+            description: values.description,
+            address: values.address,
+            ...(values.file && { file: values.file }),
+        });
     };
 
     if (isError) {
