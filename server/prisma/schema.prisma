@@ -17,20 +17,21 @@ enum userType {
 }
 
 model User {
-  id                  String               @id @default(uuid())
-  email               String               @unique
-  name                String?
-  password            String
-  userType            userType             @default(TENANT)
-  isActive            Boolean              @default(true)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  properties          Property[]
-  leases              LeaseTenant[]
-  documents           Document[]
-  maintenanceRequests MaintenanceRequest[]
-  messagesSent        Message[]            @relation("Author")
-  messagesReceived    Message[]            @relation("Recipient")
+  id                        String                     @id @default(uuid())
+  email                     String                     @unique
+  name                      String?
+  password                  String
+  userType                  userType                   @default(TENANT)
+  isActive                  Boolean                    @default(true)
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
+  properties                Property[]
+  leases                    LeaseTenant[]
+  documents                 Document[]
+  maintenanceRequests       MaintenanceRequest[]
+  messagesSent              Message[]                  @relation("Author")
+  messagesReceived          Message[]                  @relation("Recipient")
+  sharedMaintenanceRequests SharedMaintenanceRequest[]
 }
 
 model Property {
@@ -172,19 +173,20 @@ enum maintenanceRequestStatus {
 }
 
 model MaintenanceRequest {
-  id            String                   @id @default(uuid())
+  id            String                     @id @default(uuid())
   description   String
-  status        maintenanceRequestStatus @default(PENDING)
-  requestType   RequestType              @relation(fields: [requestTypeId], references: [id])
+  status        maintenanceRequestStatus   @default(PENDING)
+  requestType   RequestType                @relation(fields: [requestTypeId], references: [id])
   requestTypeId String
-  isDeleted     Boolean                  @default(false)
-  createdAt     DateTime                 @default(now())
-  updatedAt     DateTime                 @updatedAt
-  lease         Lease                    @relation(fields: [leaseId], references: [id])
+  isDeleted     Boolean                    @default(false)
+  createdAt     DateTime                   @default(now())
+  updatedAt     DateTime                   @updatedAt
+  lease         Lease                      @relation(fields: [leaseId], references: [id])
   leaseId       String
-  author        User                     @relation(fields: [authorId], references: [id])
+  author        User                       @relation(fields: [authorId], references: [id])
   authorId      String
   images        MaintenanceImage[]
+  sharedRequest SharedMaintenanceRequest[]
 }
 
 model MaintenanceImage {
@@ -197,6 +199,17 @@ model MaintenanceImage {
   updatedAt            DateTime           @updatedAt
   maintenanceRequest   MaintenanceRequest @relation(fields: [maintenanceRequestId], references: [id])
   maintenanceRequestId String
+}
+
+model SharedMaintenanceRequest {
+  id                   String             @id @default(uuid())
+  isDeleted            Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  maintenanceRequest   MaintenanceRequest @relation(fields: [maintenanceRequestId], references: [id])
+  maintenanceRequestId String
+  author               User               @relation(fields: [authorId], references: [id])
+  authorId             String
 }
 
 model RequestType {

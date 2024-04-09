@@ -191,6 +191,7 @@ export const getRequests: RequestHandler = async (req, res, next) => {
                         email: true,
                     },
                 },
+                sharedRequest: true,
             },
             take: max,
             orderBy: {
@@ -275,6 +276,7 @@ export const getAllRequests: RequestHandler = async (req, res, next) => {
                         },
                     },
                     images: true,
+                    sharedRequest: true,
                 },
                 orderBy: {
                     createdAt: "desc",
@@ -322,6 +324,7 @@ export const getAllRequests: RequestHandler = async (req, res, next) => {
                             },
                         },
                     },
+                    sharedRequest: true,
                 },
                 orderBy: {
                     createdAt: "desc",
@@ -371,6 +374,7 @@ export const getRequest: RequestHandler = async (req, res, next) => {
                         email: true,
                     },
                 },
+                sharedRequest: true,
             },
         });
 
@@ -570,6 +574,120 @@ export const deleteRequest: RequestHandler = async (req, res, next) => {
         });
 
         res.status(204).send();
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const shareMaintenanceRequest: RequestHandler = async (
+    req,
+    res,
+    next
+) => {
+    try {
+        const { id } = req.params;
+
+        const request = await prisma.maintenanceRequest.findUnique({
+            where: {
+                id,
+                isDeleted: false,
+            },
+            include: {
+                lease: {
+                    include: {
+                        property: true,
+                    },
+                },
+            },
+        });
+
+        if (!request) {
+            throw createHttpError(404, "Specified request not found");
+        }
+
+        // Check if user is landlord
+        if (request.lease.property.landlordId !== req.session.userId) {
+            throw createHttpError(
+                403,
+                "You are not the landlord of this lease"
+            );
+        }
+
+        // Check if shared request already exists
+        const sharedRequest = await prisma.sharedMaintenanceRequest.findFirst({
+            where: {
+                maintenanceRequestId: id,
+                isDeleted: false,
+            },
+        });
+
+        if (sharedRequest) {
+            res.status(200).json(sharedRequest);
+            return;
+        }
+
+        // Add to shared
+        const newSharedRequest = await prisma.sharedMaintenanceRequest.create({
+            data: {
+                maintenanceRequestId: id,
+                authorId: req.session.userId,
+            },
+        });
+
+        res.status(201).json(newSharedRequest);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getSharedMaintenanceRequests: RequestHandler = async (
+    req,
+    res,
+    next
+) => {
+    try {
+        const { id: sharedId } = req.params;
+
+        // Check if shared request exists
+        const sharedRequest = await prisma.sharedMaintenanceRequest.findUnique({
+            where: {
+                id: sharedId,
+                isDeleted: false,
+            },
+            include: {
+                maintenanceRequest: {
+                    include: {
+                        requestType: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                        images: true,
+                        lease: {
+                            select: {
+                                property: {
+                                    select: {
+                                        name: true,
+                                        address: true,
+                                        landlord: {
+                                            select: {
+                                                email: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        if (!sharedRequest) {
+            throw createHttpError(404, "Specified shared request not found");
+        }
+
+        res.status(200).json(sharedRequest);
     } catch (error) {
         next(error);
     }

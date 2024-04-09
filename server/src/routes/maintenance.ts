@@ -19,6 +19,14 @@ router.delete(
     MaintenanceController.deleteRequest
 );
 
+// Shared requests
+router.post(
+    "/requests/:id/share",
+    requiresAuth,
+    MaintenanceController.shareMaintenanceRequest
+);
+router.get("/shared/:id", MaintenanceController.getSharedMaintenanceRequests);
+
 // Request types
 router.get("/types", requiresAuth, MaintenanceController.getRequestTypes);
 
