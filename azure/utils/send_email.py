@@ -12,7 +12,7 @@ def send_email(
     to_email: str,
     subject: str,
     content: str,
-    content_type: str = "text/plain",
+    content_type: str = "text/html",
     from_email: str = "updates@lanten.site",
 ):
     """

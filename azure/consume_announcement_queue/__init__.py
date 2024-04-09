@@ -3,7 +3,11 @@ import logging
 import os
 
 from azure.functions import QueueMessage
+from jinja2 import Environment, FileSystemLoader
 from utils import send_email
+
+env = Environment(loader=FileSystemLoader("email_templates"))
+template = env.get_template("announcement.html")
 
 
 def main(msg: QueueMessage) -> None:
@@ -28,10 +32,19 @@ def main(msg: QueueMessage) -> None:
 
     # Send the email
     logging.info(f"Sending email to {email}.")
+
+    # Generate the email content
+    content = template.render(
+        username=name,
+        property_name=property_name,
+        announcement=announcement,
+        home_link=os.environ.get("ApplicationURL", ""),
+    )
+
     response = send_email(
         to_email=email,
-        subject=f"New announcement for {property_name}!",
-        content=f"Hi {name}! There is a new announcement for {property_name}:\n{announcement}",
+        subject=f"New announcement from {property_name}!",
+        content=content,
     )
 
     # Log the response

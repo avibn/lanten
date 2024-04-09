@@ -1,0 +1,21 @@
+{
+    "name": "emails",
+    "version": "0.0.19",
+    "private": true,
+    "scripts": {
+        "build": "email build",
+        "dev": "email dev --port 3003",
+        "export-win": "email export --pretty && move out\\* ..\\azure\\email_templates\\",
+        "export-linux": "email export --pretty && mv out/* ../azure/email_templates/"
+    },
+    "dependencies": {
+        "@react-email/components": "0.0.16",
+        "@react-email/render": "0.0.12",
+        "react": "18.2.0",
+        "react-email": "2.1.1"
+    },
+    "devDependencies": {
+        "@types/react": "18.2.33",
+        "@types/react-dom": "18.2.14"
+    }
+}

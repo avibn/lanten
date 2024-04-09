@@ -3,7 +3,11 @@ import logging
 import os
 
 from azure.functions import QueueMessage
+from jinja2 import Environment, FileSystemLoader
 from utils import send_email
+
+env = Environment(loader=FileSystemLoader("email_templates"))
+template = env.get_template("invite.html")
 
 
 def main(msg: QueueMessage) -> None:
@@ -27,14 +31,20 @@ def main(msg: QueueMessage) -> None:
         logging.error("Missing required fields.")
         raise ValueError("Missing required fields.")
 
+    content = template.render(
+        author_name=author_name,
+        property_name=property_name,
+        invite_code=invite_code,
+        invite_link=invite_link,
+        home_link=os.environ.get("ApplicationURL", ""),
+    )
+
     # Send the email
     logging.info(f"Sending email to {email}.")
     response = send_email(
         to_email=email,
         subject="You've been invited to join a property!",
-        content=f"Hi! You've been invited by {author_name} to join property `{property_name}`. "
-        f"Your invite code is: {invite_code}."
-        f"\nClick here to accept: {invite_link}",
+        content=content,
     )
 
     logging.info(f"Email sent. Response: {response.status_code}")

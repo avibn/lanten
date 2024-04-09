@@ -1,15 +1,13 @@
 import json
 import logging
+import os
 
 from azure.functions import QueueMessage
+from jinja2 import Environment, FileSystemLoader
 from utils import send_email
 
-# The email template
-email_text = """
-Hello {name},
-You have {num_reminders} reminders today:
-{reminders}
-"""
+env = Environment(loader=FileSystemLoader("email_templates"))
+template = env.get_template("reminder.html")
 
 
 def main(msg: QueueMessage) -> None:
@@ -37,16 +35,20 @@ def main(msg: QueueMessage) -> None:
         f"{reminder['date']}: £{reminder['amount']} for {reminder['name']}{reminder['description']}"
         for reminder in reminders
     )
-    email_content = email_text.format(
-        name=name, num_reminders=len(reminders), reminders=text_reminders
+
+    content = template.render(
+        name=name,
+        num_reminders=len(reminders),
+        reminders=text_reminders,
+        home_link=os.environ.get("ApplicationURL", ""),
     )
 
     # Send the email
     logging.info(f"Sending email to {email}.")
     response = send_email(
         to_email=email,
-        subject="Your reminders for today!",
-        content=email_content,
+        subject="Today's Reminders",
+        content=content,
     )
 
     # Log the response
