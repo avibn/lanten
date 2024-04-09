@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Menu, Settings, icons } from "lucide-react";
+import { CircleUserRound, LogOut, Menu, Settings, icons } from "lucide-react";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -168,14 +168,12 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
 
                             <Card className="mt-4">
                                 <div className="flex items-center justify-start p-4">
-                                    <Image
-                                        src="/user-placeholder.png"
-                                        alt="user"
-                                        className="w-8 h-8 rounded-full"
-                                        width={128}
-                                        height={128}
+                                    <CircleUserRound
+                                        strokeWidth={0.8}
+                                        size={35}
+                                        className="text-gray-500"
                                     />
-                                    <div className="ml-2">
+                                    <div className="ml-3">
                                         <h3 className="text-sm font-semibold">
                                             {loggedInUser?.name}
                                         </h3>
