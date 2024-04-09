@@ -72,6 +72,12 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
         router.push("/login");
     }
 
+    const closeSidebar = () => {
+        if (window.innerWidth < 1024) {
+            setOpen(false);
+        }
+    };
+
     return (
         // todo cn className
         <div className="lg:h-screen max-lg:col-span-6">
@@ -79,9 +85,19 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
                 <div className="px-3 lg:py-2 flex flex-col justify-between h-full">
                     <div>
                         <div className="flex items-center justify-between lg:mb-5 max-lg:mb-2 px-4">
-                            <h2 className="text-lg font-semibold tracking-tight">
-                                Lanten
-                            </h2>
+                            <Link href="/home" onClick={closeSidebar}>
+                                <div className="flex items-center space-x-2">
+                                    <Image
+                                        alt="Logo"
+                                        height={25}
+                                        src="/logo.png"
+                                        width={25}
+                                    />
+                                    <h2 className="text-lg font-semibold tracking-tight">
+                                        Lanten
+                                    </h2>
+                                </div>
+                            </Link>
                             <div className="lg:hidden">
                                 <IconButton
                                     icon={<Menu size={18} />}
@@ -110,7 +126,10 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
                                                 className="w-full justify-start"
                                                 asChild
                                             >
-                                                <Link href={item.href}>
+                                                <Link
+                                                    href={item.href}
+                                                    onClick={closeSidebar}
+                                                >
                                                     {createIcon(item.icon)}
                                                     {item.name}
                                                 </Link>

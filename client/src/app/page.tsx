@@ -6,13 +6,20 @@ import Link from "next/link";
 export default async function Home() {
     return (
         <>
-            <div className="flex items-center justify-between w-full px-4 py-4">
-                <div className="flex items-center space-x-4">
-                    <Image alt="Logo" height={40} src="/next.svg" width={40} />
-                    <h1 className="text-xl font-bold tracking-tighter">
-                        Lanten
-                    </h1>
-                </div>
+            <div className="flex items-center justify-between w-full px-6 py-4">
+                <Link href="/">
+                    <div className="flex items-center space-x-4">
+                        <Image
+                            alt="Logo"
+                            height={40}
+                            src="/logo.png"
+                            width={40}
+                        />
+                        <h1 className="text-xl font-bold tracking-tighter">
+                            Lanten
+                        </h1>
+                    </div>
+                </Link>
                 <div className="flex items-center gap-2">
                     <Button asChild variant="ghost">
                         <Link href="/login">Login</Link>
@@ -22,7 +29,7 @@ export default async function Home() {
                     </Button>
                 </div>
             </div>
-            <div className="container bg-gray-50 py-12 lg:py-16 px-4 md:px-6">
+            <div className="container bg-gray-50 py-12 lg:py-16 px-4 md:px-6 lg:px-14">
                 <div className="flex items-center justify-between max-lg:flex-col gap-10">
                     <div className="flex flex-col justify-center space-y-4 flex-grow-[1] flex-shrink-[1] basis-0">
                         <div className="space-y-2">
@@ -47,7 +54,7 @@ export default async function Home() {
                     />
                 </div>
             </div>
-            <div className="py-14 container px-8">
+            <div className="py-14 container px-8 lg:px-14">
                 <div className="flex max-lg:flex-col justify-between items-center space-y-8">
                     <div className="flex flex-col justify-center space-y-4">
                         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
