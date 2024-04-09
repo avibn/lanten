@@ -108,6 +108,58 @@ export const logout: RequestHandler = (req, res, next) => {
     });
 };
 
+const UpdatePasswordBody = z.object({
+    oldPassword: z.string(),
+    newPassword: z
+        .string()
+        .min(8)
+        .max(100)
+        .refine((password) => /[A-Z]/.test(password), {
+            message: "Password must contain at least one uppercase letter",
+        })
+        .refine((password) => /\d/.test(password), {
+            message: "Password must contain at least one number",
+        }),
+});
+
+export const updatePassword: RequestHandler = async (req, res, next) => {
+    try {
+        const { oldPassword, newPassword } = UpdatePasswordBody.parse(req.body);
+
+        // Get user
+        const user = await prisma.user.findUnique({
+            where: { id: req.session.userId },
+            select: {
+                password: true,
+            },
+        });
+
+        if (!user) {
+            throw createHttpError(401, "Not authenticated");
+        }
+
+        // Verify password
+        if (!(await argon2.verify(user.password, oldPassword))) {
+            throw createHttpError(401, "Current password is incorrect.");
+        }
+
+        // Hash new password
+        const hashedPassword = await argon2.hash(newPassword);
+
+        // Update password
+        await prisma.user.update({
+            where: { id: req.session.userId },
+            data: {
+                password: hashedPassword,
+            },
+        });
+
+        res.sendStatus(204);
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const me: RequestHandler = async (req, res, next) => {
     try {
         const user = await prisma.user.findUnique({

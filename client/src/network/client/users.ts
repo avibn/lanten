@@ -59,3 +59,25 @@ export const useLogoutMutation = () => {
         mutationFn: logoutClient,
     });
 };
+
+// Update password
+interface UpdatePasswordBody {
+    oldPassword: string;
+    newPassword: string;
+}
+
+const updatePasswordClient = async (
+    body: UpdatePasswordBody
+): Promise<void> => {
+    await fetchData("/users/update-password", {
+        method: "PATCH",
+        body: JSON.stringify(body),
+        credentials: "include",
+    });
+};
+
+export const useUpdatePasswordMutation = () => {
+    return useMutation({
+        mutationFn: updatePasswordClient,
+    });
+};

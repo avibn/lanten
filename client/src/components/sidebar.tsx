@@ -144,13 +144,16 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
                             <Button
                                 variant="outline"
                                 className="w-full justify-start"
+                                asChild
                             >
-                                <Settings
-                                    size={20}
-                                    strokeWidth={1}
-                                    className="mr-3"
-                                />
-                                Settings
+                                <Link href="/settings" onClick={closeSidebar}>
+                                    <Settings
+                                        size={20}
+                                        strokeWidth={1}
+                                        className="mr-3"
+                                    />
+                                    Settings
+                                </Link>
                             </Button>
                             <Button
                                 variant="outline"

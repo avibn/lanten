@@ -11,6 +11,9 @@ router.post("/login", UserController.login);
 router.post("/logout", UserController.logout);
 router.get("/me", requiresAuth, UserController.me);
 
+// Update password
+router.patch("/update-password", requiresAuth, UserController.updatePassword);
+
 // Messages
 router.get("/:id/messages", requiresAuth, MessageController.getMessages);
 router.post("/:id/messages", requiresAuth, MessageController.createMessage);
