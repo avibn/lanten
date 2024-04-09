@@ -86,12 +86,15 @@ export function FormComboboxField({
                                     ) : (
                                         <>
                                             {field.value || selectedOption
-                                                ? options.find(
-                                                      (option) =>
-                                                          option.value ===
-                                                              field.value ||
-                                                          option.value ===
-                                                              selectedOption
+                                                ? (
+                                                      options &&
+                                                      options.find(
+                                                          (option) =>
+                                                              option.value ===
+                                                                  field.value ||
+                                                              option.value ===
+                                                                  selectedOption
+                                                      )
                                                   )?.label
                                                 : placeholder}
                                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -110,39 +113,40 @@ export function FormComboboxField({
                                         No {optionName} found.
                                     </CommandEmpty>
                                     <CommandGroup>
-                                        {options.map((option, index) => (
-                                            <CommandItem
-                                                value={option.label}
-                                                key={index}
-                                                onSelect={() => {
-                                                    if (onValueChange) {
-                                                        onValueChange(
+                                        {options &&
+                                            options.map((option, index) => (
+                                                <CommandItem
+                                                    value={option.label}
+                                                    key={index}
+                                                    onSelect={() => {
+                                                        if (onValueChange) {
+                                                            onValueChange(
+                                                                option.value
+                                                            );
+                                                        } else {
+                                                            form?.setValue(
+                                                                name,
+                                                                option.value
+                                                            );
+                                                        }
+                                                        setSelectedOption(
                                                             option.value
                                                         );
-                                                    } else {
-                                                        form?.setValue(
-                                                            name,
-                                                            option.value
-                                                        );
-                                                    }
-                                                    setSelectedOption(
-                                                        option.value
-                                                    );
-                                                    setDialogOpen(false);
-                                                }}
-                                            >
-                                                <Check
-                                                    className={cn(
-                                                        "mr-2 h-4 w-4",
-                                                        option.value ===
-                                                            field.value
-                                                            ? "opacity-100"
-                                                            : "opacity-0"
-                                                    )}
-                                                />
-                                                {option.label}
-                                            </CommandItem>
-                                        ))}
+                                                        setDialogOpen(false);
+                                                    }}
+                                                >
+                                                    <Check
+                                                        className={cn(
+                                                            "mr-2 h-4 w-4",
+                                                            option.value ===
+                                                                field.value
+                                                                ? "opacity-100"
+                                                                : "opacity-0"
+                                                        )}
+                                                    />
+                                                    {option.label}
+                                                </CommandItem>
+                                            ))}
                                     </CommandGroup>
                                 </CommandList>
                             </Command>
