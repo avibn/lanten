@@ -23,6 +23,7 @@ export interface MainButtonProps {
     icon?: JSX.Element;
     onClick?: () => void;
     linkPrefetch?: boolean;
+    linkProps?: { [key: string]: any };
 }
 
 export function MainButton({
@@ -37,6 +38,7 @@ export function MainButton({
     href,
     onClick,
     linkPrefetch = true,
+    linkProps = {},
 }: MainButtonProps) {
     const buttonContent = (
         <>
@@ -57,7 +59,7 @@ export function MainButton({
             onClick={onClick}
         >
             {href ? (
-                <Link href={href} prefetch={linkPrefetch}>
+                <Link href={href} prefetch={linkPrefetch} {...linkProps}>
                     {buttonContent}
                 </Link>
             ) : (

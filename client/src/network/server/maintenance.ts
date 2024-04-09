@@ -49,3 +49,15 @@ export async function getMaintenanceRequestTypes(): Promise<
     });
     return await response.json();
 }
+
+export async function getSharedMaintenanceRequest(
+    id: string
+): Promise<MaintenanceRequest> {
+    const response = await fetchDataServer(`/maintenance/shared/${id}`, {
+        next: {
+            revalidate: 0,
+            tags: ["SharedMaintenance"],
+        },
+    });
+    return (await response.json())["maintenanceRequest"];
+}

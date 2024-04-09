@@ -25,7 +25,7 @@ export default async function Home() {
                         <Link href="/login">Login</Link>
                     </Button>
                     <Button asChild>
-                        <Link href="/login">Signup</Link>
+                        <Link href="/login?tab=signup">Signup</Link>
                     </Button>
                 </div>
             </div>
@@ -42,7 +42,7 @@ export default async function Home() {
                             </p>
                         </div>
                         <Button asChild>
-                            <Link href="/login">Get Started!</Link>
+                            <Link href="/login?tab=signup">Get started</Link>
                         </Button>
                     </div>
                     <Image

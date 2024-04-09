@@ -1,6 +1,7 @@
 import {
     MaintenanceRequest,
     MaintenanceRequestStatus,
+    SharedMaintenanceRequest,
 } from "@/models/maintenance";
 
 import { fetchData } from "../helpers/fetch-data";
@@ -104,5 +105,25 @@ export const useUpdateMaintenanceRequestStatusMutation = (
     return useMutation({
         mutationFn: (data: UpdateMaintenanceRequestStatusData) =>
             updateMaintenanceRequestStatus(requestId, data),
+    });
+};
+
+async function shareMaintenanceRequest(
+    requestId: string
+): Promise<SharedMaintenanceRequest> {
+    const response = await fetchData(
+        `/maintenance/requests/${requestId}/share`,
+        {
+            method: "POST",
+            credentials: "include",
+        }
+    );
+
+    return await response.json();
+}
+
+export const useShareMaintenanceRequestMutation = (requestId: string) => {
+    return useMutation({
+        mutationFn: () => shareMaintenanceRequest(requestId),
     });
 };

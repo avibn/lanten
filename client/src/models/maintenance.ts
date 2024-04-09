@@ -21,6 +21,7 @@ export interface MaintenanceRequest {
     images: MaintenanceImage[];
     author?: Partial<User>;
     lease?: Partial<Lease>;
+    sharedRequest?: SharedMaintenanceRequest[];
 }
 
 export interface MaintenanceImage {
@@ -42,6 +43,11 @@ export type MaintenanceRequestStatus =
 export interface MaintenanceRequestType {
     id: string;
     name: string;
+}
+
+export interface SharedMaintenanceRequest {
+    id: string;
+    isDeleted: boolean;
 }
 
 export const STATUS_BACKGROUND_COLORS: { [key: string]: string } = {

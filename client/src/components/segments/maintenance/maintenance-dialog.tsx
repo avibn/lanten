@@ -8,7 +8,14 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { Edit2, FileImage, Mail, MessageCircle, Save } from "lucide-react";
+import {
+    Edit2,
+    FileImage,
+    Mail,
+    MessageCircle,
+    Save,
+    Share2,
+} from "lucide-react";
 import {
     MaintenanceRequestUpdateFormValues,
     maintenanceRequestUpdateSchema,
@@ -20,6 +27,10 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useEffect, useState } from "react";
+import {
+    useShareMaintenanceRequestMutation,
+    useUpdateMaintenanceRequestMutation,
+} from "@/network/client/maintenance";
 
 import { DeleteRequestDialog } from "@/components/segments/maintenance/delete-request-dialog";
 import { Form } from "@/components/ui/form";
@@ -37,7 +48,6 @@ import { toast } from "sonner";
 import { useAuthStore } from "@/stores/use-auth-store";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useUpdateMaintenanceRequestMutation } from "@/network/client/maintenance";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface MaintenanceDialogProps {
@@ -56,6 +66,21 @@ export function MaintenanceDialog({
     const updateRequestMutation = useUpdateMaintenanceRequestMutation(
         maintenanceRequest.id
     );
+    const shareRequestMutation = useShareMaintenanceRequestMutation(
+        maintenanceRequest.id
+    );
+    const [sharedLink, setSharedLink] = useState<string | null>(null);
+
+    // Check if is not deleted and get first shared link
+    const existingSharedLinks = maintenanceRequest.sharedRequest?.find(
+        (sharedRequest) => !sharedRequest.isDeleted
+    );
+
+    useEffect(() => {
+        if (existingSharedLinks) {
+            setSharedLink(`/shared/maintenance/${existingSharedLinks.id}`);
+        }
+    }, [existingSharedLinks]);
 
     useEffect(() => {
         if (!dialogOpen) {
@@ -74,6 +99,10 @@ export function MaintenanceDialog({
         updateRequestMutation.mutate(data);
     };
 
+    const handleShare = () => {
+        shareRequestMutation.mutate();
+    };
+
     // Updatation event handlers
     if (updateRequestMutation.isSuccess) {
         toast.success("Maintenance request updated successfully.");
@@ -89,6 +118,25 @@ export function MaintenanceDialog({
             "Failed to update maintenance request. Please try again later."
         );
         updateRequestMutation.reset();
+    }
+
+    // Sharing event handlers
+    if (shareRequestMutation.isSuccess) {
+        // Update the shared link
+        setSharedLink(`/shared/maintenance/${shareRequestMutation.data.id}`);
+
+        toast.success(
+            "Link created successfully. Press Open Shared Link to view."
+        );
+
+        shareRequestMutation.reset();
+    }
+
+    if (shareRequestMutation.isError) {
+        toast.error(
+            "Failed to share maintenance request. Please try again later."
+        );
+        shareRequestMutation.reset();
     }
 
     const formatFileName = (fileName: string) => {
@@ -249,6 +297,21 @@ export function MaintenanceDialog({
                                     className="flex-grow"
                                 />
                             )}
+                        </WithAuthorized>
+                        <WithAuthorized role="LANDLORD">
+                            <MainButton
+                                icon={<Share2 size={18} />}
+                                text={sharedLink ? "Open Shared Link" : "Share"}
+                                loadingText="Sharing..."
+                                onClick={sharedLink ? undefined : handleShare}
+                                isLoading={shareRequestMutation.isPending}
+                                className="w-1/2"
+                                href={sharedLink || undefined}
+                                linkProps={{
+                                    target: "_blank",
+                                    rel: "noreferrer noopener",
+                                }}
+                            />
                         </WithAuthorized>
                         <DeleteRequestDialog
                             requestID={maintenanceRequest.id}
