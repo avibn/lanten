@@ -1,5 +1,7 @@
 import { statusCodeErrorMap } from "../errors/httpErrors";
 
+const public_url = process.env.NEXT_PUBLIC_BASE_URL;
+
 /**
  * Fetches data from the server.
  * @param input - The URL to fetch.
@@ -13,7 +15,9 @@ export async function fetchData(
     init: RequestInit = {},
     json = true
 ) {
-    const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+    const baseURL = process.env.SERVER_BASE_URL || public_url;
+
+    console.log("Fetching data from: ", (baseURL || "undefined") + input);
 
     if (!baseURL) {
         throw new Error("Base URL is not set.");
@@ -32,6 +36,7 @@ export async function fetchData(
     try {
         response = await fetch(baseURL + input, init);
     } catch (error) {
+        console.error("Failed to fetch data: ", error);
         throw new Error("Failed to fetch data");
     }
 

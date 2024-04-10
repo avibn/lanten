@@ -11,6 +11,8 @@ services:
             - ${DB_PORT}:5432
         volumes:
             - postgres-data-volume:/var/lib/postgresql/data
+        networks:
+            - backend
 
     pgadmin:
         container_name: pg-admin
@@ -30,6 +32,8 @@ services:
         command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
         volumes:
             - redis-cache:/data
+        networks:
+            - backend
 
     redisInsight:
         container_name: redis-insight
@@ -38,8 +42,33 @@ services:
         ports:
             - ${REDIS_INSIGHT_PORT}:8001
 
+    server:
+        build: ./server
+        ports:
+            - 5000:5000
+        depends_on:
+            - db
+            - redis
+        env_file:
+            - ./.env.server
+        networks:
+            - backend
+
+    client:
+        build: ./client
+        ports:
+            - 3000:3000
+        depends_on:
+            - server
+        networks:
+            - backend
+
 volumes:
     postgres-data-volume:
         external: true
     redis-cache:
         external: true
+
+networks:
+    backend:
+        driver: bridge

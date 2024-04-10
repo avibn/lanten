@@ -216,23 +216,20 @@ export const updateProperty: RequestHandler = async (req, res, next) => {
         if (updateImage && files.length > 0) {
             const uploadedImage = files[0];
 
-            // Check if property has an image
-            if (property.propertyImage) {
-                try {
-                    // Upload image to blob
-                    console.log("Uploading image to blob");
-                    createdBlob = await uploadPropertyImageToBlob(
-                        uploadedImage.buffer,
-                        uploadedImage.mimetype
-                    );
+            try {
+                // Upload image to blob
+                console.log("Uploading image to blob");
+                createdBlob = await uploadPropertyImageToBlob(
+                    uploadedImage.buffer,
+                    uploadedImage.mimetype
+                );
 
-                    // Delete existing image from blob
-                    console.log("Deleting existing image from blob");
-                    if (property.propertyImage) {
-                        await deletePropertyImageFromBlob(
-                            property.propertyImage.fileName
-                        );
-                    }
+                // Delete existing image from blob
+                console.log("Deleting existing image from blob");
+                if (property.propertyImage) {
+                    await deletePropertyImageFromBlob(
+                        property.propertyImage.fileName
+                    );
 
                     // Update property with new image
                     const updatedProperty = await prisma.property.update({
@@ -252,13 +249,28 @@ export const updateProperty: RequestHandler = async (req, res, next) => {
                     });
 
                     return res.status(200).json(updatedProperty);
-                } catch (error) {
-                    console.error("Error uploading image to blob", error);
-                    throw createHttpError(
-                        500,
-                        `Error uploading image: ${error}`
-                    );
+                } else {
+                    // add image to property
+                    const updatedProperty = await prisma.property.update({
+                        where: { id: id },
+                        data: {
+                            name,
+                            description,
+                            address,
+                            propertyImage: {
+                                create: {
+                                    url: createdBlob.url,
+                                    fileName: createdBlob.fileName,
+                                    fileType: uploadedImage.mimetype,
+                                },
+                            },
+                        },
+                    });
+                    return res.status(200).json(updatedProperty);
                 }
+            } catch (error) {
+                console.error("Error uploading image to blob", error);
+                throw createHttpError(500, `Error uploading image: ${error}`);
             }
         }
 
