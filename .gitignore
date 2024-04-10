@@ -80,6 +80,7 @@ web_modules/
 .env.local
 .env.client
 .env.server
+.env.azure
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

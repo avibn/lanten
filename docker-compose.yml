@@ -63,6 +63,32 @@ services:
         networks:
             - backend
 
+    azure-function:
+        build: ./azure
+        ports:
+            - "7071:80"
+        env_file:
+            - ./.env.azure
+        volumes:
+            - ./etc/test-secrets:/azure-functions-host/Secrets
+        networks:
+            - backend
+        # depends_on:
+        #     - azurite
+
+    # azurite:
+    #     image: mcr.microsoft.com/azure-storage/azurite
+    #     container_name: azurite
+    #     hostname: azurite
+    #     restart: always
+    #     command: "azurite --blobHost 0.0.0.0 --blobPort 10000 --queueHost 0.0.0.0 --queuePort 10001 --tableHost 0.0.0.0 --tablePort 10002"
+    #     ports:
+    #         - "10000:10000"
+    #         - "10001:10001"
+    #         - "10002:10002"
+    #     networks:
+    #         - backend
+
 volumes:
     postgres-data-volume:
         external: true
