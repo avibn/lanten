@@ -1,0 +1,65 @@
+version: "3.1"
+services:
+    db:
+        image: postgres:16
+        restart: always
+        environment:
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+        ports:
+            - ${DB_PORT}:5432
+        volumes:
+            - postgres-data-volume:/var/lib/postgresql/data
+        networks:
+            - backend
+
+    redis:
+        image: redis:7.2.4
+        restart: always
+        ports:
+            - ${REDIS_PORT}:6379
+        command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+        volumes:
+            - redis-cache:/data
+        networks:
+            - backend
+
+    server:
+        build: ./server
+        ports:
+            - 5000:5000
+        depends_on:
+            - db
+            - redis
+        environment:
+            PORT: ${PORT}
+            DATABASE_URL: ${DATABASE_URL}
+            REDIS_URL: ${REDIS_URL}
+            SESSION_SECRET: ${SESSION_SECRET}
+            CLIENT_URL: ${CLIENT_URL}
+            AZURE_FUNCTION_URL: ${AZURE_FUNCTION_URL}
+            AZURE_FUNCTION_TOKEN: ${AZURE_FUNCTION_TOKEN}
+            AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
+            DOCUMENT_BLOB_CONTAINER: ${DOCUMENT_BLOB_CONTAINER}
+            MAINTENANCE_BLOB_CONTAINER: ${MAINTENANCE_BLOB_CONTAINER}
+            PROPERTY_BLOB_CONTAINER: ${PROPERTY_BLOB_CONTAINER}
+        networks:
+            - backend
+
+    client:
+        build: ./client
+        ports:
+            - 3000:3000
+        depends_on:
+            - server
+        networks:
+            - backend
+
+volumes:
+    postgres-data-volume:
+    redis-cache:
+
+networks:
+    backend:
+        driver: bridge
