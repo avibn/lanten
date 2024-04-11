@@ -48,7 +48,7 @@ services:
             - backend
 
     client:
-        build: ./client
+        image: alvis987/part-3-client:latest
         ports:
             - 3000:3000
         depends_on:
