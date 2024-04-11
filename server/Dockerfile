@@ -14,6 +14,7 @@ COPY tsconfig.json ./tsconfig.json
 
 # Generate prisma client
 RUN npx prisma generate
+RUN npx prisma migrate deploy
 
 # Build dist
 RUN npm run build

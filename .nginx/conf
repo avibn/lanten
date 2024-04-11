@@ -1,0 +1,47 @@
+server {
+    listen 80;
+    server_name lanten.site;
+
+    # Redirect HTTP to HTTPS with www
+    return 301 https://www.$host$request_uri;
+}
+
+server {
+    listen 80;
+    server_name www.lanten.site;
+
+    # Redirect HTTP to HTTPS
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name www.lanten.site;
+
+    # SSL configuration
+    ssl_certificate /etc/letsencrypt/live/lanten.site/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/lanten.site/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+
+    # Additional SSL configurations if needed
+
+    # Proxy configurations for your Next.js frontend and Express backend
+    location / {
+        proxy_pass http://localhost:3000;  # Next.js frontend
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    location /api {
+        rewrite /api/(.*) /$1 break;
+        proxy_pass http://localhost:5000;  # Express backend
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
