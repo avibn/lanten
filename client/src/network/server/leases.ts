@@ -4,7 +4,7 @@ import { fetchDataServer } from "../helpers/fetch-data-server";
 export async function getLeases(): Promise<Lease[]> {
     const response = await fetchDataServer("/leases", {
         next: {
-            revalidate: 20,
+            revalidate: 0,
             tags: ["leases"],
         },
     });
@@ -14,7 +14,7 @@ export async function getLeases(): Promise<Lease[]> {
 export async function getLeasesList(): Promise<Partial<Lease>[]> {
     const response = await fetchDataServer("/leases/list", {
         next: {
-            revalidate: 20,
+            revalidate: 0,
             tags: ["leases"],
         },
     });
@@ -24,7 +24,7 @@ export async function getLeasesList(): Promise<Partial<Lease>[]> {
 export async function getLease(id: string): Promise<Lease> {
     const response = await fetchDataServer(`/leases/${id}`, {
         next: {
-            revalidate: 20,
+            revalidate: 0,
             tags: ["leases"],
         },
     });

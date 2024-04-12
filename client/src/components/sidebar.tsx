@@ -70,6 +70,7 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
         setUser(null);
         toast.success("Logged out successfully");
         router.push("/login");
+        router.refresh();
     }
 
     const closeSidebar = () => {

@@ -5,7 +5,7 @@ import { fetchDataServer } from "../helpers/fetch-data-server";
 export async function getPayments(leaseId: string): Promise<Payment[]> {
     const response = await fetchDataServer(`/leases/${leaseId}/payments`, {
         next: {
-            revalidate: 20,
+            revalidate: 0,
             tags: ["LeasePayments"],
         },
     });

@@ -32,6 +32,7 @@ export function LoginClient() {
         toast.success("Logged in successfully!");
         setUser(data);
         router.push("/home");
+        router.refresh();
     }
 
     return <LoginForm onSubmit={onSubmit} loading={isPending} />;

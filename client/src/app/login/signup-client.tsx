@@ -32,6 +32,7 @@ export function SignupClient() {
         toast.success("Account created!");
         setUser(data);
         router.push("/home");
+        router.refresh();
     }
 
     return <SignupForm onSubmit={onSubmit} loading={isPending} />;

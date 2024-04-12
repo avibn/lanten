@@ -9,7 +9,7 @@ export async function getAnnouncements(
         `/leases/${leaseId}/announcements` + (max ? `?max=${max}` : ""),
         {
             next: {
-                revalidate: 20,
+                revalidate: 0,
                 tags: ["LeaseAnnouncements"],
             },
         }
@@ -24,7 +24,7 @@ export async function getLatestAnnouncements(
         `/announcements/latest` + (max ? `?max=${max}` : ""),
         {
             next: {
-                revalidate: 20,
+                revalidate: 0,
                 tags: ["Announcements"],
             },
         }

@@ -20,6 +20,7 @@ export function InviteClient({
         if (leaseTenant) {
             refreshLeases();
             router.push(`/leases/${leaseTenant.leaseId}`);
+            router.refresh();
             toast.success("You have joined the lease!");
         } else {
             router.push("/leases");

@@ -43,7 +43,7 @@ export async function getMaintenanceRequestTypes(): Promise<
 > {
     const response = await fetchDataServer("/maintenance/types", {
         next: {
-            revalidate: 1 * 60 * 60, // 1 hour
+            revalidate: 0,
             tags: ["MaintenanceTypes"],
         },
     });
