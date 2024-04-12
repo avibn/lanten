@@ -1,39 +1,12 @@
+import datetime
+import os
 from typing import List
 
-from .models import Lease, LeaseTenant, Payment, User, database
+import requests
 
-project_reminders_query = """
--- Recurring reminders
-WITH recurring_dates AS (
-  SELECT p."id", g.date::date
-  FROM "Payment" p
-  CROSS JOIN LATERAL
-  generate_series(
-    p."paymentDate", 
-    (CURRENT_DATE AT TIME ZONE 'UTC') + INTERVAL '10 days', 
-    CASE 
-      WHEN p."recurringInterval" = 'DAILY' THEN '1 day'::interval
-      WHEN p."recurringInterval" = 'WEEKLY' THEN '7 days'::interval
-      WHEN p."recurringInterval" = 'MONTHLY' THEN '1 month'::interval
-      WHEN p."recurringInterval" = 'YEARLY' THEN '1 year'::interval
-    END
-  ) g(date)
-  WHERE p."recurringInterval" != 'NONE'
-)
-SELECT p.*, r.*
-FROM recurring_dates rd
-JOIN "Payment" p ON rd."id" = p."id"
-JOIN "Reminder" r ON p."id" = r."paymentId"
-WHERE DATE(rd.date) - r."daysBefore" = (CURRENT_DATE AT TIME ZONE 'UTC')
-
-UNION
-
--- Non-recurring reminders
-SELECT p.*, r.*
-FROM "Payment" p
-JOIN "Reminder" r ON p."id" = r."paymentId"
-WHERE DATE(p."paymentDate") - r."daysBefore" = CURRENT_DATE;
-"""
+# Base URL
+base_url = os.getenv("BackendBaseUrl")
+auth_token = os.getenv("BackendKey")
 
 
 # Data classes for type hinting
@@ -68,7 +41,10 @@ class PaymentData:
         self.payment_type = payment_type
 
         # Convert datetime to just date text
-        self.payment_date = payment_date.strftime("%d-%m-%Y")
+        payment_datetime = datetime.datetime.strptime(
+            payment_date, "%Y-%m-%dT%H:%M:%S.%fZ"
+        )
+        self.payment_date = payment_datetime.strftime("%d-%m-%Y")
 
     def __str__(self):
         return f"{self.payment_id} {self.payment_amount} {self.payment_name} {self.payment_description} {self.payment_type} {self.payment_date}"
@@ -104,42 +80,34 @@ def get_todays_reminders() -> dict[PaymentData, List[TenantData]]:
     Returns:
         A dictionary mapping PaymentData instances to a list of TenantData instances.
     """
-    reminders = database.execute_sql(project_reminders_query)
-    response = reminders.fetchall()
+    # reminders = database.execute_sql(project_reminders_query)
+    # response = reminders.fetchall()
+
+    if auth_token is None or base_url is None:
+        raise ValueError("Base URL and auth token must be set.")
+
+    response = requests.get(
+        f"{base_url}/reminders/all",
+        headers={"Authorization": auth_token},
+    ).json()
 
     payment_to_tenants = {}
     for resp in response:
         # Create PaymentData instance to store payment data
-        (
-            payment_id,
-            payment_amount,
-            payment_name,
-            payment_description,
-            payment_type,
-            payment_date,
-            *rest,
-        ) = resp
-
         payment_instance = PaymentData(
-            payment_id,
-            payment_amount,
-            payment_name,
-            payment_description,
-            payment_type,
-            payment_date,
+            resp.get("paymentId"),
+            resp.get("amount"),
+            resp.get("name"),
+            resp.get("description"),
+            resp.get("type"),
+            resp.get("paymentDate"),
         )
 
         # Get tenants emails and names
-        tenants = (
-            User.select(User.email, User.name)
-            .join(LeaseTenant)
-            .join(Lease)
-            .join(Payment)
-            .where(Payment.id == payment_id)
-            .distinct()  # This is important to avoid duplicates
-        )
-
-        tenants = [TenantData(tenant.name, tenant.email) for tenant in tenants]
+        tenants = [
+            TenantData(tenant.get("name"), tenant.get("email"))
+            for tenant in resp.get("tenants")
+        ]
 
         # Assign tenants to payment
         payment_to_tenants[payment_instance] = tenants

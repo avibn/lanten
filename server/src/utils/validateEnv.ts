@@ -14,4 +14,5 @@ export default cleanEnv(process.env, {
     MAINTENANCE_BLOB_CONTAINER: str(),
     PROPERTY_BLOB_CONTAINER: str(),
     NODE_ENV: str({ default: "development" }),
+    EXPRESS_SECRET_KEY: str(),
 });

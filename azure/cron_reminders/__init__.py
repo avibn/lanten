@@ -2,7 +2,7 @@ import logging
 from datetime import UTC, datetime, timezone
 
 from azure.functions import TimerRequest
-from database.get_reminders import get_todays_reminders
+from network.get_reminders import get_todays_reminders
 from utils import queue
 
 # Get the queue proxy

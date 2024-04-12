@@ -229,3 +229,106 @@ export const deleteReminder: RequestHandler = async (req, res, next) => {
         next(error);
     }
 };
+
+type AllRemindersQueryResult = {
+    id: string;
+    amount: number;
+    name: string;
+    description?: string | null;
+    type: string;
+    paymentDate: Date;
+    isDeleted: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    leaseId?: string | null;
+    leaseTenantId?: string | null;
+    recurringInterval: string;
+    daysBefore: number;
+    paymentId: string;
+}[];
+
+const getAllRemindersQuery = async (): Promise<AllRemindersQueryResult> => {
+    return prisma.$queryRaw`
+        -- Recurring reminders
+        WITH recurring_dates AS (
+        SELECT p."id", g.date::date
+        FROM "Payment" p
+        CROSS JOIN LATERAL
+        generate_series(
+            p."paymentDate", 
+            (CURRENT_DATE AT TIME ZONE 'UTC') + INTERVAL '10 days', 
+            CASE 
+            WHEN p."recurringInterval" = 'DAILY' THEN '1 day'::interval
+            WHEN p."recurringInterval" = 'WEEKLY' THEN '7 days'::interval
+            WHEN p."recurringInterval" = 'MONTHLY' THEN '1 month'::interval
+            WHEN p."recurringInterval" = 'YEARLY' THEN '1 year'::interval
+            END
+        ) g(date)
+        WHERE p."recurringInterval" != 'NONE'
+        )
+        SELECT p.*, r.*
+        FROM recurring_dates rd
+        JOIN "Payment" p ON rd."id" = p."id"
+        JOIN "Reminder" r ON p."id" = r."paymentId"
+        WHERE DATE(rd.date) - r."daysBefore" = (CURRENT_DATE AT TIME ZONE 'UTC')
+
+        UNION
+
+        -- Non-recurring reminders
+        SELECT p.*, r.*
+        FROM "Payment" p
+        JOIN "Reminder" r ON p."id" = r."paymentId"
+        WHERE DATE(p."paymentDate") - r."daysBefore" = CURRENT_DATE;`;
+};
+
+export const getAllReminders: RequestHandler = async (req, res, next) => {
+    try {
+        const reminders = await getAllRemindersQuery();
+
+        // Filter out deleted payments
+        const filteredReminders = reminders.filter(
+            (reminder) => !reminder.isDeleted
+        );
+
+        // Add tenants names and emails to the response
+        const remindersWithTenants = await Promise.all(
+            filteredReminders.map(async (reminder) => {
+                if (!reminder.leaseId) {
+                    return reminder;
+                }
+
+                const tenants = await prisma.leaseTenant.findMany({
+                    where: {
+                        leaseId: reminder.leaseId,
+                        isDeleted: false,
+                        tenant: {
+                            isActive: true,
+                        },
+                    },
+                    include: {
+                        tenant: {
+                            select: {
+                                id: true,
+                                name: true,
+                                email: true,
+                            },
+                        },
+                    },
+                });
+
+                return {
+                    ...reminder,
+                    tenants: tenants.map((tenant) => ({
+                        id: tenant.tenant.id,
+                        name: tenant.tenant.name,
+                        email: tenant.tenant.email,
+                    })),
+                };
+            })
+        );
+
+        res.json(remindersWithTenants);
+    } catch (error) {
+        next(error);
+    }
+};
