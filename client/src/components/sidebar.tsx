@@ -85,7 +85,11 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
                 <div className="px-3 lg:py-2 flex flex-col justify-between h-full">
                     <div>
                         <div className="flex items-center justify-between lg:mb-5 max-lg:mb-2 px-4">
-                            <Link href="/home" onClick={closeSidebar}>
+                            <Link
+                                href="/home"
+                                onClick={closeSidebar}
+                                prefetch={false}
+                            >
                                 <div className="flex items-center space-x-2">
                                     <Image
                                         alt="Logo"
@@ -129,6 +133,7 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
                                                 <Link
                                                     href={item.href}
                                                     onClick={closeSidebar}
+                                                    prefetch={false}
                                                 >
                                                     {createIcon(item.icon)}
                                                     {item.name}
@@ -146,7 +151,7 @@ export function Sidebar({ sideBarItems }: SidebarProps) {
                                 className="w-full justify-start"
                                 asChild
                             >
-                                <Link href="/settings" onClick={closeSidebar}>
+                                <Link href="/settings" onClick={closeSidebar} prefetch={false}>
                                     <Settings
                                         size={20}
                                         strokeWidth={1}

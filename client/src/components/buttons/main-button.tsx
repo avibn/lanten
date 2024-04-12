@@ -37,7 +37,7 @@ export function MainButton({
     icon,
     href,
     onClick,
-    linkPrefetch = true,
+    linkPrefetch = false,
     linkProps = {},
 }: MainButtonProps) {
     const buttonContent = (

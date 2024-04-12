@@ -59,6 +59,7 @@ export function CreateLeaseForm({
                                 <Link
                                     href="/properties/create"
                                     className="link-primary"
+                                    prefetch={false}
                                 >
                                     create a new property
                                 </Link>

@@ -7,7 +7,7 @@ export default async function Home() {
     return (
         <>
             <div className="flex items-center justify-between w-full px-6 py-4">
-                <Link href="/">
+                <Link href="/" prefetch={false}>
                     <div className="flex items-center space-x-4">
                         <Image
                             alt="Logo"
@@ -22,10 +22,10 @@ export default async function Home() {
                 </Link>
                 <div className="flex items-center gap-2">
                     <Button asChild variant="ghost">
-                        <Link href="/login">Login</Link>
+                        <Link href="/login" prefetch={false}>Login</Link>
                     </Button>
                     <Button asChild>
-                        <Link href="/login?tab=signup">Signup</Link>
+                        <Link href="/login?tab=signup" prefetch={false}>Signup</Link>
                     </Button>
                 </div>
             </div>
@@ -42,7 +42,7 @@ export default async function Home() {
                             </p>
                         </div>
                         <Button asChild>
-                            <Link href="/login?tab=signup">Get started</Link>
+                            <Link href="/login?tab=signup" prefetch={false}>Get started</Link>
                         </Button>
                     </div>
                     <Image

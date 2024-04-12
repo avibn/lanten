@@ -43,6 +43,7 @@ export async function LatestLeasesCard() {
                                 <Link
                                     key={lease.id}
                                     href={`/leases/${lease.id}`}
+                                    prefetch={false}
                                     passHref
                                 >
                                     <div className="rounded-md border whitespace-nowrap p-3 hover-card">

@@ -7,6 +7,8 @@ const protectedRoutes = [
     "/leases",
     "/tenants",
     "/maintenance",
+    "/messages",
+    "/settings",
 ];
 
 export function middleware(request: NextRequest) {

@@ -138,7 +138,7 @@ export const columns: ColumnDef<LeaseTenant>[] = [
             const lease = row.getValue("lease") as Partial<Lease>;
             return (
                 <Button variant="link" asChild className="p-0">
-                    <Link href={`/leases/${lease?.id}`}>
+                    <Link href={`/leases/${lease?.id}`} prefetch={false}>
                         {lease?.property?.name}
                     </Link>
                 </Button>

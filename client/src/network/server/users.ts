@@ -11,12 +11,13 @@ import { redirect } from "next/navigation";
 export const getSessionUser = async (): Promise<User> => {
     const cookie = cookies().get("connect.sid");
     if (!cookie) {
+        console.error("No cookie found");
         throw new UnauthorizedError("Not logged in");
     }
 
     const response = await fetchDataServer("/users/me", {
         next: {
-            revalidate: 30,
+            revalidate: 0,
         },
     });
     return await response.json();

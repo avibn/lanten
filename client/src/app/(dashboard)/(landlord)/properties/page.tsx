@@ -45,6 +45,7 @@ export default async function Page() {
                         <Link
                             href="/properties/create"
                             className="hover:underline hover:text-green-700"
+                            prefetch={false}
                         >
                             Create
                         </Link>{" "}
@@ -57,6 +58,7 @@ export default async function Page() {
                         key={property.id}
                         href={`/properties/${property.id}`}
                         className="flex-grow flex-shrink basis-0 max-w-80"
+                        prefetch={false}
                     >
                         <Card className="hover-card h-full">
                             <div className="relative aspect-video overflow-hidden rounded-t-lg h-[150px] w-full">

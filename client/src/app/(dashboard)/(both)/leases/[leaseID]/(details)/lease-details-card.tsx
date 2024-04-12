@@ -44,6 +44,7 @@ export default function LeaseDetailsCard({ lease }: LeaseDetailsCardProps) {
                             <Link
                                 href={`/properties/${lease.propertyId}`}
                                 className="link-primary"
+                                prefetch={false}
                             >
                                 {lease.property?.name}
                             </Link>

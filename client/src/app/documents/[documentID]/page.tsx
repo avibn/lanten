@@ -35,7 +35,7 @@ export default async function Page({ params: { documentID } }: PageProps) {
                     <div className="text-sm text-gray-500">
                         If the document does not open, click{" "}
                         <Button variant="link" className="p-0" asChild>
-                            <Link href={link}>here</Link>
+                            <Link href={link} prefetch={false}>here</Link>
                         </Button>
                         .
                     </div>
@@ -46,7 +46,7 @@ export default async function Page({ params: { documentID } }: PageProps) {
                     <div className="text-sm text-gray-500">
                         Click{" "}
                         <Button variant="link" className="p-0" asChild>
-                            <Link href="/home">here</Link>
+                            <Link href="/home" prefetch={false}>here</Link>
                         </Button>{" "}
                         to go back to the dashboard.
                     </div>

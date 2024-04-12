@@ -53,7 +53,7 @@ export function DeletePropertyClient({
                             <ol className="list-decimal list-inside">
                                 {leases.map((lease) => (
                                     <li key={lease.id}>
-                                        <Link href={`/leases/${lease.id}`}>
+                                        <Link href={`/leases/${lease.id}`} prefetch={false}>
                                             {" "}
                                             {formatTimeToDateString(
                                                 lease.startDate

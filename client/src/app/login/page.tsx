@@ -19,7 +19,7 @@ export default async function Page({ searchParams }: PageProps) {
     return (
         <>
             <div className="flex items-center justify-between w-full px-6 py-4">
-                <Link href="/">
+                <Link href="/" prefetch={false}>
                     <div className="flex items-center space-x-4">
                         <Image
                             alt="Logo"

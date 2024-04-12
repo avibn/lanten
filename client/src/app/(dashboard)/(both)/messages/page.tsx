@@ -34,7 +34,7 @@ export default async function Page() {
                     </p>
                 )}
                 {messageChannels.map((channel) => (
-                    <Link key={channel.id} href={`/messages/${channel.id}`}>
+                    <Link key={channel.id} href={`/messages/${channel.id}`} prefetch={false}>
                         <Card
                             key={channel.id}
                             className="hover:bg-gray-100 duration-500"

@@ -35,7 +35,7 @@ export async function LatestMessagesCard() {
                     </p>
                 )}
                 {messageChannels.map((user) => (
-                    <Link key={user.id} href={`/messages/${user.id}`} passHref>
+                    <Link key={user.id} href={`/messages/${user.id}`} prefetch={false} passHref>
                         <div className="flex flex-row gap-2 items-center justify-between border rounded p-3 text-sm hover-card">
                             <div className="flex gap-2 items-center">
                                 <MessageCircle size={16} />

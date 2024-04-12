@@ -40,7 +40,7 @@ export function IconButton({
                     <a href={href} target="_blank" rel="noreferrer noopener">
                         {icon}
                     </a>
-                )) || <Link href={href}>{icon}</Link>
+                )) || <Link href={href} prefetch={false}>{icon}</Link>
             ) : (
                 icon
             )}
