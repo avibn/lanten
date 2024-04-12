@@ -26,7 +26,10 @@ services:
             - backend
 
     server:
-        build: ./server
+        build:
+            context: ./server
+            args:
+                - DATABASE_URL=${DATABASE_URL}
         ports:
             - 5000:5000
         depends_on:

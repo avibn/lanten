@@ -13,4 +13,5 @@ export default cleanEnv(process.env, {
     DOCUMENT_BLOB_CONTAINER: str(),
     MAINTENANCE_BLOB_CONTAINER: str(),
     PROPERTY_BLOB_CONTAINER: str(),
+    NODE_ENV: str({ default: "development" }),
 });

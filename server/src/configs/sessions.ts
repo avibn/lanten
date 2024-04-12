@@ -14,7 +14,6 @@ const redisStore = new RedisStore({
     client: redisClient,
     prefix: "lanten:",
 });
-
 export const sessionMiddleware = session({
     store: redisStore,
     resave: false,
@@ -24,7 +23,9 @@ export const sessionMiddleware = session({
     cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 5, // 15 days
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        domain:
+            process.env.NODE_ENV === "production" ? ".lanten.site" : undefined,
     },
 });
