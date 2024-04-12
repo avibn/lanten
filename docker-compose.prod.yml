@@ -38,6 +38,7 @@ services:
         environment:
             PORT: ${PORT}
             NODE_ENV: production
+            EXPRESS_SECRET_KEY: ${EXPRESS_SECRET_KEY}
             DATABASE_URL: ${DATABASE_URL}
             REDIS_URL: ${REDIS_CONNECTION_STRING}
             SESSION_SECRET: ${SESSION_SECRET}
