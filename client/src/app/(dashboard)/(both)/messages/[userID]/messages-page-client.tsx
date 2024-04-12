@@ -71,7 +71,7 @@ export default function MessagesPageClient({
     };
 
     return (
-        <div className="h-[95%]">
+        <div className="h-[95%] w-full">
             <div className="flex flex-col w-full h-full">
                 <div className="flex items-center justify-between w-full h-[5%]">
                     <p className="text-sm text-gray-500 mx-10 max-lg:mx-3 flex items-center">
