@@ -46,7 +46,7 @@ export default function LeaseInfoCard({ lease }: LeaseInfoCardProps) {
                     </WithAuthorized>
                 </div>
                 {lease.description ? (
-                    <ScrollArea>
+                    <ScrollArea className="flex">
                         <div
                             dangerouslySetInnerHTML={sanitizeText(
                                 lease.description

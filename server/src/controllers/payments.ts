@@ -134,15 +134,19 @@ export const getPayments: RequestHandler = async (req, res, next) => {
             },
         });
 
-        // Convert paymentDate to add recurringInterval if any
         payments.forEach((payment) => {
             if (payment.recurringInterval !== "NONE") {
                 const date = new Date(payment.paymentDate);
-                const nextDate = addIntervalToDate(
-                    date,
-                    payment.recurringInterval
-                );
-                payment.paymentDate = nextDate;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // set time to 00:00:00 to compare dates only
+
+                if (date < today) {
+                    const nextDate = addIntervalToDate(
+                        date,
+                        payment.recurringInterval
+                    );
+                    payment.paymentDate = nextDate;
+                }
             }
         });
 

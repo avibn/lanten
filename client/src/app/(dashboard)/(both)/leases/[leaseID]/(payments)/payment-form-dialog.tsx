@@ -83,7 +83,7 @@ export function PaymentFormDialog({
                 </DialogHeader>
                 <div className="gap-4 mt-2">
                     <Form {...form}>
-                        <ScrollArea className="h-[70vh] pr-2">
+                        <ScrollArea className="h-[70vh] pr-2 flex">
                             <form
                                 onSubmit={form.handleSubmit(handlePaymentForm)}
                                 className="flex flex-col gap-4 w-full px-2"

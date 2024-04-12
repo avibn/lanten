@@ -91,7 +91,7 @@ export function RemindersDialog({ payment, reminders }: RemindersDialogProps) {
                                     <p className="text-gray-600">
                                         Current reminders set for this payment:
                                     </p>
-                                    <ScrollArea className="pr-2 h-[50vh]">
+                                    <ScrollArea className="flex pr-2 h-[50vh]">
                                         {reminders.map((reminder) => (
                                             <div
                                                 key={reminder.id}
