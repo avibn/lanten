@@ -42,37 +42,37 @@ services:
         ports:
             - ${REDIS_INSIGHT_PORT}:8001
 
-    # server:
-    #     build: ./server
-    #     ports:
-    #         - 5000:5000
-    #     depends_on:
-    #         - db
-    #         - redis
-    #     env_file:
-    #         - ./.env.server
-    #     networks:
-    #         - backend
+    server:
+        build: ./server
+        ports:
+            - 5000:5000
+        depends_on:
+            - db
+            - redis
+        env_file:
+            - ./.env.server
+        networks:
+            - backend
 
-    # client:
-    #     build: ./client
-    #     ports:
-    #         - 3000:3000
-    #     depends_on:
-    #         - server
-    #     networks:
-    #         - backend
+    client:
+        build: ./client
+        ports:
+            - 3000:3000
+        depends_on:
+            - server
+        networks:
+            - backend
 
-    # azure-function:
-    #     build: ./azure
-    #     ports:
-    #         - "7071:80"
-    #     env_file:
-    #         - ./.env.azure
-    #     volumes:
-    #         - ./etc/test-secrets:/azure-functions-host/Secrets
-    #     networks:
-    #         - backend
+    azure-function:
+        build: ./azure
+        ports:
+            - "7071:80"
+        env_file:
+            - ./.env.azure
+        volumes:
+            - ./etc/test-secrets:/azure-functions-host/Secrets
+        networks:
+            - backend
         # depends_on:
         #     - azurite
 
