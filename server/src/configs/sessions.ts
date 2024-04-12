@@ -21,10 +21,10 @@ export const sessionMiddleware = session({
     secret: env.SESSION_SECRET,
     rolling: true,
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 5, // 15 days
+        maxAge: 1000 * 60 * 60 * 24 * 5, // 5 days
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: false,
+        sameSite: "lax",
         domain:
             process.env.NODE_ENV === "production" ? ".lanten.site" : undefined,
     },
