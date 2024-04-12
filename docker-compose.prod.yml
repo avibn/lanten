@@ -37,6 +37,7 @@ services:
             - redis
         environment:
             PORT: ${PORT}
+            NODE_ENV: production
             DATABASE_URL: ${DATABASE_URL}
             REDIS_URL: ${REDIS_CONNECTION_STRING}
             SESSION_SECRET: ${SESSION_SECRET}
