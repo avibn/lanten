@@ -526,6 +526,7 @@ export const updateTenant: RequestHandler = async (req, res, next) => {
 
         res.status(200).json(leaseTenant);
     } catch (error) {
+        console.log(error);
         next(error);
     }
 };

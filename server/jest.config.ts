@@ -142,6 +142,7 @@ const config: Config = {
         "<rootDir>/tests/utils/prismaMock.ts",
         "<rootDir>/tests/utils/blobHelperMock.ts",
         "<rootDir>/tests/utils/envalidMock.ts",
+        "<rootDir>/tests/utils/azureFunctionsMock.ts",
     ],
 
     // The number of seconds after which a test is considered as slow and reported as such in the results.
