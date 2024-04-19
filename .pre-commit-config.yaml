@@ -3,6 +3,6 @@ repos:
       hooks:
           - id: npm-test
             name: Run npm test
-            entry: bash -c 'cd server && npm test'
+            entry: bash -c 'cd server && npm run test:nocov'
             language: system
-            files: '.*'
+            files: ".*"

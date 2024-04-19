@@ -7,7 +7,8 @@
         "dev": "nodemon src/server.ts",
         "studio": "npx prisma studio",
         "lint": "npx eslint . --ext .ts",
-        "test": "jest -i --collectCoverageFrom ''",
+        "test": "jest",
+        "test:nocov": "jest -i --collectCoverage=false",
         "build": "tsc"
     },
     "author": "",
