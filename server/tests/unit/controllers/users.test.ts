@@ -7,10 +7,11 @@ import {
 } from "../../../src/controllers/users";
 
 import { User } from "@prisma/client";
-import app from "../../expressApp";
+import app from "../../utils/expressApp";
 import argon2 from "argon2";
 import { errorHandler } from "../../../src/configs/errorHandler";
-import prismaMock from "../../prismaMock";
+import { expectSessionCookie } from "../../utils/expectSessionCookie";
+import prismaMock from "../../utils/prismaMock";
 import request from "supertest";
 
 // Create an Express app for testing
@@ -20,21 +21,6 @@ app.post("/users/logout", logout);
 app.patch("/users/update-password", updatePassword);
 app.get("/users/me", me);
 app.use(errorHandler);
-
-function expectSessionCookie(response: request.Response, not = false) {
-    const checkArray = expect.arrayContaining([
-        expect.stringContaining("connect.sid="),
-    ]);
-    const checkArrayEmpty = expect.arrayContaining([
-        expect.stringContaining("connect.sid=;"),
-    ]);
-
-    if (not) {
-        expect(response.headers["set-cookie"]).toEqual(checkArrayEmpty);
-    } else {
-        expect(response.headers["set-cookie"]).toEqual(checkArray);
-    }
-}
 
 async function getExampleMockUser(): Promise<User> {
     return {
