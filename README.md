@@ -16,7 +16,7 @@
   - [Prerequisites](#prerequisites)
   - [Docker Setup](#docker-setup)
 - [🎈 Usage ](#usage)
-- [⛏️ Built Using ](#️built_using)
+- [⛏️ Built Using ](#built_using)
 
 ## 🧐 About<a name = "about"></a>
 
